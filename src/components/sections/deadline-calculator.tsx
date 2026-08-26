@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 
 import { useCaseType } from "@/context/case-type-context";
 import { calculateDeadline } from "@/domain/deadlines/calculate";
@@ -10,14 +12,22 @@ import {
   isDeadlineId,
 } from "@/domain/deadlines/data";
 import type { DeadlineTone } from "@/domain/deadlines/types";
-import { useFitSelectText } from "@/hooks/use-fit-select-text";
-import { startOfToday, toLocalIsoDate } from "@/lib/date";
+import { useFitText } from "@/hooks/use-fit-text";
 import {
-  buttonGold,
-  fieldClass,
-  inputClass,
-  labelClass,
-} from "@/styles/classes";
+  formatDateInputPtBr,
+  parseDateInput,
+  startOfToday,
+  toLocalIsoDate,
+} from "@/lib/date";
+import { buttonGold, fieldClass, inputClass, labelClass } from "@/styles/classes";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 const toneClasses: Record<
   DeadlineTone,
@@ -40,19 +50,24 @@ const toneClasses: Record<
   },
 };
 
+const selectTriggerClass =
+  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-nowrap shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
+
 export function DeadlineCalculator() {
   const { deadlineType, setDeadlineType } = useCaseType();
   const [date, setDate] = useState("");
-  const selectRef = useRef<HTMLSelectElement>(null);
-  useFitSelectText(selectRef);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const valueRef = useRef<HTMLSpanElement>(null);
 
   const rule = deadlineRules[deadlineType];
+  useFitText(valueRef, rule.optionLabel);
   const result = useMemo(() => calculateDeadline(rule, date), [date, rule]);
   const tone = toneClasses[result.tone];
   const maximumDate =
     "mode" in rule && rule.mode === "before-due-date"
       ? undefined
-      : toLocalIsoDate(startOfToday());
+      : startOfToday();
+  const selectedDate = parseDateInput(date);
 
   return (
     <div className="grid grid-cols-1 items-start gap-[clamp(24px,3vw,40px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
@@ -61,37 +76,71 @@ export function DeadlineCalculator() {
           <label className={labelClass} htmlFor="calc-tipo">
             Qual problema você está enfrentando?
           </label>
-          <select
-            ref={selectRef}
-            className={`${inputClass} text-[clamp(13px,1vw,14px)] whitespace-nowrap`}
-            id="calc-tipo"
+          <Select
             value={deadlineType}
-            onChange={(event) => {
-              if (isDeadlineId(event.target.value)) {
-                setDeadlineType(event.target.value);
-              }
+            onValueChange={(value) => {
+              if (isDeadlineId(value)) setDeadlineType(value);
             }}
           >
-            {deadlineOptions.map((option) => (
-              <option value={option.id} key={option.id}>
-                {option.optionLabel}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="calc-tipo"
+              className={selectTriggerClass}
+              style={{ height: "auto" }}
+            >
+              <span
+                ref={valueRef}
+                className="min-w-0 flex-1 truncate text-left"
+              >
+                {rule.optionLabel}
+              </span>
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              className="max-w-[min(92vw,32rem)]"
+            >
+              {deadlineOptions.map((option) => (
+                <SelectItem value={option.id} key={option.id}>
+                  {option.optionLabel}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </p>
         <p className={fieldClass}>
           <label className={labelClass} htmlFor="calc-data">
             {rule.dateLabel}
           </label>
-          <input
-            className={inputClass}
-            id="calc-data"
-            type="date"
-            value={date}
-            max={maximumDate}
-            onChange={(event) => setDate(event.target.value)}
-            onInput={(event) => setDate(event.currentTarget.value)}
-          />
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <button
+                id="calc-data"
+                type="button"
+                className={`${inputClass} flex items-center justify-between gap-2 text-left`}
+              >
+                <span className={date ? "" : "text-paper/40"}>
+                  {date ? formatDateInputPtBr(date) : "dd/mm/aaaa"}
+                </span>
+                <CalendarIcon
+                  className="size-4.5 shrink-0 text-paper/50"
+                  aria-hidden="true"
+                />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                locale={ptBR}
+                captionLayout="dropdown"
+                selected={selectedDate ?? undefined}
+                defaultMonth={selectedDate ?? maximumDate ?? undefined}
+                disabled={maximumDate ? { after: maximumDate } : undefined}
+                onSelect={(selected) => {
+                  setDate(selected ? toLocalIsoDate(selected) : "");
+                  setCalendarOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </p>
         <p className="text-[13.5px] leading-[1.6] text-paper/60">{rule.hint}</p>
       </div>

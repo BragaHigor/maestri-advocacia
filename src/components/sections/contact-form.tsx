@@ -1,6 +1,8 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 import { useCaseType } from "@/context/case-type-context";
@@ -14,24 +16,44 @@ import {
   createWhatsappUrl,
   sanitizeMessage,
 } from "@/lib/contact";
-import { formatDateInputPtBr, startOfToday, toLocalIsoDate } from "@/lib/date";
+import {
+  formatDateInputPtBr,
+  parseDateInput,
+  startOfToday,
+  toLocalIsoDate,
+} from "@/lib/date";
 import {
   buttonGold,
   fieldClass,
   inputClass,
   labelClass,
 } from "@/styles/classes";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 type FieldName = "name" | "phone" | "report";
+
+const wrapSelectTriggerClass =
+  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-[14.5px] leading-[1.5] text-paper whitespace-normal shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
 
 export function ContactForm() {
   const { contactCaseType, setContactCaseType } = useCaseType();
   const [invalidFields, setInvalidFields] = useState<Set<FieldName>>(new Set());
   const [status, setStatus] = useState("");
+  const [date, setDate] = useState("");
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const selectedCaseLabel =
     contactCaseType === "outro"
       ? "Outro"
       : deadlineRules[contactCaseType].optionLabel;
+  const selectedDate = parseDateInput(date);
+  const maximumDate = startOfToday();
 
   const clearInvalid = (field: FieldName) => {
     setInvalidFields((current) => {
@@ -101,6 +123,7 @@ export function ContactForm() {
       );
       setStatus("Abrimos seu aplicativo de e-mail com o relato preenchido.");
       form.reset();
+      setDate("");
       return;
     }
 
@@ -115,6 +138,7 @@ export function ContactForm() {
       "Prontinho! Abrimos o WhatsApp com sua mensagem já preenchida — é só confirmar o envio por lá. Se a janela não abrir, use o número ou e-mail ao lado para falar com a gente.",
     );
     form.reset();
+    setDate("");
   };
 
   return (
@@ -166,49 +190,72 @@ export function ContactForm() {
           <label className={labelClass} htmlFor="f-tipo">
             Tipo de caso
           </label>
-          <span className="relative block min-w-0">
-            <select
-              className="peer absolute inset-0 z-10 h-full w-full cursor-pointer bg-ink-3 text-paper opacity-0 [color-scheme:dark] [&>option]:bg-ink-3 [&>option]:text-paper"
+          <Select
+            value={contactCaseType}
+            onValueChange={(value) => {
+              if (value === "outro" || isDeadlineId(value)) {
+                setContactCaseType(value);
+              }
+            }}
+          >
+            <SelectTrigger
               id="f-tipo"
-              name="tipo"
-              value={contactCaseType}
-              onChange={(event) => {
-                const value = event.target.value;
-                if (value === "outro" || isDeadlineId(value)) {
-                  setContactCaseType(value);
-                }
-              }}
+              className={wrapSelectTriggerClass}
+              style={{ height: "auto" }}
+            >
+              <span className="min-w-0 flex-1 text-left whitespace-normal">
+                {selectedCaseLabel}
+              </span>
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              className="max-w-[min(92vw,32rem)]"
             >
               {deadlineOptions.map((option) => (
-                <option value={option.id} key={option.id}>
+                <SelectItem value={option.id} key={option.id}>
                   {option.optionLabel}
-                </option>
+                </SelectItem>
               ))}
-              <option value="outro">Outro</option>
-            </select>
-            <span
-              className={`${inputClass} pointer-events-none flex h-auto min-w-0 items-center whitespace-normal wrap-break-word py-2.5 pr-12 text-[clamp(12.5px,0.9vw,13.5px)] leading-[1.4] peer-hover:border-paper/30 peer-focus-visible:border-gold peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold`}
-              aria-hidden="true"
-            >
-              {selectedCaseLabel}
-            </span>
-            <span
-              className="pointer-events-none absolute top-1/2 right-[18px] size-2 -translate-y-[70%] rotate-45 border-r-2 border-b-2 border-paper"
-              aria-hidden="true"
-            />
-          </span>
+              <SelectItem value="outro">Outro</SelectItem>
+            </SelectContent>
+          </Select>
         </p>
         <p className={fieldClass}>
           <label className={labelClass} htmlFor="f-quando">
             Quando aconteceu
           </label>
-          <input
-            className={inputClass}
-            id="f-quando"
-            name="quando"
-            type="date"
-            max={toLocalIsoDate(startOfToday())}
-          />
+          <input type="hidden" name="quando" value={date} readOnly />
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <button
+                id="f-quando"
+                type="button"
+                className={`${inputClass} flex items-center justify-between gap-2 text-left`}
+              >
+                <span className={date ? "" : "text-paper/40"}>
+                  {date ? formatDateInputPtBr(date) : "dd/mm/aaaa"}
+                </span>
+                <CalendarIcon
+                  className="size-4.5 shrink-0 text-paper/50"
+                  aria-hidden="true"
+                />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                locale={ptBR}
+                captionLayout="dropdown"
+                selected={selectedDate ?? undefined}
+                defaultMonth={selectedDate ?? maximumDate}
+                disabled={{ after: maximumDate }}
+                onSelect={(selected) => {
+                  setDate(selected ? toLocalIsoDate(selected) : "");
+                  setCalendarOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </p>
       </div>
       <p className={fieldClass}>
