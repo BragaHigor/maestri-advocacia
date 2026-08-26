@@ -2,6 +2,7 @@ import { CaseTypeProvider } from "@/context/case-type-context";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyContact } from "@/components/layout/sticky-contact";
+import { WhatsappFloat } from "@/components/layout/whatsapp-float";
 import { MotionEffects } from "@/components/motion-effects";
 import {
   AboutSection,
@@ -47,6 +48,7 @@ export default function HomePage() {
       </main>
       <Footer />
       <StickyContact />
+      <WhatsappFloat />
       <MotionEffects />
     </CaseTypeProvider>
   );
