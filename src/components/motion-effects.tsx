@@ -36,14 +36,32 @@ export function MotionEffects() {
     };
 
     const reveal = (element: HTMLElement) => {
+      if (element.dataset.shown === "true") return;
       element.dataset.shown = "true";
       element
         .querySelectorAll<HTMLElement>("[data-count]")
         .forEach(animateCounter);
     };
 
+    // Elements already sitting in (or just above) the viewport on mount are
+    // revealed straight away instead of waiting on an IntersectionObserver
+    // callback — on some real mobile browsers that first callback can be
+    // delayed or dropped, which otherwise leaves already-visible text (like
+    // the hero heading) stuck hidden indefinitely.
+    const alreadyVisible: HTMLElement[] = [];
+    const pending: HTMLElement[] = [];
+    animatedElements.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        alreadyVisible.push(element);
+      } else {
+        pending.push(element);
+      }
+    });
+    alreadyVisible.forEach(reveal);
+
     let observer: IntersectionObserver | undefined;
-    if ("IntersectionObserver" in window) {
+    if ("IntersectionObserver" in window && pending.length > 0) {
       observer = new IntersectionObserver(
         (entries) => {
           entries
@@ -62,10 +80,16 @@ export function MotionEffects() {
         },
         { rootMargin: "0px 0px -10% 0px", threshold: 0.06 },
       );
-      animatedElements.forEach((element) => observer?.observe(element));
+      pending.forEach((element) => observer?.observe(element));
     } else {
-      animatedElements.forEach(reveal);
+      pending.forEach(reveal);
     }
+
+    // Safety net: if the observer never fires for some element (device- or
+    // browser-specific quirk), make sure nothing stays invisible forever.
+    const fallbackTimer = window.setTimeout(() => {
+      animatedElements.forEach(reveal);
+    }, 2_500);
 
     const parallaxLayers = Array.from(
       document.querySelectorAll<HTMLElement>("[data-parallax]"),
@@ -105,6 +129,7 @@ export function MotionEffects() {
 
     return () => {
       observer?.disconnect();
+      window.clearTimeout(fallbackTimer);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
