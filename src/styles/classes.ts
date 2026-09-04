@@ -1,5 +1,5 @@
 export const buttonBase =
-  "relative isolate inline-flex min-h-14 cursor-pointer items-center justify-center overflow-hidden rounded-sm border px-[30px] py-[17px] text-center text-base font-semibold leading-[1.2] tracking-[0.01em] transition duration-200 active:translate-y-0";
+  "relative isolate inline-flex min-h-14 cursor-pointer items-center justify-center overflow-hidden rounded-sm border px-[30px] py-[17px] text-center text-[clamp(14px,3.6vw,16px)] font-medium leading-[1.2] tracking-[0.01em] transition duration-200 active:translate-y-0";
 
 export const buttonGold = `${buttonBase} button-shine border-gold bg-gold text-ink hover:-translate-y-0.5 hover:border-gold-bright hover:bg-gold-bright hover:text-ink hover:shadow-[0_10px_30px_rgba(217,174,60,0.22)]`;
 
@@ -12,10 +12,10 @@ export const containerClass =
   "mx-auto w-full max-w-[1240px] px-[clamp(20px,4vw,48px)]";
 
 export const headingOneClass =
-  "font-heading text-[clamp(34px,9vw,52px)] leading-[1.04] font-semibold tracking-[-0.02em] text-white text-balance min-[880px]:text-[clamp(40px,6.4vw,78px)]";
+  "font-heading text-[clamp(30px,7.8vw,44px)] leading-[1.1] font-normal tracking-[-0.02em] text-white text-balance min-[880px]:text-[clamp(38px,4vw,54px)]";
 
 export const headingTwoClass =
-  "font-heading text-[clamp(32px,3.8vw,52px)] leading-[1.06] font-semibold tracking-[-0.018em] text-white text-balance";
+  "font-heading text-[clamp(28px,3.4vw,44px)] leading-[1.12] font-normal tracking-[-0.018em] text-white text-balance";
 
 export const kickerClass =
   "inline-flex items-center gap-2.5 text-[13px] font-semibold tracking-[0.2em] text-gold-bright uppercase";
@@ -23,7 +23,7 @@ export const kickerClass =
 export const sectionHeadingClass =
   "mb-[clamp(32px,4vw,54px)] flex max-w-[62ch] flex-col gap-4";
 
-export const introClass = "text-[17px] leading-[1.72] text-paper";
+export const introClass = "text-base leading-[1.72] text-paper";
 
 export const fieldClass = "flex flex-col gap-2";
 

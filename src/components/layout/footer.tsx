@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/site";
-import { navigationItems } from "@/data/content";
+import { footerNavigationItems } from "@/data/content";
 import { createEmailUrl } from "@/lib/contact";
 
 import { Container } from "../ui/container";
@@ -47,7 +47,7 @@ export function Footer() {
           </div>
           <div className={columnClass}>
             <p className={titleClass}>Navegação</p>
-            {navigationItems.map((item) => (
+            {footerNavigationItems.map((item) => (
               <a className={linkClass} href={item.href} key={item.href}>
                 {item.label}
               </a>

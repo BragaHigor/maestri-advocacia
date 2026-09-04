@@ -1,14 +1,13 @@
 import type { Metadata, Viewport } from "next";
 
-import "@fontsource/cormorant-garamond/500.css";
-import "@fontsource/cormorant-garamond/500-italic.css";
-import "@fontsource/cormorant-garamond/600.css";
-import "@fontsource/cormorant-garamond/600-italic.css";
-import "@fontsource/cormorant-garamond/700.css";
-import "@fontsource/lora/400.css";
-import "@fontsource/lora/400-italic.css";
-import "@fontsource/lora/500.css";
-import "@fontsource/lora/600.css";
+import "@fontsource/bodoni-moda/400.css";
+import "@fontsource/bodoni-moda/400-italic.css";
+import "@fontsource/bodoni-moda/500.css";
+import "@fontsource/bodoni-moda/500-italic.css";
+import "@fontsource/bodoni-moda/600.css";
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
 import "./globals.css";
 
 import { siteConfig } from "@/config/site";

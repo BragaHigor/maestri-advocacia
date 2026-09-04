@@ -1,43 +1,28 @@
-export const navigationItems = [
-  { href: "#prazo", label: "Calcule seu prazo" },
-  { href: "#golpes", label: "Tipos de golpe" },
-  { href: "#lei", label: "Seus direitos" },
-  { href: "#como-funciona", label: "Como funciona" },
-  { href: "#perguntas", label: "Dúvidas" },
+export const headerNavigationItems = [
+  { href: "#atuacao", label: "Atuação" },
+  { href: "#como-reconhecer", label: "Como reconhecer" },
+  { href: "#o-caminho", label: "O caminho" },
+  { href: "#quem-atende", label: "Quem atende" },
+  { href: "#perguntas-frequentes", label: "Perguntas" },
+  { href: "#ferramenta", label: "Calcule seu prazo" },
 ] as const;
 
-export const stats = [
-  {
-    value: 80,
-    unit: "dias",
-    text: "para acionar a devolução especial do Pix (MED) junto ao banco.",
-  },
-  {
-    value: 10,
-    unit: "dias",
-    text: "antes do vencimento da fatura para contestar a cobrança e impedir seu débito enquanto ela é apurada.",
-  },
-  {
-    value: 7,
-    unit: "dias",
-    text: "de arrependimento em qualquer compra feita pela internet.",
-  },
-  {
-    value: 5,
-    unit: "anos",
-    text: "para pedir reparação por dano causado por produto ou serviço, conforme o Código de Defesa do Consumidor.",
-  },
+export const footerNavigationItems = [
+  { href: "#atuacao", label: "Atuação" },
+  { href: "#como-reconhecer", label: "Como reconhecer" },
+  { href: "#o-caminho", label: "O caminho" },
+  { href: "#quem-atende", label: "Quem atende" },
+  { href: "#perguntas-frequentes", label: "Perguntas frequentes" },
+  { href: "#ferramenta", label: "Calcule seu prazo" },
 ] as const;
 
 export const marqueeItems = [
   "Golpe do Pix",
-  "Falso funcionário do banco",
-  "Cartão clonado",
-  "Site fantasma",
-  "Empréstimo não contratado",
+  "Cartão de crédito",
+  "Compras online",
   "Conta invadida",
-  "Boleto adulterado",
-  "Cobrança em dobro",
+  "Empréstimo não contratado",
+  "Cobrança indevida e negativação",
 ] as const;
 
 export const caseCards: ReadonlyArray<{
@@ -99,29 +84,6 @@ export const scamSignals = [
   },
 ] as const;
 
-export const lawCards = [
-  {
-    reference: "Súmula 297 · STJ",
-    title: "O CDC vale para bancos",
-    text: "Instituições financeiras são fornecedoras de serviço. Toda a proteção do Código de Defesa do Consumidor se aplica à relação.",
-  },
-  {
-    reference: "CDC · art. 14",
-    title: "Responsabilidade sem culpa",
-    text: "Quem presta o serviço responde pelo defeito, ainda que não tenha agido de má-fé. A discussão é sobre falha de segurança.",
-  },
-  {
-    reference: "CDC · art. 6º, VIII",
-    title: "A prova não é sua obrigação",
-    text: "Reconhecida a verossimilhança, o ônus se inverte: cabe à instituição demonstrar que a operação partiu de você.",
-  },
-  {
-    reference: "CDC · art. 42",
-    title: "Cobrança indevida volta em dobro",
-    text: "Valor cobrado indevidamente pode ser restituído em dobro, com correção e juros — além de eventual dano moral.",
-  },
-] as const;
-
 export const processSteps = [
   {
     title: "Análise do caso",
@@ -141,56 +103,36 @@ export const processSteps = [
   },
 ] as const;
 
-export const glossaryItems = [
-  {
-    term: "MED",
-    definition: "Mecanismo Especial de Devolução. Ferramenta do Pix que permite ao banco bloquear e devolver valores em caso de fraude, sem precisar de processo.",
-  },
-  {
-    term: "Chargeback",
-    definition: "Contestação de compra junto à bandeira do cartão. O valor é estornado enquanto a operação é apurada entre banco, bandeira e loja.",
-  },
-  {
-    term: "Ônus da prova",
-    definition: "Quem tem o dever de provar. No consumo, o juiz pode inverter esse dever: em vez de você provar a fraude, o banco prova que foi você.",
-  },
-  {
-    term: "Tutela de urgência",
-    definition: "Decisão provisória tomada no começo do processo, antes do julgamento final — para retirar a negativação ou suspender parcelas já agora.",
-  },
-  {
-    term: "Fortuito interno",
-    definition: "Risco que faz parte da própria atividade da empresa. Fraude no sistema bancário entra nessa conta — e por isso o banco responde.",
-  },
-  {
-    term: "Repetição do indébito",
-    definition: "Devolução do que foi cobrado indevidamente. No Código de Defesa do Consumidor, em dobro e com correção.",
-  },
-] as const;
-
 export const faqItems = [
   {
-    question: "O banco disse que a culpa foi minha, porque eu mesmo fiz o Pix. Ainda tenho direito?",
-    answer: "Provavelmente sim, e é exatamente aqui que a maioria desiste sem precisar. O fato de a transferência ter partido do seu aparelho não encerra a discussão: a jurisprudência reconhece a responsabilidade da instituição por fraudes praticadas por terceiros no ambiente bancário. O que se examina é a falha de segurança e de informação — por que o sistema não identificou uma operação atípica, por exemplo. Cada caso é analisado individualmente, sem garantia de resultado.",
+    question:
+      "O banco disse que a culpa foi minha, porque eu mesmo fiz o Pix. Ainda tenho direito?",
+    answer:
+      "Provavelmente sim, e é exatamente aqui que a maioria desiste sem precisar. O fato de a transferência ter partido do seu aparelho não encerra a discussão: a jurisprudência reconhece a responsabilidade da instituição por fraudes praticadas por terceiros no ambiente bancário. O que se examina é a falha de segurança e de informação — por que o sistema não identificou uma operação atípica, por exemplo. Cada caso é analisado individualmente, sem garantia de resultado.",
   },
   {
     question: "Preciso ter feito boletim de ocorrência?",
-    answer: "Ajuda bastante, mas a ausência não impede a análise nem a atuação. Se ainda não registrou, dá para fazer agora, on-line, mesmo dias depois do ocorrido. Se já registrou, tenha o número em mãos no primeiro contato.",
+    answer:
+      "Ajuda bastante, mas a ausência não impede a análise nem a atuação. Se ainda não registrou, dá para fazer agora, on-line, mesmo dias depois do ocorrido. Se já registrou, tenha o número em mãos no primeiro contato.",
   },
   {
     question: "Quanto tempo leva para resolver?",
-    answer: "Depende da via. A administrativa costuma responder em dias ou poucas semanas. A judicial varia conforme a comarca e a complexidade da prova, e pode envolver decisão de urgência no início. Nenhum escritório sério promete prazo ou resultado — o que podemos oferecer é clareza sobre o cenário realista do seu caso.",
+    answer:
+      "Depende da via. A administrativa costuma responder em dias ou poucas semanas. A judicial varia conforme a comarca e a complexidade da prova, e pode envolver decisão de urgência no início. Nenhum escritório sério promete prazo ou resultado — o que podemos oferecer é clareza sobre o cenário realista do seu caso.",
   },
   {
     question: "Preciso ir até o escritório?",
-    answer: "Não. Todo o atendimento é 100% online e pode ser feito por WhatsApp, e-mail e videochamada, com procuração assinada digitalmente.",
+    answer:
+      "Não. Todo o atendimento é 100% online e pode ser feito por WhatsApp, e-mail e videochamada, com procuração assinada digitalmente.",
   },
   {
     question: "Como funcionam os honorários?",
-    answer: "São definidos na primeira conversa, sempre por contrato escrito e em observância à Tabela de Honorários da OAB. A análise inicial do caso não é cobrada, e você só decide sobre a contratação depois de saber exatamente o que está sendo proposto.",
+    answer:
+      "São definidos na primeira conversa, sempre por contrato escrito e em observância à Tabela de Honorários da OAB. A análise inicial do caso não é cobrada, e você só decide sobre a contratação depois de saber exatamente o que está sendo proposto.",
   },
   {
     question: "O valor que perdi foi pequeno. Vale a pena?",
-    answer: "Vale avaliar. Além da devolução do valor, pode haver pedido de restituição em dobro e de danos morais, e existem vias de custo reduzido para causas menores. A análise inicial dirá se faz sentido seguir — e, se não fizer, você vai ouvir isso com franqueza.",
+    answer:
+      "Vale avaliar. Além da devolução do valor, pode haver pedido de restituição em dobro e de danos morais, e existem vias de custo reduzido para causas menores. A análise inicial dirá se faz sentido seguir — e, se não fizer, você vai ouvir isso com franqueza.",
   },
 ] as const;

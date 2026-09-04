@@ -10,9 +10,7 @@ import {
   ContactSection,
   DeadlineSection,
   FaqSection,
-  GlossarySection,
   HeroSection,
-  LawSection,
   ProcessSection,
   SignalsSection,
 } from "@/components/sections/landing-sections";
@@ -36,14 +34,12 @@ export default function HomePage() {
         tabIndex={-1}
       >
         <HeroSection />
-        <DeadlineSection />
         <CasesSection />
         <SignalsSection />
-        <LawSection />
         <ProcessSection />
-        <GlossarySection />
         <AboutSection />
         <FaqSection />
+        <DeadlineSection />
         <ContactSection />
       </main>
       <Footer />

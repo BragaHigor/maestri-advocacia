@@ -5,11 +5,12 @@ export function Faq() {
     <div className="border-t border-paper/15">
       {faqItems.map((item) => (
         <details
-          className="group border-b border-paper/15"
+          className="reveal group border-b border-paper/15"
+          data-reveal="rise-small"
           name="perguntas-frequentes"
           key={item.question}
         >
-          <summary className="flex min-h-[60px] cursor-pointer list-none items-start justify-between gap-6 py-[26px] font-heading text-[clamp(18px,2vw,22px)] leading-[1.32] font-semibold text-paper transition-colors marker:hidden hover:text-gold-bright [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-[60px] cursor-pointer list-none items-start justify-between gap-6 py-[24px] font-heading text-[clamp(17px,1.8vw,20px)] leading-[1.4] font-normal text-paper transition-colors marker:hidden hover:text-gold-bright [&::-webkit-details-marker]:hidden">
             <span>{item.question}</span>
             <span
               className="shrink-0 font-body text-[26px] leading-[0.9] font-normal text-gold-bright transition-transform duration-300 ease-fluid group-open:rotate-135"

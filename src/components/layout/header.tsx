@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { navigationItems } from "@/data/content";
+import { headerNavigationItems } from "@/data/content";
 import { buttonGold } from "@/styles/classes";
 
 import { Brand } from "../ui/brand";
@@ -55,11 +55,11 @@ export function Header() {
           <Brand />
         </a>
 
-        <ul className="hidden items-center gap-[26px] min-[1220px]:flex">
-          {navigationItems.map((item) => (
+        <ul className="hidden items-center gap-3 min-[1220px]:flex">
+          {headerNavigationItems.map((item) => (
             <li key={item.href}>
               <a
-                className="text-sm font-medium tracking-[0.01em] text-paper hover:text-gold-bright"
+                className="text-[13px] font-medium tracking-[0.005em] whitespace-nowrap text-paper hover:text-gold-bright"
                 href={item.href}
               >
                 {item.label}
@@ -68,10 +68,10 @@ export function Header() {
           ))}
           <li>
             <a
-              className={`${buttonGold} min-h-11 px-5 py-3 text-sm`}
+              className={`${buttonGold} min-h-11 !px-4 !py-3 text-[13px] whitespace-nowrap`}
               href="#contato"
             >
-              Falar com um advogado
+              Fale com um advogado
             </a>
           </li>
         </ul>
@@ -101,7 +101,7 @@ export function Header() {
         id="nav-mobile"
         className={`${isOpen ? "flex" : "hidden"} flex-col border-t border-paper/15 px-[clamp(20px,4vw,48px)] pt-3 pb-[26px] min-[1220px]:hidden`}
       >
-        {navigationItems.map((item, index) => (
+        {headerNavigationItems.map((item, index) => (
           <a
             ref={index === 0 ? firstLinkRef : undefined}
             className="border-b border-paper/15 py-[15px] text-[17px] font-medium text-paper hover:text-gold-bright"
@@ -117,7 +117,7 @@ export function Header() {
           href="#contato"
           onClick={() => setIsOpen(false)}
         >
-          Falar com um advogado
+          Fale com um advogado
         </a>
       </div>
     </header>

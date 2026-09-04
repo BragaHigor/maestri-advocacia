@@ -8,39 +8,17 @@ export function MotionEffects() {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const isNarrowViewport = window.matchMedia("(max-width: 640px)").matches;
+    const staggerStep = prefersReducedMotion ? 40 : isNarrowViewport ? 55 : 85;
     const animatedElements = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal]"),
     );
 
     root.dataset.motionReady = "true";
 
-    const animateCounter = (element: HTMLElement) => {
-      if (element.dataset.counted === "true") return;
-      element.dataset.counted = "true";
-      const target = Number.parseFloat(element.dataset.count ?? "");
-      if (!Number.isFinite(target)) return;
-      if (prefersReducedMotion) {
-        element.textContent = String(target);
-        return;
-      }
-
-      const startedAt = performance.now();
-      const update = (now: number) => {
-        const progress = Math.min(1, (now - startedAt) / 1_200);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        element.textContent = String(Math.round(target * eased));
-        if (progress < 1) requestAnimationFrame(update);
-        else element.textContent = String(target);
-      };
-      requestAnimationFrame(update);
-    };
-
     const reveal = (element: HTMLElement) => {
       if (element.dataset.shown === "true") return;
       element.dataset.shown = "true";
-      element
-        .querySelectorAll<HTMLElement>("[data-count]")
-        .forEach(animateCounter);
     };
 
     // Elements already sitting in (or just above) the viewport on mount are
@@ -74,11 +52,11 @@ export function MotionEffects() {
               observer?.unobserve(entry.target);
               window.setTimeout(
                 () => reveal(entry.target as HTMLElement),
-                index * (prefersReducedMotion ? 40 : 85),
+                index * staggerStep,
               );
             });
         },
-        { rootMargin: "0px 0px -10% 0px", threshold: 0.06 },
+        { rootMargin: "0px 0px -20% 0px", threshold: 0.15 },
       );
       pending.forEach((element) => observer?.observe(element));
     } else {
@@ -112,8 +90,13 @@ export function MotionEffects() {
         const bounds = element.getBoundingClientRect();
         if (bounds.bottom < -240 || bounds.top > window.innerHeight + 240) return;
         const speed = Number.parseFloat(element.dataset.parallax ?? "") || 0;
+        // Softer movement on small screens: touch scrolling makes strong
+        // parallax feel jumpy, and phones have less headroom to spare.
+        const intensity = isNarrowViewport ? 0.45 : 1;
         const offset =
-          (bounds.top + bounds.height / 2 - window.innerHeight / 2) * speed;
+          (bounds.top + bounds.height / 2 - window.innerHeight / 2) *
+          speed *
+          intensity;
         element.style.transform =
           `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.14)`;
       });

@@ -71,7 +71,10 @@ export function DeadlineCalculator() {
 
   return (
     <div className="grid grid-cols-1 items-start gap-[clamp(24px,3vw,40px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      <div className="flex min-w-0 flex-col gap-5 rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,36px)] min-[521px]:p-[clamp(24px,3vw,36px)]">
+      <div
+        className="reveal flex min-w-0 flex-col gap-5 rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,36px)] min-[521px]:p-[clamp(24px,3vw,36px)]"
+        data-reveal="rise"
+      >
         <p className={fieldClass}>
           <label className={labelClass} htmlFor="calc-tipo">
             Qual problema você está enfrentando?
@@ -146,17 +149,18 @@ export function DeadlineCalculator() {
       </div>
 
       <div
-        className={`flex min-w-0 flex-col gap-5 rounded-md border bg-ink-2 p-[clamp(18px,3vw,36px)] transition-colors min-[521px]:p-[clamp(24px,3vw,36px)] ${tone.border}`}
+        className={`reveal flex min-w-0 flex-col gap-5 rounded-md border bg-ink-2 p-[clamp(18px,3vw,36px)] transition-colors min-[521px]:p-[clamp(24px,3vw,36px)] ${tone.border}`}
+        data-reveal="rise"
         aria-live="polite"
         aria-atomic="true"
       >
         <p className="flex flex-wrap items-baseline gap-3.5">
           <span
-            className={`font-heading text-[clamp(46px,6vw,72px)] leading-none font-semibold tabular-nums transition-colors ${tone.number}`}
+            className={`font-heading text-[clamp(42px,5.4vw,64px)] leading-none font-normal tabular-nums transition-colors ${tone.number}`}
           >
             {result.number}
           </span>
-          <span className="font-heading text-[22px] font-semibold text-paper">
+          <span className="font-heading text-xl font-normal text-paper">
             {result.unit}
           </span>
         </p>

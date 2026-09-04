@@ -7,7 +7,7 @@ export function StructuredData() {
     name: siteConfig.name,
     url: siteConfig.siteUrl.toString(),
     image: new URL(
-      "/assets/images/retrato-principal.jpg",
+      "/assets/images/retrato-principal.jpeg",
       siteConfig.siteUrl,
     ).toString(),
     email: siteConfig.email,

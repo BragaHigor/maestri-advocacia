@@ -32,7 +32,7 @@ export function Brand({ footer = false }: { footer?: boolean }) {
           style={{ width: "auto" }}
         />
         <span
-          className={`font-heading leading-none font-semibold tracking-[0.34em] whitespace-nowrap text-gold-bright uppercase ${
+          className={`font-heading leading-none font-medium tracking-[0.34em] whitespace-nowrap text-gold-bright uppercase ${
             footer ? "text-[12.5px]" : "text-[clamp(9.5px,2.8vw,11.5px)]"
           }`}
         >
