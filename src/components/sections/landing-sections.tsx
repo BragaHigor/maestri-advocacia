@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 import { siteConfig } from "@/config/site";
 import {
@@ -8,6 +11,14 @@ import {
   scamSignals,
 } from "@/data/content";
 import { createEmailUrl } from "@/lib/contact";
+import {
+  fadeIn,
+  fadeUp,
+  fadeUpSmall,
+  maskUp,
+  staggerContainer,
+  VIEWPORT,
+} from "@/lib/motion";
 import {
   buttonGhost,
   buttonGold,
@@ -30,49 +41,60 @@ export function HeroSection() {
     <>
       <section className="scroll-mt-24" id="top">
         <Container className="grid grid-cols-1 items-center gap-[clamp(36px,5vw,72px)] py-[clamp(44px,6vw,84px)] min-[880px]:min-h-[calc(100svh-150px)] min-[880px]:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
-          <div
-            className="reveal flex flex-col gap-[clamp(22px,2.6vw,32px)]"
-            data-reveal="rise"
+          <motion.div
+            className="flex flex-col gap-[clamp(22px,2.6vw,32px)]"
+            variants={staggerContainer(0.12)}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT}
           >
-            <p className={kickerClass}>
+            <motion.p className={kickerClass} variants={fadeUp}>
               <span className="h-[1.5px] w-[26px] bg-gold" />
               Direito do Consumidor &amp; Fraudes bancárias
-            </p>
-            <h1 className={`${headingOneClass} reveal`} data-reveal="mask">
+            </motion.p>
+            <motion.h1 className={headingOneClass} variants={maskUp}>
               <span>
                 Atuação focada em fraudes bancárias para quem quer o seu{" "}
               </span>
               <em className="font-normal text-gold-bright not-italic">
                 dinheiro de volta.
               </em>
-            </h1>
-            <p className="max-w-[54ch] text-[clamp(17px,1.5vw,19.5px)] leading-[1.72]">
+            </motion.h1>
+            <motion.p
+              className="max-w-[54ch] text-[clamp(17px,1.5vw,19.5px)] leading-[1.72]"
+              variants={fadeUp}
+            >
               Atendemos pessoas de todo o Brasil vítimas de golpes no Pix, no
               cartão de crédito e em compras online. Atuação exclusiva em
               Direito do Consumidor, com contato direto com advogado do início
               ao fim.
-            </p>
-            <div className="flex flex-wrap gap-3.5">
+            </motion.p>
+            <motion.div className="flex flex-wrap gap-3.5" variants={fadeUp}>
               <a className={buttonGold} href="#contato">
                 Enviar meu caso agora
               </a>
               <a className={buttonGhost} href="#ferramenta">
                 Calcular meu prazo
               </a>
-            </div>
-            <p className="text-[14.5px] leading-[1.6] text-paper/75">
+            </motion.div>
+            <motion.p
+              className="text-[14.5px] leading-[1.6] text-paper/75"
+              variants={fadeUp}
+            >
               Atendimento em todo o Brasil
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
-          <div
-            className="reveal relative mx-auto w-full min-w-0 max-w-[620px] min-[880px]:max-w-[520px]"
-            data-reveal="fade"
+          <motion.div
+            className="relative mx-auto w-full min-w-0 max-w-[620px] min-[880px]:max-w-[520px]"
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT}
           >
             <div className="relative overflow-hidden rounded-md border border-paper/15">
               <Image
                 className="aspect-4/5 w-full object-cover object-[50%_16%] saturate-[0.88] contrast-[1.04]"
-                data-parallax="-0.055"
                 src="/assets/images/retrato-principal.jpeg"
                 alt="Advogada responsável pela Maestri Advocacia"
                 width={853}
@@ -92,7 +114,7 @@ export function HeroSection() {
               style={{ height: "auto" }}
               aria-hidden="true"
             />
-          </div>
+          </motion.div>
         </Container>
       </section>
       <Marquee />
@@ -137,9 +159,12 @@ export function DeadlineSection() {
           description="Escolha a situação que mais se parece com a sua e informe a data solicitada. O cálculo é informativo — os detalhes do caso podem mudar a contagem e devem ser confirmados na análise."
         />
         <DeadlineCalculator />
-        <aside
-          className="reveal mt-[clamp(20px,3vw,30px)] grid grid-cols-1 items-baseline gap-[8px_20px] border-l-2 border-gold/60 bg-gold/5 p-4 text-[13px] leading-[1.65] text-paper/60 min-[621px]:grid-cols-[auto_minmax(0,1fr)] min-[621px]:p-[18px_20px]"
-          data-reveal="fade"
+        <motion.aside
+          className="mt-[clamp(20px,3vw,30px)] grid grid-cols-1 items-baseline gap-[8px_20px] border-l-2 border-gold/60 bg-gold/5 p-4 text-[13px] leading-[1.65] text-paper/60 min-[621px]:grid-cols-[auto_minmax(0,1fr)] min-[621px]:p-[18px_20px]"
+          variants={fadeIn}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
           aria-labelledby="calc-sources-title"
         >
           <p
@@ -169,7 +194,7 @@ export function DeadlineSection() {
             </a>
             , especialmente nos arts. 26, 27, 49 e 54-G.
           </p>
-        </aside>
+        </motion.aside>
       </Container>
     </section>
   );
@@ -187,11 +212,17 @@ export function CasesSection() {
           title="Como podemos ajudar você"
           description="Atuação concentrada em relações de consumo e fraudes no ambiente bancário e digital."
         />
-        <div className="grid grid-cols-1 gap-5 min-[521px]:grid-cols-[repeat(auto-fit,minmax(288px,1fr))]">
+        <motion.div
+          className="grid grid-cols-1 gap-5 min-[521px]:grid-cols-[repeat(auto-fit,minmax(288px,1fr))]"
+          variants={staggerContainer(0.08)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
           {caseCards.map((card) => (
-            <article
-              className={`reveal ${cardClass} ${card.featured ? "gap-3.5 min-[880px]:col-span-2 min-[880px]:p-[clamp(26px,3vw,40px)]" : ""}`}
-              data-reveal="rise"
+            <motion.article
+              className={`${cardClass} ${card.featured ? "gap-3.5 min-[880px]:col-span-2 min-[880px]:p-[clamp(26px,3vw,40px)]" : ""}`}
+              variants={fadeUp}
               key={card.title}
             >
               {card.featured ? (
@@ -209,9 +240,9 @@ export function CasesSection() {
               >
                 {card.text}
               </p>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
@@ -220,27 +251,44 @@ export function CasesSection() {
 const splitClass =
   "grid grid-cols-1 items-start gap-[clamp(32px,5vw,72px)] min-[880px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]";
 const splitAsideClass =
-  "reveal flex flex-col gap-4 min-[880px]:sticky min-[880px]:top-[116px]";
+  "flex flex-col gap-4 min-[880px]:sticky min-[880px]:top-[116px]";
 
 export function SignalsSection() {
   return (
     <section className={sectionClass} id="como-reconhecer">
       <Container className={splitClass}>
-        <div className={splitAsideClass} data-reveal="rise">
-          <p className={kickerClass}>Como reconhecer</p>
-          <h2 className={`${headingTwoClass} reveal`} data-reveal="mask">
+        <motion.div
+          className={splitAsideClass}
+          variants={staggerContainer(0.12)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
+          <motion.p className={kickerClass} variants={fadeUp}>
+            Como reconhecer
+          </motion.p>
+          <motion.h2 className={headingTwoClass} variants={maskUp}>
             Seis sinais de que é golpe
-          </h2>
-          <p className="max-w-[42ch] text-base leading-[1.72] text-paper/75">
+          </motion.h2>
+          <motion.p
+            className="max-w-[42ch] text-base leading-[1.72] text-paper/75"
+            variants={fadeUp}
+          >
             Se alguma destas situações estiver acontecendo agora, encerre o
             contato antes de decidir qualquer coisa.
-          </p>
-        </div>
-        <ol className="flex flex-col">
+          </motion.p>
+        </motion.div>
+        <motion.ol
+          className="flex flex-col"
+          variants={staggerContainer(0.07)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
           {scamSignals.map((signal, index) => (
-            <li
-              className="reveal grid grid-cols-[34px_1fr] gap-3.5 border-b border-paper/15 py-6 last:border-b-0 min-[521px]:grid-cols-[42px_1fr] min-[521px]:gap-[18px]"
-              data-reveal="rise-small"
+            <motion.li
+              className="grid grid-cols-[34px_1fr] gap-3.5 border-b border-paper/15 py-6 last:border-b-0 min-[521px]:grid-cols-[42px_1fr] min-[521px]:gap-[18px]"
+              variants={fadeUpSmall}
               key={signal.title}
             >
               <span className="font-heading text-lg font-normal text-gold-bright tabular-nums">
@@ -254,9 +302,9 @@ export function SignalsSection() {
                   {signal.text}
                 </p>
               </div>
-            </li>
+            </motion.li>
           ))}
-        </ol>
+        </motion.ol>
       </Container>
     </section>
   );
@@ -269,20 +317,37 @@ export function ProcessSection() {
       id="o-caminho"
     >
       <Container className={splitClass}>
-        <div className={splitAsideClass} data-reveal="rise">
-          <p className={kickerClass}>O caminho</p>
-          <h2 className={`${headingTwoClass} reveal`} data-reveal="mask">
+        <motion.div
+          className={splitAsideClass}
+          variants={staggerContainer(0.12)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
+          <motion.p className={kickerClass} variants={fadeUp}>
+            O caminho
+          </motion.p>
+          <motion.h2 className={headingTwoClass} variants={maskUp}>
             Do primeiro contato ao desfecho
-          </h2>
-          <p className="max-w-[42ch] text-base leading-[1.72] text-paper/75">
+          </motion.h2>
+          <motion.p
+            className="max-w-[42ch] text-base leading-[1.72] text-paper/75"
+            variants={fadeUp}
+          >
             Quatro etapas, sem surpresa em nenhuma delas.
-          </p>
-        </div>
-        <div className="flex flex-col">
+          </motion.p>
+        </motion.div>
+        <motion.div
+          className="flex flex-col"
+          variants={staggerContainer(0.07)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
           {processSteps.map((step, index) => (
-            <div
-              className="reveal grid grid-cols-[48px_1fr] gap-3.5 border-t border-paper/15 py-7 last:border-b min-[521px]:grid-cols-[64px_1fr] min-[521px]:gap-5"
-              data-reveal="rise-small"
+            <motion.div
+              className="grid grid-cols-[48px_1fr] gap-3.5 border-t border-paper/15 py-7 last:border-b min-[521px]:grid-cols-[64px_1fr] min-[521px]:gap-5"
+              variants={fadeUpSmall}
               key={step.title}
             >
               <span className="font-heading text-[28px] leading-none font-normal text-gold/60 tabular-nums min-[521px]:text-[36px]">
@@ -296,9 +361,9 @@ export function ProcessSection() {
                   {step.text}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
@@ -308,13 +373,15 @@ export function AboutSection() {
   return (
     <section className={sectionClass} id="quem-atende">
       <Container className="grid grid-cols-1 items-center gap-[clamp(32px,5vw,68px)] min-[880px]:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
-        <div
-          className="reveal relative order-first min-w-0 overflow-hidden rounded-md border border-paper/15"
-          data-reveal="rise"
+        <motion.div
+          className="relative order-first min-w-0 overflow-hidden rounded-md border border-paper/15"
+          variants={fadeIn}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
         >
           <Image
             className="aspect-4/5 w-full object-cover object-[50%_55%] saturate-90 contrast-[1.03]"
-            data-parallax="-0.055"
             src="/assets/images/retrato-sentada.jpg"
             alt="Advogada responsável pela Maestri Advocacia"
             width={853}
@@ -322,55 +389,75 @@ export function AboutSection() {
             sizes="(max-width: 879px) 100vw, 38vw"
           />
           <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(217,174,60,0.1),rgba(13,11,9,0)_50%)]" />
-        </div>
-        <div className="reveal flex min-w-0 flex-col gap-5" data-reveal="rise">
-          <p className={kickerClass}>Quem atende</p>
-          <h2 className={`${headingTwoClass} reveal`} data-reveal="mask">
+        </motion.div>
+        <motion.div
+          className="flex min-w-0 flex-col gap-5"
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
+          <motion.p className={kickerClass} variants={fadeUp}>
+            Quem atende
+          </motion.p>
+          <motion.h2 className={headingTwoClass} variants={maskUp}>
             Advocacia dedicada a um assunto só
-          </h2>
-          <p className="text-base leading-[1.74]">
+          </motion.h2>
+          <motion.p className="text-base leading-[1.74]" variants={fadeUp}>
             Especialista em Direito do Consumidor, com atuação concentrada em
             fraudes bancárias e conflitos de consumo no ambiente digital.
-          </p>
-          <p className="text-base leading-[1.74] text-paper/75">
+          </motion.p>
+          <motion.p
+            className="text-base leading-[1.74] text-paper/75"
+            variants={fadeUp}
+          >
             Casos de golpe exigem familiaridade com o funcionamento dos sistemas
             de pagamento, com a jurisprudência dos tribunais e com o
             comportamento das instituições em cada etapa. É esse repertório que
             define a estratégia do seu caso.
-          </p>
-          <p className="text-base leading-[1.74] text-paper/75">
+          </motion.p>
+          <motion.p
+            className="text-base leading-[1.74] text-paper/75"
+            variants={fadeUp}
+          >
             O atendimento é direto com advogado, do primeiro contato ao fim do
             processo, e 100% online: procuração assinada digitalmente e reuniões
             por videochamada.
-          </p>
-          <span className="block h-px bg-paper/15" />
-          <dl className="grid grid-cols-1 gap-6 min-[520px]:grid-cols-3 min-[520px]:gap-5">
-            <div className="reveal flex flex-col gap-1" data-reveal="rise-small">
+          </motion.p>
+          <motion.span
+            className="block h-px bg-paper/15"
+            variants={fadeUp}
+          />
+          <motion.dl
+            className="grid grid-cols-1 gap-6 min-[520px]:grid-cols-3 min-[520px]:gap-5"
+            variants={staggerContainer(0.08)}
+          >
+            <motion.div className="flex flex-col gap-1" variants={fadeUpSmall}>
               <dt className="text-[12.5px] font-semibold tracking-[0.14em] text-paper/75 uppercase">
                 Inscrição
               </dt>
               <dd className="m-0 font-heading text-lg font-normal text-white">
                 {siteConfig.oab}
               </dd>
-            </div>
-            <div className="reveal flex flex-col gap-1" data-reveal="rise-small">
+            </motion.div>
+            <motion.div className="flex flex-col gap-1" variants={fadeUpSmall}>
               <dt className="text-[12.5px] font-semibold tracking-[0.14em] text-paper/75 uppercase">
                 Especialização
               </dt>
               <dd className="m-0 font-heading text-lg font-normal text-white">
                 Direito do Consumidor
               </dd>
-            </div>
-            <div className="reveal flex flex-col gap-1" data-reveal="rise-small">
+            </motion.div>
+            <motion.div className="flex flex-col gap-1" variants={fadeUpSmall}>
               <dt className="text-[12.5px] font-semibold tracking-[0.14em] text-paper/75 uppercase">
                 Atendimento
               </dt>
               <dd className="m-0 font-heading text-lg font-normal text-white">
                 {siteConfig.serviceArea}
               </dd>
-            </div>
-          </dl>
-        </div>
+            </motion.div>
+          </motion.dl>
+        </motion.div>
       </Container>
     </section>
   );
@@ -409,21 +496,26 @@ export function ContactSection() {
         aria-hidden="true"
       />
       <Container className="relative grid grid-cols-1 items-start gap-[clamp(36px,5vw,76px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        <div
-          className="reveal flex min-w-0 flex-col gap-[22px]"
-          data-reveal="rise"
+        <motion.div
+          className="flex min-w-0 flex-col gap-[22px]"
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
         >
-          <p className={kickerClass}>Fale com um advogado</p>
-          <h2 className={`${headingTwoClass} reveal`} data-reveal="mask">
+          <motion.p className={kickerClass} variants={fadeUp}>
+            Fale com um advogado
+          </motion.p>
+          <motion.h2 className={headingTwoClass} variants={maskUp}>
             Conte o que aconteceu. O resto a gente organiza.
-          </h2>
-          <p className={introClass}>
+          </motion.h2>
+          <motion.p className={introClass} variants={fadeUp}>
             Descreva o caso em poucas linhas. Respondemos com uma avaliação
             inicial honesta: se há caminho, qual seria, e o que você precisa
             reunir. Se não houver, também dizemos.
-          </p>
-          <span className="block h-px bg-paper/15" />
-          <div className="flex flex-col gap-4">
+          </motion.p>
+          <motion.span className="block h-px bg-paper/15" variants={fadeUp} />
+          <motion.div className="flex flex-col gap-4" variants={fadeUp}>
             <a
               className="flex flex-col items-start gap-0.5 text-paper hover:text-gold-bright min-[521px]:inline-flex min-[521px]:flex-row min-[521px]:items-center min-[521px]:gap-3.5"
               href="#contato"
@@ -446,8 +538,8 @@ export function ContactSection() {
                 {siteConfig.email}
               </span>
             </a>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         <ContactForm />
       </Container>
     </section>

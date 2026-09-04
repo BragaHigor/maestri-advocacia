@@ -11,6 +11,7 @@ import "@fontsource/manrope/600.css";
 import "./globals.css";
 
 import { siteConfig } from "@/config/site";
+import { MotionProvider } from "@/components/motion-provider";
 
 const title =
   "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
@@ -82,7 +83,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }

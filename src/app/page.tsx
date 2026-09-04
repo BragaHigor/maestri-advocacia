@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyContact } from "@/components/layout/sticky-contact";
 import { WhatsappFloat } from "@/components/layout/whatsapp-float";
-import { MotionEffects } from "@/components/motion-effects";
+import { ScrollProgress } from "@/components/scroll-progress";
 import {
   AboutSection,
   CasesSection,
@@ -26,7 +26,7 @@ export default function HomePage() {
       >
         Ir para o conteúdo
       </a>
-      <div className="scroll-progress" aria-hidden="true" />
+      <ScrollProgress />
       <Header />
       <main
         className="pb-[84px] outline-none min-[1220px]:pb-0"
@@ -45,7 +45,6 @@ export default function HomePage() {
       <Footer />
       <StickyContact />
       <WhatsappFloat />
-      <MotionEffects />
     </CaseTypeProvider>
   );
 }

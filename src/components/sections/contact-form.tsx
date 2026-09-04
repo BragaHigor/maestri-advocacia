@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
 import { CalendarIcon } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
@@ -29,6 +30,7 @@ import {
   startOfToday,
   toLocalIsoDate,
 } from "@/lib/date";
+import { fadeUp, VIEWPORT } from "@/lib/motion";
 import {
   buttonGold,
   fieldClass,
@@ -176,9 +178,12 @@ export function ContactForm() {
   };
 
   return (
-    <form
-      className="reveal flex min-w-0 flex-col gap-[18px] rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,38px)] min-[521px]:p-[clamp(24px,3vw,38px)]"
-      data-reveal="rise"
+    <motion.form
+      className="flex min-w-0 flex-col gap-[18px] rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,38px)] min-[521px]:p-[clamp(24px,3vw,38px)]"
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={VIEWPORT}
       aria-describedby="form-privacy"
       noValidate
       onSubmit={handleSubmit}
@@ -407,6 +412,6 @@ export function ContactForm() {
         Nada é armazenado neste site. O envio não cria, por si só, relação de
         cliente e advogado.
       </p>
-    </form>
+    </motion.form>
   );
 }

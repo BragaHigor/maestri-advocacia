@@ -1,14 +1,25 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 import { faqItems } from "@/data/content";
+import { fadeUpSmall, staggerContainer, VIEWPORT } from "@/lib/motion";
 
 export function Faq() {
   return (
-    <div className="border-t border-paper/15">
+    <motion.div
+      className="border-t border-paper/15"
+      variants={staggerContainer(0.07)}
+      initial="hidden"
+      whileInView="show"
+      viewport={VIEWPORT}
+    >
       {faqItems.map((item) => (
-        <details
-          className="reveal group border-b border-paper/15"
-          data-reveal="rise-small"
+        <motion.details
+          className="group border-b border-paper/15"
           name="perguntas-frequentes"
           key={item.question}
+          variants={fadeUpSmall}
         >
           <summary className="flex min-h-[60px] cursor-pointer list-none items-start justify-between gap-6 py-[24px] font-heading text-[clamp(17px,1.8vw,20px)] leading-[1.4] font-normal text-paper transition-colors marker:hidden hover:text-gold-bright [&::-webkit-details-marker]:hidden">
             <span>{item.question}</span>
@@ -22,8 +33,8 @@ export function Faq() {
           <p className="max-w-[68ch] pb-7 text-[16.5px] leading-[1.74] text-paper/75">
             {item.answer}
           </p>
-        </details>
+        </motion.details>
       ))}
-    </div>
+    </motion.div>
   );
 }

@@ -1,9 +1,14 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 import {
   headingTwoClass,
   introClass,
   kickerClass,
   sectionHeadingClass,
 } from "@/styles/classes";
+import { fadeUp, maskUp, staggerContainer, VIEWPORT } from "@/lib/motion";
 
 export function SectionHeading({
   kicker,
@@ -15,12 +20,24 @@ export function SectionHeading({
   description?: string;
 }) {
   return (
-    <div className={`${sectionHeadingClass} reveal`} data-reveal="rise">
-      <p className={kickerClass}>{kicker}</p>
-      <h2 className={`${headingTwoClass} reveal`} data-reveal="mask">
+    <motion.div
+      className={sectionHeadingClass}
+      variants={staggerContainer(0.12)}
+      initial="hidden"
+      whileInView="show"
+      viewport={VIEWPORT}
+    >
+      <motion.p className={kickerClass} variants={fadeUp}>
+        {kicker}
+      </motion.p>
+      <motion.h2 className={headingTwoClass} variants={maskUp}>
         {title}
-      </h2>
-      {description ? <p className={introClass}>{description}</p> : null}
-    </div>
+      </motion.h2>
+      {description ? (
+        <motion.p className={introClass} variants={fadeUp}>
+          {description}
+        </motion.p>
+      ) : null}
+    </motion.div>
   );
 }

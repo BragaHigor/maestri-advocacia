@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
 import { CalendarIcon } from "lucide-react";
 
 import { useCaseType } from "@/context/case-type-context";
@@ -19,6 +20,7 @@ import {
   startOfToday,
   toLocalIsoDate,
 } from "@/lib/date";
+import { fadeUp, staggerContainer, VIEWPORT } from "@/lib/motion";
 import { buttonGold, fieldClass, inputClass, labelClass } from "@/styles/classes";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -70,10 +72,16 @@ export function DeadlineCalculator() {
   const selectedDate = parseDateInput(date);
 
   return (
-    <div className="grid grid-cols-1 items-start gap-[clamp(24px,3vw,40px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      <div
-        className="reveal flex min-w-0 flex-col gap-5 rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,36px)] min-[521px]:p-[clamp(24px,3vw,36px)]"
-        data-reveal="rise"
+    <motion.div
+      className="grid grid-cols-1 items-start gap-[clamp(24px,3vw,40px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
+      variants={staggerContainer(0.12)}
+      initial="hidden"
+      whileInView="show"
+      viewport={VIEWPORT}
+    >
+      <motion.div
+        className="flex min-w-0 flex-col gap-5 rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,36px)] min-[521px]:p-[clamp(24px,3vw,36px)]"
+        variants={fadeUp}
       >
         <p className={fieldClass}>
           <label className={labelClass} htmlFor="calc-tipo">
@@ -146,11 +154,11 @@ export function DeadlineCalculator() {
           </Popover>
         </p>
         <p className="text-[13.5px] leading-[1.6] text-paper/60">{rule.hint}</p>
-      </div>
+      </motion.div>
 
-      <div
-        className={`reveal flex min-w-0 flex-col gap-5 rounded-md border bg-ink-2 p-[clamp(18px,3vw,36px)] transition-colors min-[521px]:p-[clamp(24px,3vw,36px)] ${tone.border}`}
-        data-reveal="rise"
+      <motion.div
+        className={`flex min-w-0 flex-col gap-5 rounded-md border bg-ink-2 p-[clamp(18px,3vw,36px)] transition-colors min-[521px]:p-[clamp(24px,3vw,36px)] ${tone.border}`}
+        variants={fadeUp}
         aria-live="polite"
         aria-atomic="true"
       >
@@ -185,7 +193,7 @@ export function DeadlineCalculator() {
         >
           Solicitar avaliação jurídica inicial
         </a>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

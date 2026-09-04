@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useMotionValueEvent, useScroll } from "framer-motion";
 
 import { headerNavigationItems } from "@/data/content";
 import { buttonGold } from "@/styles/classes";
@@ -9,8 +10,14 @@ import { Brand } from "../ui/brand";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (value) => {
+    setIsScrolled(value > 40);
+  });
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -42,6 +49,7 @@ export function Header() {
     <header
       className="group/header sticky top-0 z-80 border-b border-paper/15 bg-ink/85 backdrop-blur-[14px]"
       data-site-header
+      data-scrolled={isScrolled ? "" : undefined}
     >
       <nav
         className="mx-auto flex h-[86px] max-w-[1240px] items-center gap-[34px] px-[clamp(20px,4vw,48px)] transition-[height] duration-450 ease-fluid group-data-[scrolled]/header:h-[70px]"
