@@ -41,7 +41,6 @@ Cadastre em **Settings → Environment Variables** para Production e Preview:
 | `NEXT_PUBLIC_OAB` | `OAB/SP 123.456` |
 | `NEXT_PUBLIC_OFFICE_LOCATION` | `Franca/SP — atendimento 100% online` |
 | `NEXT_PUBLIC_SERVICE_AREA` | `Todo o Brasil` |
-| `NEXT_PUBLIC_CONTACT_DESTINATION` | `whatsapp` ou `email` |
 
 Esses dados são públicos por natureza e entram no bundle. Não armazene tokens,
 senhas ou credenciais em variáveis `NEXT_PUBLIC_*`.
@@ -58,8 +57,8 @@ senhas ou credenciais em variáveis `NEXT_PUBLIC_*`.
 
 - abrir o site em janela anônima e celular real;
 - conferir canonical e imagem ao compartilhar uma URL;
-- testar CTAs do cabeçalho, hero, calculadora, contato, rodapé e barra móvel;
-- enviar um relato fictício pelos dois destinos configuráveis;
+- testar CTAs do cabeçalho, hero, contato, rodapé e barra móvel;
+- enviar um relato fictício pelo WhatsApp configurado;
 - verificar teclado, Escape do menu, FAQ e movimento reduzido;
 - confirmar que resposta contém CSP, HSTS, `nosniff` e bloqueio de frames;
 - revisar logs de build e Runtime Logs da Vercel.

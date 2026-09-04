@@ -1,29 +1,25 @@
-import { CaseTypeProvider } from "@/context/case-type-context";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyContact } from "@/components/layout/sticky-contact";
 import { WhatsappFloat } from "@/components/layout/whatsapp-float";
 import { MotionEffects } from "@/components/motion-effects";
 import {
-  AboutSection,
-  CasesSection,
+  AttorneySection,
+  CommitmentSection,
   ContactSection,
-  DeadlineSection,
   FaqSection,
-  GlossarySection,
   HeroSection,
-  LawSection,
-  ProcessSection,
-  SignalsSection,
+  HowItWorksSection,
+  PracticeAreasSection,
 } from "@/components/sections/landing-sections";
 import { StructuredData } from "@/components/structured-data";
 
 export default function HomePage() {
   return (
-    <CaseTypeProvider>
+    <>
       <StructuredData />
       <a
-        className="absolute top-2 -left-[9999px] z-200 rounded-sm bg-gold px-5 py-3 font-semibold text-ink focus:left-4"
+        className="absolute top-2 -left-[9999px] z-200 rounded-sm bg-gold px-5 py-3 font-medium text-ink focus:left-4"
         href="#main-content"
       >
         Ir para o conteúdo
@@ -36,13 +32,10 @@ export default function HomePage() {
         tabIndex={-1}
       >
         <HeroSection />
-        <DeadlineSection />
-        <CasesSection />
-        <SignalsSection />
-        <LawSection />
-        <ProcessSection />
-        <GlossarySection />
-        <AboutSection />
+        <PracticeAreasSection />
+        <CommitmentSection />
+        <HowItWorksSection />
+        <AttorneySection />
         <FaqSection />
         <ContactSection />
       </main>
@@ -50,6 +43,6 @@ export default function HomePage() {
       <StickyContact />
       <WhatsappFloat />
       <MotionEffects />
-    </CaseTypeProvider>
+    </>
   );
 }

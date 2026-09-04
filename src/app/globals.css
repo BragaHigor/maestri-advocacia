@@ -11,7 +11,7 @@
   --color-warning: #e8a13c;
   --color-alert: #e0765a;
   --font-heading: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-body: "Lora", Georgia, "Times New Roman", serif;
+  --font-body: "Montserrat", Arial, Helvetica, sans-serif;
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* shadcn/ui theme tokens, mapped onto the site's ink/gold palette */
@@ -43,6 +43,7 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 96px;
     background: var(--color-ink);
     -webkit-text-size-adjust: 100%;
   }
@@ -115,10 +116,6 @@
   transform: translateX(130%);
 }
 
-.marquee-track {
-  animation: marquee-scroll 34s linear infinite;
-}
-
 .whatsapp-pulse::before {
   content: "";
   position: absolute;
@@ -140,15 +137,6 @@
   100% {
     transform: scale(2.05);
     opacity: 0;
-  }
-}
-
-@keyframes marquee-scroll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-33.333333%, 0, 0);
   }
 }
 
@@ -227,8 +215,7 @@
 @media print {
   [data-site-header],
   [data-sticky-cta],
-  .scroll-progress,
-  [data-marquee] {
+  .scroll-progress {
     display: none !important;
   }
 

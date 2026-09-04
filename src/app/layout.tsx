@@ -1,14 +1,9 @@
 import type { Metadata, Viewport } from "next";
 
+import "@fontsource/cormorant-garamond/400.css";
 import "@fontsource/cormorant-garamond/500.css";
-import "@fontsource/cormorant-garamond/500-italic.css";
-import "@fontsource/cormorant-garamond/600.css";
-import "@fontsource/cormorant-garamond/600-italic.css";
-import "@fontsource/cormorant-garamond/700.css";
-import "@fontsource/lora/400.css";
-import "@fontsource/lora/400-italic.css";
-import "@fontsource/lora/500.css";
-import "@fontsource/lora/600.css";
+import "@fontsource/montserrat/400.css";
+import "@fontsource/montserrat/500.css";
 import "./globals.css";
 
 import { siteConfig } from "@/config/site";
@@ -16,7 +11,7 @@ import { siteConfig } from "@/config/site";
 const title =
   "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
 const description =
-  "Advocacia dedicada a fraudes bancárias e Direito do Consumidor: golpes de Pix, cartão de crédito e compras online. Calcule seu prazo e fale com um advogado.";
+  "Advocacia especializada em Direito do Consumidor, com atuação em golpes do Pix, fraudes no cartão de crédito e compras online em todo o Brasil.";
 
 export const metadata: Metadata = {
   metadataBase: siteConfig.siteUrl,
@@ -34,8 +29,7 @@ export const metadata: Metadata = {
     url: "/",
     siteName: siteConfig.name,
     title,
-    description:
-      "Golpes de Pix, cartão de crédito e compras online. A lei coloca o risco da fraude sobre o banco — não sobre você.",
+    description,
     images: [
       {
         url: "/opengraph-image",
@@ -83,7 +77,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body suppressHydrationWarning>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

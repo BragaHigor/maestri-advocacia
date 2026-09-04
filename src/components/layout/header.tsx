@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { navigationItems } from "@/data/content";
+import { mainNavigationItems } from "@/data/content";
 import { buttonGold } from "@/styles/classes";
 
 import { Brand } from "../ui/brand";
@@ -14,7 +14,7 @@ export function Header() {
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && isOpen) {
         setIsOpen(false);
         requestAnimationFrame(() => toggleRef.current?.focus());
       }
@@ -28,14 +28,16 @@ export function Header() {
       document.removeEventListener("keydown", closeOnEscape);
       window.removeEventListener("resize", closeOnDesktop);
     };
-  }, []);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const focusFrame = requestAnimationFrame(() => firstLinkRef.current?.focus());
+    return () => cancelAnimationFrame(focusFrame);
+  }, [isOpen]);
 
   const toggleMenu = () => {
-    setIsOpen((current) => {
-      const next = !current;
-      if (next) requestAnimationFrame(() => firstLinkRef.current?.focus());
-      return next;
-    });
+    setIsOpen((current) => !current);
   };
 
   return (
@@ -51,12 +53,13 @@ export function Header() {
           className="mr-auto min-w-0 text-gold-bright"
           href="#top"
           aria-label="Maestri Advocacia — início"
+          onClick={() => setIsOpen(false)}
         >
           <Brand />
         </a>
 
         <ul className="hidden items-center gap-[26px] min-[1220px]:flex">
-          {navigationItems.map((item) => (
+          {mainNavigationItems.map((item) => (
             <li key={item.href}>
               <a
                 className="text-sm font-medium tracking-[0.01em] text-paper hover:text-gold-bright"
@@ -99,9 +102,9 @@ export function Header() {
 
       <div
         id="nav-mobile"
-        className={`${isOpen ? "flex" : "hidden"} flex-col border-t border-paper/15 px-[clamp(20px,4vw,48px)] pt-3 pb-[26px] min-[1220px]:hidden`}
+        className={`${isOpen ? "flex" : "hidden"} max-h-[calc(100dvh-86px)] flex-col overflow-y-auto border-t border-paper/15 px-[clamp(20px,4vw,48px)] pt-3 pb-[26px] min-[1220px]:hidden`}
       >
-        {navigationItems.map((item, index) => (
+        {mainNavigationItems.map((item, index) => (
           <a
             ref={index === 0 ? firstLinkRef : undefined}
             className="border-b border-paper/15 py-[15px] text-[17px] font-medium text-paper hover:text-gold-bright"

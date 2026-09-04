@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site";
 
 const DEFAULT_MESSAGE =
-  "Olá! Acessei o site da Maestri Advocacia e gostaria de solicitar uma avaliação jurídica inicial do meu caso.";
+  "Olá! Vim pelo site da Maestri Advocacia e gostaria de falar com um advogado.";
 const MAX_MESSAGE_LENGTH = 3_500;
 
 export function isWhatsappConfigured(): boolean {

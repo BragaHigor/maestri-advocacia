@@ -8,14 +8,14 @@
 | React | 19.2.8 | Componentes e interações |
 | TypeScript | 6.0.3 | Tipagem estrita e contratos |
 | Tailwind CSS | 4.3.3 | Design system e responsividade |
-| Fontsource | 5.3.0 | Cormorant Garamond e Lora auto-hospedadas |
+| Fontsource | 5.3.0 | Cormorant Garamond e Montserrat auto-hospedadas |
 
 As versões completas ficam fixadas em `package.json` e `package-lock.json`.
 
 ## Desenvolvimento e qualidade
 
 - ESLint 9 com `eslint-config-next` e Core Web Vitals;
-- Vitest para regras puras de data, prazo e contato;
+- Vitest para normalização e criação segura de links de contato;
 - PostCSS com `@tailwindcss/postcss`;
 - scripts separados para lint, typecheck, testes e build.
 
@@ -42,4 +42,3 @@ CSS global.
 - Server Components por padrão;
 - estado local e client boundaries mínimos;
 - UTF-8, LF e indentação de dois espaços.
-

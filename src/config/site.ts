@@ -1,12 +1,13 @@
-export type ContactDestination = "whatsapp" | "email";
-
 const DEFAULT_SITE_URL = "https://www.maestriadvocacia.com.br";
 const DEFAULT_EMAIL = "contato@maestriadvocacia.com.br";
 
 function parseSiteUrl(value: string | undefined): URL {
   try {
     const url = new URL(value ?? DEFAULT_SITE_URL);
-    if (url.protocol !== "https:" && url.hostname !== "localhost") {
+    const isLocalHttp =
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+    if (url.protocol !== "https:" && !isLocalHttp) {
       return new URL(DEFAULT_SITE_URL);
     }
     return url;
@@ -18,10 +19,6 @@ function parseSiteUrl(value: string | undefined): URL {
 function parseEmail(value: string | undefined): string {
   const email = value?.trim() ?? "";
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : DEFAULT_EMAIL;
-}
-
-function parseDestination(value: string | undefined): ContactDestination {
-  return value === "email" ? "email" : "whatsapp";
 }
 
 export const siteConfig = Object.freeze({
@@ -40,7 +37,4 @@ export const siteConfig = Object.freeze({
     "Franca/SP — atendimento 100% online",
   serviceArea:
     process.env.NEXT_PUBLIC_SERVICE_AREA?.trim() || "Todo o Brasil",
-  contactDestination: parseDestination(
-    process.env.NEXT_PUBLIC_CONTACT_DESTINATION,
-  ),
 });

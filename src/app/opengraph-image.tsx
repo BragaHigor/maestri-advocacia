@@ -34,7 +34,7 @@ export default function OpenGraphImage() {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div style={{ display: "flex", maxWidth: 900, fontSize: 70, lineHeight: 1.05 }}>
-          Fraude bancária tem solução jurídica.
+          Especialista em fraudes bancárias.
         </div>
         <div style={{ display: "flex", color: "#d9ae3c", fontSize: 27 }}>
           Direito do Consumidor · Atendimento em todo o Brasil

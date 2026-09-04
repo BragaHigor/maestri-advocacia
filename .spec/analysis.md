@@ -2,52 +2,51 @@
 
 ## Estado
 
-A migração da landing estática para Next.js, TypeScript e Tailwind foi concluída.
-Todo conteúdo e comportamento anterior foi portado, com separação entre domínio,
-configuração, conteúdo editorial e interface.
+A landing está alinhada ao conteúdo institucional atual. A estrutura interna,
+os IDs das seções, a header, o footer e as nomenclaturas dos componentes seguem
+a mesma sequência editorial apresentada ao visitante.
 
-## Ganhos obtidos
+## Estrutura ativa
 
-- regras de prazo tipadas, puras e cobertas por testes;
-- conteúdo repetitivo transformado em dados estruturados;
-- imagens otimizadas e fontes auto-hospedadas;
-- SEO com canonical, Open Graph, Twitter Card, JSON-LD, sitemap e robots;
-- segurança por CSP e headers adicionais;
-- mensagens do visitante processadas somente no dispositivo;
-- configuração por ambiente pronta para Vercel;
-- FAQ nativo e interface utilizável por teclado;
-- build totalmente pré-renderizado e cacheável na CDN.
+1. hero;
+2. áreas de atuação;
+3. compromisso do escritório;
+4. funcionamento do atendimento;
+5. profissional responsável;
+6. perguntas frequentes;
+7. contato.
+
+Recursos da versão anterior — calculadora, regras de prazo, glossário, contexto
+compartilhado, calendário e dados jurídicos não exibidos — foram removidos junto
+com suas dependências.
 
 ## Validações executadas
 
-- ESLint sem avisos;
+- ESLint sem erros ou avisos;
 - TypeScript estrito sem erros;
-- 13 testes unitários aprovados;
+- três testes unitários de contato aprovados;
 - build de produção aprovado em sete rotas estáticas;
 - auditoria npm sem vulnerabilidades conhecidas;
-- navegador de produção sem erro ou warning;
-- menu mobile, Escape, FAQ, calculadora, sincronização e fallback de contato
-  verificados;
-- larguras de 390 a 1220 px sem overflow horizontal;
-- CSP, HSTS, clickjacking, MIME, referrer e permissions policy conferidos.
-
-## Pendências de negócio antes do domínio público
-
-1. substituir URL, telefone, e-mail, OAB e localização pelos dados reais;
-2. validar prazos, fundamentos e redação com a pessoa responsável;
-3. definir a política de privacidade do atendimento posterior no WhatsApp/e-mail;
-4. testar o canal real após configurar as variáveis na Vercel;
-5. decidir se analytics será necessário; ele não foi incluído por privacidade e
-   por não fazer parte do escopo atual.
+- navegador sem erros ou avisos no console;
+- todas as âncoras da header e do footer apontam para IDs existentes;
+- menu móvel, Escape, retorno de foco, Select e validação do formulário testados;
+- larguras de 320, 390, 520, 768, 959, 1219 e 1440 px verificadas sem conteúdo
+  cortado ou rolagem horizontal utilizável.
 
 ## Decisões conscientes
 
-- A CSP mantém `unsafe-inline` para scripts/estilos porque a alternativa com
-  nonce exige renderização dinâmica e elimina as vantagens de CDN desta landing.
-  É a configuração sem nonce documentada pelo Next.js. `unsafe-eval` é removido
-  em produção.
-- Não foi criada API intermediária para WhatsApp. Isso reduz superfície de
-  ataque, armazenamento de dados pessoais, spam e custo operacional.
-- Não foram adicionados bibliotecas de formulário, animação ou estado: o React e
-  APIs nativas cobrem o requisito com menos dependências.
+- O formulário compõe a mensagem apenas no dispositivo e abre o WhatsApp; não
+  há API intermediária nem persistência de dados.
+- Componentes cliente ficam restritos às interações que dependem do navegador.
+- A navegação por fragmentos usa deslocamento global para não posicionar títulos
+  atrás da header sticky.
+- O CTA fixo permanece abaixo de 1220 px e o conteúdo recebe espaço inferior
+  equivalente para evitar sobreposição permanente.
 
+## Pendências de negócio antes da publicação
+
+1. confirmar URL, telefone, e-mail, OAB e localização reais;
+2. validar a redação jurídica com a pessoa profissionalmente responsável;
+3. definir a política de privacidade do atendimento posterior no WhatsApp;
+4. testar o canal real após configurar as variáveis na Vercel;
+5. decidir se analytics será necessário — ele não foi incluído por privacidade.

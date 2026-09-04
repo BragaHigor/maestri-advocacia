@@ -25,5 +25,8 @@ describe("contact links", () => {
     expect(createWhatsappUrl("Teste")).toBe(
       "https://wa.me/5516991554260?text=Teste",
     );
+    expect(createWhatsappUrl()).toBe(
+      "https://wa.me/5516991554260?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Maestri%20Advocacia%20e%20gostaria%20de%20falar%20com%20um%20advogado.",
+    );
   });
 });

@@ -32,12 +32,11 @@ NEXT_PUBLIC_CONTACT_EMAIL=contato@seudominio.com.br
 NEXT_PUBLIC_OAB=OAB/SP 000.000
 NEXT_PUBLIC_OFFICE_LOCATION=Cidade/UF — atendimento 100% online
 NEXT_PUBLIC_SERVICE_AREA=Todo o Brasil
-NEXT_PUBLIC_CONTACT_DESTINATION=whatsapp
 ```
 
 `NEXT_PUBLIC_WHATSAPP` aceita somente DDI 55, DDD e número. Enquanto o valor for
-placeholder, os CTAs levam à seção de contato e o formulário não abre uma URL
-inválida. O destino aceita `whatsapp` ou `email`.
+placeholder, os links de WhatsApp não são renderizados e o formulário não abre
+uma URL inválida.
 
 Variáveis `NEXT_PUBLIC_*` são incorporadas ao bundle durante o build. Alterações
 na Vercel exigem um novo deploy.
@@ -60,11 +59,8 @@ src/
 ├── app/                 rotas, metadata, SEO e estilos globais
 ├── components/          layout, seções e componentes de interface
 ├── config/              configuração tipada do site
-├── context/             sincronização de tipo de caso
-├── data/                conteúdo editorial estruturado
-├── domain/deadlines/    regras e cálculo puro de prazos
-├── hooks/               comportamentos reutilizáveis do navegador
-├── lib/                 datas e criação segura de links
+├── data/                navegação e conteúdo editorial estruturado
+├── lib/                 criação segura de links de contato
 └── styles/              combinações reutilizáveis de classes Tailwind
 public/assets/           marca, favicons e fotografias
 .spec/                   arquitetura, stack e análise técnica
@@ -74,7 +70,7 @@ docs/deployment.md       publicação na Vercel
 ## Antes da publicação
 
 1. configure os dados reais do escritório e o domínio;
-2. valide todo conteúdo e prazo com a pessoa profissionalmente responsável;
+2. valide todo o conteúdo com a pessoa profissionalmente responsável;
 3. defina a política de privacidade aplicável ao atendimento;
 4. execute `npm run lint`, `npm run typecheck`, `npm test` e `npm run build`;
 5. teste WhatsApp/e-mail no domínio HTTPS.

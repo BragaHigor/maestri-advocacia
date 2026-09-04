@@ -2,118 +2,87 @@
 
 ## Visão geral
 
-A aplicação usa Next.js App Router. A única página é pré-renderizada como
-conteúdo estático, mas mantém componentes client apenas onde existe interação.
+A aplicação usa Next.js App Router e entrega uma landing page pré-renderizada.
 Não há API própria, banco de dados, autenticação ou persistência de relatos.
 
 ```text
-app -> components -> context/domain/data/lib/config
-                    domain -> lib
+app -> components -> data/lib/config
 ```
 
-Dependências devem apontar para camadas mais internas. Regras de negócio não
-dependem de React nem do DOM.
+Componentes são Server Components por padrão. Apenas as interações que dependem
+do navegador formam limites cliente.
 
 ## Camadas
 
 ### `src/app`
 
-- `layout.tsx`: idioma, fontes locais e Metadata API.
-- `page.tsx`: composição da landing e providers globais.
-- `globals.css`: Tailwind, tokens, base e animações especiais.
-- `robots.ts`, `sitemap.ts` e `manifest.ts`: SEO técnico e PWA metadata.
-- `opengraph-image.tsx`: imagem social gerada no build.
+- `layout.tsx`: idioma, fontes locais e Metadata API;
+- `page.tsx`: composição das seções na ordem da navegação;
+- `globals.css`: Tailwind, tokens, estilos-base e animações especiais;
+- `robots.ts`, `sitemap.ts` e `manifest.ts`: SEO técnico e PWA metadata;
+- `opengraph-image.tsx`: imagem social gerada pelo Next.js.
 
 ### `src/components`
 
-- `layout`: cabeçalho, rodapé e CTA fixo.
-- `sections`: seções editoriais e ferramentas interativas.
-- `ui`: peças reutilizáveis pequenas, sem regra jurídica.
+- `layout`: header, footer, CTA móvel e atalho de WhatsApp;
+- `sections`: conteúdo editorial, FAQ e formulário de contato;
+- `ui`: componentes reutilizáveis sem regra de negócio.
 
-Componentes são Server Components por padrão. Apenas cabeçalho, formulário,
-calculadora, efeitos de movimento e provider de sincronização usam
-`"use client"`.
+`Header`, `ContactForm`, `Select` e `MotionEffects` usam `"use client"` por
+necessitarem de estado, eventos ou APIs do navegador. O restante permanece no
+servidor.
 
-### `src/domain/deadlines`
+### `src/data`
 
-- `types.ts`: contratos da regra e do resultado.
-- `data.ts`: seis regras de prazo e textos associados.
-- `calculate.ts`: função pura de cálculo e estados de apresentação.
+`content.ts` é a fonte única dos itens de navegação e dos conteúdos repetitivos.
+Os IDs da página seguem a sequência:
 
-Alterações em quantidade, unidade, termo inicial ou texto jurídico exigem
-validação profissional. A interface não deve duplicar essas regras.
+```text
+#top -> #atuacao -> #compromisso -> #como-funciona ->
+#quem-atende -> #perguntas -> #contato
+```
 
 ### `src/lib`
 
-- `date.ts`: parsing e operações com datas locais de calendário.
-- `contact.ts`: normalização de texto e criação segura de `wa.me`/`mailto:`.
+`contact.ts` normaliza texto e cria URLs seguras de `wa.me` e `mailto:`.
 
 ### `src/config`
 
-`site.ts` lê diretamente as variáveis públicas, aplica defaults seguros e
-restringe URL, e-mail e destino de contato. Dados institucionais nunca devem ser
-duplicados nos componentes.
+`site.ts` lê as variáveis públicas, aplica valores padrão e valida URL e e-mail.
+Dados institucionais não devem ser duplicados nos componentes.
 
-### `src/context`
+## Fluxo de contato
 
-O provider mantém separadamente a seleção da calculadora e do formulário. Tipos
-compartilhados são sincronizados nos dois sentidos; `Outro` existe somente no
-formulário e não altera a calculadora.
-
-## Fluxos
-
-### Calculadora
-
-1. o usuário seleciona uma regra e informa a data;
-2. `calculateDeadline` recebe regra, valor e data atual;
-3. a função retorna número, unidade, progresso, tom e mensagens;
-4. o componente renderiza o resultado e cria um CTA contextual codificado.
-
-Casos cobertos: vazio, inválido, futuro, vigente, urgente, limite e vencido.
-
-### Contato
-
-1. o formulário valida os três campos obrigatórios;
-2. entradas são normalizadas, caracteres de controle são removidos e o tamanho
-   total é limitado;
-3. a mensagem é construída apenas no navegador;
-4. `URLSearchParams` ou `encodeURIComponent` codifica todo conteúdo;
-5. abre-se exclusivamente o e-mail configurado ou `https://wa.me/<número>`.
+1. o formulário valida nome, WhatsApp e relato no dispositivo;
+2. os valores são normalizados e têm o tamanho limitado;
+3. a mensagem é montada apenas no navegador;
+4. `encodeURIComponent` codifica o conteúdo;
+5. uma nova aba segura é aberta em `https://wa.me/<número>`.
 
 O projeto não recebe, registra, retransmite nem armazena a mensagem.
 
-### Movimento
+## Movimento
 
-`MotionEffects` inicializa revelação com `IntersectionObserver`, contadores,
-barra de progresso e parallax com `requestAnimationFrame`. Sem JavaScript, o
-conteúdo continua visível. `prefers-reduced-motion` desativa movimento não
-essencial.
-
-### FAQ
-
-O FAQ usa `details`/`summary` nativos com o atributo `name`, permitindo teclado,
-semântica e funcionamento sem JavaScript, com apenas uma resposta aberta.
+`MotionEffects` controla revelação progressiva, barra de leitura e parallax com
+`IntersectionObserver` e `requestAnimationFrame`. Sem JavaScript, o conteúdo
+permanece visível. `prefers-reduced-motion` reduz movimentos não essenciais.
 
 ## Responsividade
 
-- até 520 px: grids compactos, tipografia e contato ajustados;
-- abaixo de 880 px: hero, calculadora, conteúdo dividido, perfil e contato em
-  uma coluna;
-- abaixo de 1220 px: menu móvel e CTA fixo;
-- em 1220 px ou mais: navegação completa no cabeçalho.
+- até 520 px: tipografia, botões, formulário e dados profissionais compactos;
+- abaixo de 880 px: contato em uma coluna;
+- abaixo de 960 px: hero e perfil em uma coluna, cards em até duas colunas;
+- abaixo de 1220 px: menu recolhido e CTA fixo;
+- em 1220 px ou mais: navegação completa na header.
 
-O layout foi validado em 390, 520, 879, 880, 1219 e 1220 px sem overflow
-horizontal.
+O deslocamento global de âncoras considera a header sticky, e o menu móvel limita
+sua altura à viewport com rolagem própria.
 
-## Segurança
+## Segurança e privacidade
 
-- CSP limita scripts, estilos, imagens, fontes, conexões, forms e frames.
-- `unsafe-eval` existe somente no desenvolvimento, conforme exigência do React.
-- HSTS é enviado em produção.
-- `frame-ancestors 'none'` e `X-Frame-Options: DENY` bloqueiam clickjacking.
-- MIME sniffing, permissões do navegador e referrer são restringidos.
-- não há `dangerouslySetInnerHTML` com entrada do visitante; o único uso contém
-  JSON-LD controlado e escapa `<`.
-- links externos usam `noopener noreferrer` quando abertos em nova aba.
-- nenhuma variável presente no navegador deve ser tratada como segredo.
-
+- CSP limita scripts, estilos, imagens, fontes, conexões, formulários e frames;
+- HSTS é enviado em produção;
+- proteção contra clickjacking, MIME sniffing e permissões indevidas;
+- JSON-LD controlado escapa o caractere `<`;
+- links externos em nova aba usam `noopener noreferrer`;
+- nenhuma variável `NEXT_PUBLIC_*` deve conter segredo.
