@@ -487,7 +487,7 @@ export function ContactSection() {
       id="contato"
     >
       <Image
-        className="pointer-events-none absolute bottom-[-20%] left-[-7%] h-auto w-[min(540px,54vw)] opacity-5"
+        className="pointer-events-none absolute bottom-[-20%] left-0 h-auto w-[min(540px,54vw)] opacity-5"
         src="/assets/brand/maestri-monograma-fundo-escuro.svg"
         alt=""
         width={1000}
