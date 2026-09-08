@@ -56,7 +56,7 @@ export function Header() {
         aria-label="Principal"
       >
         <a
-          className="mr-auto min-w-0 text-gold-bright"
+          className="mr-auto min-w-0 text-gold-deep"
           href="#top"
           aria-label="Maestri Advocacia — início"
         >
@@ -67,7 +67,7 @@ export function Header() {
           {headerNavigationItems.map((item) => (
             <li key={item.href}>
               <a
-                className="text-[13px] font-medium tracking-[0.005em] whitespace-nowrap text-paper hover:text-gold-bright"
+                className="text-[13px] font-medium tracking-[0.005em] whitespace-nowrap text-paper hover:text-gold-deep"
                 href={item.href}
               >
                 {item.label}
@@ -112,7 +112,7 @@ export function Header() {
         {headerNavigationItems.map((item, index) => (
           <a
             ref={index === 0 ? firstLinkRef : undefined}
-            className="border-b border-paper/15 py-[15px] text-[17px] font-medium text-paper hover:text-gold-bright"
+            className="border-b border-paper/15 py-[15px] text-[17px] font-medium text-paper hover:text-gold-deep"
             href={item.href}
             key={item.href}
             onClick={() => setIsOpen(false)}

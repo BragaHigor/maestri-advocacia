@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0d0b09;
-  --color-ink-2: #17140f;
-  --color-ink-3: #211c15;
-  --color-paper: #f5f0e6;
-  --color-white: #fffdf8;
+  /* Light theme: warm ivory backgrounds, deep-ink text, brand gold accents. */
+  --color-ink: #f7f3ea;
+  --color-ink-2: #efe6d3;
+  --color-ink-3: #fffefa;
+  --color-paper: #3a2f22;
+  --color-white: #1c140b;
   --color-gold: #d9ae3c;
   --color-gold-bright: #ecc667;
+  --color-gold-deep: #8d670a;
   --color-warning: #e8a13c;
+  --color-warning-deep: #a9701a;
   --color-alert: #e0765a;
+  --color-alert-deep: #b14a30;
   --font-heading: "Bodoni Moda", Didot, "Times New Roman", serif;
   --font-body: "Manrope", Arial, sans-serif;
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
@@ -20,17 +24,17 @@
   --color-popover: var(--color-ink-3);
   --color-popover-foreground: var(--color-paper);
   --color-primary: var(--color-gold);
-  --color-primary-foreground: var(--color-ink);
+  --color-primary-foreground: var(--color-paper);
   --color-secondary: var(--color-ink-2);
   --color-secondary-foreground: var(--color-paper);
   --color-muted: var(--color-ink-2);
-  --color-muted-foreground: rgba(245, 240, 230, 0.6);
-  --color-accent: rgba(217, 174, 60, 0.14);
+  --color-muted-foreground: rgba(58, 47, 34, 0.62);
+  --color-accent: rgba(141, 103, 10, 0.12);
   --color-accent-foreground: var(--color-paper);
   --color-destructive: var(--color-alert);
-  --color-border: rgba(245, 240, 230, 0.15);
-  --color-input: rgba(245, 240, 230, 0.15);
-  --color-ring: var(--color-gold);
+  --color-border: rgba(28, 20, 11, 0.12);
+  --color-input: rgba(28, 20, 11, 0.14);
+  --color-ring: var(--color-gold-deep);
 }
 
 @layer base {
@@ -74,13 +78,13 @@
   }
 
   ::selection {
-    background: rgb(217 174 60 / 30%);
-    color: #fff;
+    background: rgb(141 103 10 / 22%);
+    color: var(--color-white);
   }
 
   :focus-visible {
     border-radius: 2px;
-    outline: 2px solid var(--color-gold);
+    outline: 2px solid var(--color-gold-deep);
     outline-offset: 3px;
   }
 }

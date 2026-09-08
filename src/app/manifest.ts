@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Direito do Consumidor e fraudes bancárias.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0d0b09",
-    theme_color: "#0d0b09",
+    background_color: "#f7f3ea",
+    theme_color: "#f7f3ea",
     lang: "pt-BR",
     icons: [
       {

@@ -211,7 +211,7 @@ export function ContactForm() {
             }}
           />
           {fieldErrors.name ? (
-            <span className="text-[13px] leading-[1.45] text-alert" id="f-nome-error" role="alert">
+            <span className="text-[13px] leading-[1.45] text-alert-deep" id="f-nome-error" role="alert">
               {fieldErrors.name}
             </span>
           ) : null}
@@ -265,7 +265,7 @@ export function ContactForm() {
             }}
           />
           {fieldErrors.phone ? (
-            <span className="text-[13px] leading-[1.45] text-alert" id="f-fone-error" role="alert">
+            <span className="text-[13px] leading-[1.45] text-alert-deep" id="f-fone-error" role="alert">
               {fieldErrors.phone}
             </span>
           ) : null}
@@ -348,7 +348,7 @@ export function ContactForm() {
             </PopoverContent>
           </Popover>
           {fieldErrors.date ? (
-            <span className="text-[13px] leading-[1.45] text-alert" id="f-quando-error" role="alert">
+            <span className="text-[13px] leading-[1.45] text-alert-deep" id="f-quando-error" role="alert">
               {fieldErrors.date}
             </span>
           ) : null}
@@ -378,7 +378,7 @@ export function ContactForm() {
         />
         <span className="flex items-start justify-between gap-3 text-[13px] leading-[1.45]">
           {fieldErrors.report ? (
-            <span className="text-alert" id="f-relato-error" role="alert">
+            <span className="text-alert-deep" id="f-relato-error" role="alert">
               {fieldErrors.report}
             </span>
           ) : <span />}
@@ -397,7 +397,7 @@ export function ContactForm() {
       </button>
       {status ? (
         <p
-          className="text-[14.5px] leading-[1.6] text-gold-bright"
+          className="text-[14.5px] leading-[1.6] text-gold-deep"
           role="status"
           aria-live="polite"
         >

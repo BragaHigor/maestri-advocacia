@@ -10,10 +10,10 @@ export function Footer() {
   const columnClass = "flex flex-col gap-2.5";
   const titleClass =
     "text-[11.5px] font-semibold tracking-[0.18em] text-paper/50 uppercase";
-  const linkClass = "text-[15px] text-paper hover:text-gold-bright";
+  const linkClass = "text-[15px] text-paper hover:text-gold-deep";
 
   return (
-    <footer className="border-t border-paper/15 bg-[#080706] pt-[clamp(44px,6vw,76px)] pb-[calc(114px+env(safe-area-inset-bottom))] text-paper/75 min-[1220px]:pb-[clamp(32px,4vw,48px)]">
+    <footer className="border-t border-paper/15 bg-ink-2 pt-[clamp(44px,6vw,76px)] pb-[calc(114px+env(safe-area-inset-bottom))] text-paper/75 min-[1220px]:pb-[clamp(32px,4vw,48px)]">
       <Container>
         <div className="mb-[34px] grid grid-cols-[repeat(auto-fit,minmax(214px,1fr))] items-start gap-[34px]">
           <div className={columnClass}>
@@ -26,10 +26,7 @@ export function Footer() {
           </div>
           <div className={columnClass}>
             <p className={titleClass}>Contato</p>
-            <a
-              className={linkClass}
-              href="#contato"
-            >
+            <a className={linkClass} href="#contato">
               {siteConfig.phoneDisplay}
             </a>
             <a className={linkClass} href={createEmailUrl()}>
@@ -73,7 +70,7 @@ export function Footer() {
             <p className="text-[11.5px] tracking-[0.01em] text-paper/35">
               Desenvolvido por{" "}
               <a
-                className="border-b border-gold/30 text-paper/50 hover:border-gold hover:text-gold-bright"
+                className="border-b border-gold/30 text-paper/50 hover:border-gold hover:text-gold-deep"
                 href="https://www.linkedin.com/in/higor-braga-99010ba1/"
                 target="_blank"
                 rel="noopener noreferrer"

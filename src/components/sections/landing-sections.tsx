@@ -56,7 +56,7 @@ export function HeroSection() {
               <span>
                 Atuação focada em fraudes bancárias para quem quer o seu{" "}
               </span>
-              <em className="font-normal text-gold-bright not-italic">
+              <em className="font-normal text-gold-deep not-italic">
                 dinheiro de volta.
               </em>
             </motion.h1>
@@ -139,7 +139,7 @@ function Marquee() {
             {marqueeItems.map((item) => (
               <span className="contents" key={`${group}-${item}`}>
                 <span>{item}</span>
-                <i className="text-gold not-italic">·</i>
+                <i className="text-gold-deep not-italic">·</i>
               </span>
             ))}
           </div>
@@ -168,7 +168,7 @@ export function DeadlineSection() {
           aria-labelledby="calc-sources-title"
         >
           <p
-            className="text-[11.5px] font-semibold tracking-[0.14em] text-gold-bright uppercase"
+            className="text-[11.5px] font-semibold tracking-[0.14em] text-gold-deep uppercase"
             id="calc-sources-title"
           >
             Fontes oficiais
@@ -176,7 +176,7 @@ export function DeadlineSection() {
           <p>
             Os prazos exibidos vêm das regras do{" "}
             <a
-              className="border-b border-gold/30 text-paper/75 hover:border-gold hover:text-gold-bright"
+              className="border-b border-gold/30 text-paper/75 hover:border-gold hover:text-gold-deep"
               href="https://www.bcb.gov.br/meubc/faqs/p/o-que-e-e-como-funciona-o-mecanismo-especial-de-devolucao-med"
               target="_blank"
               rel="noopener noreferrer"
@@ -185,7 +185,7 @@ export function DeadlineSection() {
             </a>{" "}
             e do{" "}
             <a
-              className="border-b border-gold/30 text-paper/75 hover:border-gold hover:text-gold-bright"
+              className="border-b border-gold/30 text-paper/75 hover:border-gold hover:text-gold-deep"
               href="https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
               target="_blank"
               rel="noopener noreferrer"
@@ -226,7 +226,7 @@ export function CasesSection() {
               key={card.title}
             >
               {card.featured ? (
-                <p className="text-xs font-semibold tracking-[0.18em] text-gold-bright uppercase">
+                <p className="text-xs font-semibold tracking-[0.18em] text-gold-deep uppercase">
                   Mais frequente
                 </p>
               ) : null}
@@ -291,7 +291,7 @@ export function SignalsSection() {
               variants={fadeUpSmall}
               key={signal.title}
             >
-              <span className="font-heading text-lg font-normal text-gold-bright tabular-nums">
+              <span className="font-heading text-lg font-normal text-gold-deep tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col gap-1.5">
@@ -350,7 +350,7 @@ export function ProcessSection() {
               variants={fadeUpSmall}
               key={step.title}
             >
-              <span className="font-heading text-[28px] leading-none font-normal text-gold/60 tabular-nums min-[521px]:text-[36px]">
+              <span className="font-heading text-[28px] leading-none font-normal text-gold-deep/60 tabular-nums min-[521px]:text-[36px]">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col gap-2">
@@ -487,8 +487,8 @@ export function ContactSection() {
       id="contato"
     >
       <Image
-        className="pointer-events-none absolute bottom-[-20%] left-[-7%] h-auto w-[min(540px,54vw)] opacity-5"
-        src="/assets/brand/maestri-monograma-fundo-escuro.svg"
+        className="pointer-events-none absolute bottom-[-6%] left-[-3%] h-auto w-[min(480px,48vw)] opacity-15"
+        src="/assets/brand/maestri-monograma.svg"
         alt=""
         width={1000}
         height={849}
@@ -517,24 +517,24 @@ export function ContactSection() {
           <motion.span className="block h-px bg-paper/15" variants={fadeUp} />
           <motion.div className="flex flex-col gap-4" variants={fadeUp}>
             <a
-              className="flex flex-col items-start gap-0.5 text-paper hover:text-gold-bright min-[521px]:inline-flex min-[521px]:flex-row min-[521px]:items-center min-[521px]:gap-3.5"
+              className="flex flex-col items-start gap-0.5 text-paper hover:text-gold-deep min-[521px]:inline-flex min-[521px]:flex-row min-[521px]:items-center min-[521px]:gap-3.5"
               href="#contato"
             >
               <span className="min-w-[78px] text-[12.5px] font-semibold tracking-[0.16em] text-paper/75 uppercase">
                 WhatsApp
               </span>
-              <span className="font-heading text-lg font-normal [overflow-wrap:anywhere] min-[521px]:text-xl min-[521px]:whitespace-nowrap">
+              <span className="text-[12.5px] font-normal [overflow-wrap:anywhere] min-[521px]:whitespace-nowrap">
                 {siteConfig.phoneDisplay}
               </span>
             </a>
             <a
-              className="flex flex-col items-start gap-0.5 text-paper hover:text-gold-bright min-[521px]:inline-flex min-[521px]:flex-row min-[521px]:items-center min-[521px]:gap-3.5"
+              className="flex flex-col items-start gap-0.5 text-paper hover:text-gold-deep min-[521px]:inline-flex min-[521px]:flex-row min-[521px]:items-center min-[521px]:gap-3.5"
               href={createEmailUrl()}
             >
               <span className="min-w-[78px] text-[12.5px] font-semibold tracking-[0.16em] text-paper/75 uppercase">
                 E-mail
               </span>
-              <span className="font-heading text-lg font-normal [overflow-wrap:anywhere] min-[521px]:text-xl min-[521px]:whitespace-nowrap">
+              <span className="text-[12.5px] font-normal [overflow-wrap:anywhere] min-[521px]:whitespace-nowrap">
                 {siteConfig.email}
               </span>
             </a>

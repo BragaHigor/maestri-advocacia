@@ -9,7 +9,7 @@ export function Brand({ footer = false }: { footer?: boolean }) {
             ? "h-[58px] w-auto"
             : "h-[clamp(42px,12vw,52px)] w-auto transition-[height] duration-450 ease-fluid group-data-[scrolled]/header:h-10"
         }
-        src="/assets/brand/maestri-monograma-fundo-escuro.svg"
+        src="/assets/brand/maestri-monograma.svg"
         alt=""
         width={1000}
         height={849}
@@ -24,7 +24,7 @@ export function Brand({ footer = false }: { footer?: boolean }) {
               ? "h-[25px] w-auto"
               : "h-[clamp(18px,5.2vw,23px)] w-auto transition-[height] duration-450 ease-fluid group-data-[scrolled]/header:h-[18px]"
           }
-          src="/assets/brand/maestri-nome-creme.svg"
+          src="/assets/brand/maestri-nome-escuro.svg"
           alt="Maestri"
           width={1000}
           height={152}
@@ -32,7 +32,7 @@ export function Brand({ footer = false }: { footer?: boolean }) {
           style={{ width: "auto" }}
         />
         <span
-          className={`font-heading leading-none font-medium tracking-[0.34em] whitespace-nowrap text-gold-bright uppercase ${
+          className={`font-heading leading-none font-medium tracking-[0.34em] whitespace-nowrap text-gold-deep uppercase ${
             footer ? "text-[12.5px]" : "text-[clamp(9.5px,2.8vw,11.5px)]"
           }`}
         >

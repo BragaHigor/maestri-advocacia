@@ -21,18 +21,14 @@ export default function HomePage() {
     <CaseTypeProvider>
       <StructuredData />
       <a
-        className="absolute top-2 -left-[9999px] z-200 rounded-sm bg-gold px-5 py-3 font-semibold text-ink focus:left-4"
+        className="absolute top-2 -left-[9999px] z-200 rounded-sm bg-gold px-5 py-3 font-semibold text-paper focus:left-4"
         href="#main-content"
       >
         Ir para o conteúdo
       </a>
       <ScrollProgress />
       <Header />
-      <main
-        className="pb-[84px] outline-none min-[1220px]:pb-0"
-        id="main-content"
-        tabIndex={-1}
-      >
+      <main className="outline-none" id="main-content" tabIndex={-1}>
         <HeroSection />
         <CasesSection />
         <SignalsSection />
