@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { CalendarIcon } from "lucide-react";
@@ -13,7 +13,6 @@ import {
   isDeadlineId,
 } from "@/domain/deadlines/data";
 import type { DeadlineTone } from "@/domain/deadlines/types";
-import { useFitText } from "@/hooks/use-fit-text";
 import {
   formatDateInputPtBr,
   parseDateInput,
@@ -53,16 +52,13 @@ const toneClasses: Record<
 };
 
 const selectTriggerClass =
-  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-nowrap shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
+  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-normal shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
 
 export function DeadlineCalculator() {
   const { deadlineType, setDeadlineType } = useCaseType();
   const [date, setDate] = useState("");
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const valueRef = useRef<HTMLSpanElement>(null);
-
   const rule = deadlineRules[deadlineType];
-  useFitText(valueRef, rule.optionLabel);
   const result = useMemo(() => calculateDeadline(rule, date), [date, rule]);
   const tone = toneClasses[result.tone];
   const maximumDate =
@@ -98,10 +94,7 @@ export function DeadlineCalculator() {
               className={selectTriggerClass}
               style={{ height: "auto" }}
             >
-              <span
-                ref={valueRef}
-                className="min-w-0 flex-1 truncate text-left"
-              >
+              <span className="min-w-0 flex-1 text-left whitespace-normal">
                 {rule.optionLabel}
               </span>
             </SelectTrigger>

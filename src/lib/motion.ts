@@ -36,11 +36,6 @@ export const fadeIn: Variants = {
 };
 
 export const maskUp: Variants = {
-  hidden: { opacity: 0, y: 16, clipPath: "inset(0 0 100% 0)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    clipPath: "inset(0 0 -6% 0)",
-    transition: { duration: 0.75, ease: EASE },
-  },
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } },
 };

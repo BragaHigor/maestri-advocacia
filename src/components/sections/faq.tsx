@@ -30,7 +30,7 @@ export function Faq() {
               +
             </span>
           </summary>
-          <p className="max-w-[68ch] pb-7 text-[16.5px] leading-[1.74] text-paper/75">
+          <p className="pr-8 pb-7 text-[16.5px] leading-[1.74] text-paper/75">
             {item.answer}
           </p>
         </motion.details>

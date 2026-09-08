@@ -28,11 +28,7 @@ export default function HomePage() {
       </a>
       <ScrollProgress />
       <Header />
-      <main
-        className="pb-[84px] outline-none min-[1220px]:pb-0"
-        id="main-content"
-        tabIndex={-1}
-      >
+      <main className="outline-none" id="main-content" tabIndex={-1}>
         <HeroSection />
         <CasesSection />
         <SignalsSection />

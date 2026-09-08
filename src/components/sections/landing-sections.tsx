@@ -523,7 +523,7 @@ export function ContactSection() {
               <span className="min-w-[78px] text-[12.5px] font-semibold tracking-[0.16em] text-paper/75 uppercase">
                 WhatsApp
               </span>
-              <span className="font-heading text-lg font-normal [overflow-wrap:anywhere] min-[521px]:text-xl min-[521px]:whitespace-nowrap">
+              <span className="text-[12.5px] font-normal [overflow-wrap:anywhere] min-[521px]:whitespace-nowrap">
                 {siteConfig.phoneDisplay}
               </span>
             </a>
@@ -534,7 +534,7 @@ export function ContactSection() {
               <span className="min-w-[78px] text-[12.5px] font-semibold tracking-[0.16em] text-paper/75 uppercase">
                 E-mail
               </span>
-              <span className="font-heading text-lg font-normal [overflow-wrap:anywhere] min-[521px]:text-xl min-[521px]:whitespace-nowrap">
+              <span className="text-[12.5px] font-normal [overflow-wrap:anywhere] min-[521px]:whitespace-nowrap">
                 {siteConfig.email}
               </span>
             </a>
