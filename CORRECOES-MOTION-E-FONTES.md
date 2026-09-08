@@ -81,12 +81,22 @@ Portanto, ao aplicar em outra branch:
 
 ## 3. Correções tipográficas
 
-### 3.1 Calculadora: remover o encolhimento automático
+### 3.1 Ferramenta — campo “Qual problema você está enfrentando?”
 
 Arquivos envolvidos:
 
 - `src/components/sections/deadline-calculator.tsx`
 - `src/hooks/use-fit-text.ts` — removido integralmente
+
+O campo exibido na seção **Ferramenta**, abaixo do rótulo **“Qual problema você está enfrentando?”**, é um `Select` (e não um `<input>` nativo). A correção foi feita especificamente no `SelectTrigger` de id `calc-tipo`, que mostra `rule.optionLabel`.
+
+#### Problema anterior
+
+O gatilho obrigava todo o valor a ficar em uma única linha com `whitespace-nowrap`. O span interno também usava `truncate`, ocultando parte do texto quando necessário. Para compensar, `useFitText` media o overflow no navegador e diminuía progressivamente o tamanho da fonte — em passos de `0.5px`, podendo chegar a apenas `6px`.
+
+Além da perda de legibilidade, isso tornava a apresentação dependente de medição do DOM, `ResizeObserver`, evento de resize e do carregamento assíncrono das fontes.
+
+#### Correções aplicadas
 
 Mudanças necessárias:
 
@@ -97,6 +107,37 @@ Mudanças necessárias:
 5. Trocar o span de `truncate` para quebra normal de linha.
 6. Excluir o hook `src/hooks/use-fit-text.ts` se ele não tiver outros consumidores.
 
+Classe do gatilho antes:
+
+```tsx
+const selectTriggerClass =
+  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-nowrap shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
+```
+
+Classe do gatilho depois:
+
+```tsx
+const selectTriggerClass =
+  "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-normal shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
+```
+
+A alteração efetiva nessa classe é:
+
+```diff
+- whitespace-nowrap
++ whitespace-normal
+```
+
+O `SelectTrigger` também mantém explicitamente a altura automática para crescer quando o valor ocupar duas ou mais linhas:
+
+```tsx
+<SelectTrigger
+  id="calc-tipo"
+  className={selectTriggerClass}
+  style={{ height: "auto" }}
+>
+```
+
 Trecho final do valor:
 
 ```tsx
@@ -106,6 +147,24 @@ Trecho final do valor:
 ```
 
 O hook removido reduzia a fonte em passos de `0.5px`, até o mínimo de `6px`, enquanto houvesse overflow. A nova solução preserva o tamanho legível e permite que rótulos longos ocupem mais de uma linha.
+
+#### O que permanece igual
+
+- fonte do controle: `font-body` (**Manrope**);
+- tamanho: `text-base`;
+- altura mínima: `min-h-[52px]`;
+- espaçamento interno: `px-[15px] py-3`;
+- opções provenientes de `deadlineOptions` e valor proveniente de `rule.optionLabel`;
+- comportamento de seleção e validação por `isDeadlineId`;
+- largura máxima do menu: `max-w-[min(92vw,32rem)]`.
+
+#### Resultado esperado
+
+- o texto selecionado aparece por inteiro;
+- rótulos longos quebram naturalmente em mais de uma linha;
+- o controle aumenta sua altura sem comprimir a fonte;
+- o tamanho tipográfico fica consistente entre as opções;
+- não há mais JavaScript de medição ou redimensionamento de fonte para esse campo.
 
 ### 3.2 Contato: telefone e e-mail
 
