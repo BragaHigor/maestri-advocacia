@@ -1,7 +1,7 @@
 export type ContactDestination = "whatsapp" | "email";
 
 const DEFAULT_SITE_URL = "https://www.maestriadv.com.br";
-const DEFAULT_EMAIL = "contato.maestriadv@gmail.com.br";
+const DEFAULT_EMAIL = "contato.maestriadv@gmail.com";
 
 function parseSiteUrl(value: string | undefined): URL {
   try {
