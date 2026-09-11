@@ -35,6 +35,42 @@ export function Footer() {
             <a className={linkClass} href={createEmailUrl()}>
               {siteConfig.email}
             </a>
+            <a
+              className={`-ml-2 mt-1 inline-flex items-center gap-2 rounded-full pl-2 ${linkClass}`}
+              href="https://www.instagram.com/maestri.adv/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram da Maestri Advocacia (abre em nova aba)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                className="h-5 w-5 shrink-0"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+                <path d="M16 11.37a4 4 0 1 1-7.914 1.174A4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+              <span
+                aria-hidden="true"
+                className="h-5 shrink-0 bg-current"
+                style={{
+                  aspectRatio: "408 / 112",
+                  WebkitMaskImage:
+                    "url(/assets/logo/instagram-wordmark-mask.png)",
+                  maskImage: "url(/assets/logo/instagram-wordmark-mask.png)",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskSize: "contain",
+                  maskSize: "contain",
+                  WebkitMaskPosition: "left center",
+                  maskPosition: "left center",
+                }}
+              />
+            </a>
           </div>
           <div className={columnClass}>
             <p className={titleClass}>Escritório</p>
