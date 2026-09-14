@@ -54,10 +54,10 @@ export function HeroSection() {
             </motion.p>
             <motion.h1 className={headingOneClass} variants={maskUp}>
               <span>
-                Atuação focada em fraudes bancárias para quem quer o seu{" "}
+                Atuação focada em fraudes bancárias.{" "}
               </span>
               <em className="font-normal text-gold-bright not-italic">
-                dinheiro de volta.
+                Entenda seus direitos e o que fazer agora.
               </em>
             </motion.h1>
             <motion.p
