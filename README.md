@@ -1,16 +1,23 @@
 # Maestri Advocacia
 
-Landing page da Maestri Advocacia construída com Next.js, React, TypeScript e
-Tailwind CSS. O projeto preserva a experiência da versão estática e acrescenta
-SEO técnico, testes automatizados, otimização de imagens/fontes, headers de
-segurança e configuração para deploy na Vercel.
+Landing page institucional para Direito do Consumidor e fraudes bancárias,
+construída com Next.js App Router, React, TypeScript e Tailwind CSS. Inclui
+conteúdo editorial, calculadora informativa de prazos e formulário que prepara
+mensagens para WhatsApp ou e-mail no dispositivo do visitante.
 
-## Requisitos
+Não há API própria, banco de dados, autenticação, CMS, analytics ou armazenamento
+de relatos. A confirmação do envio acontece no aplicativo externo.
+Os campos permanecem preenchidos após a tentativa; o visitante pode abrir
+novamente com os dados atuais ou limpar o formulário manualmente. No mobile,
+essas ações ocupam a largura inteira, uma abaixo da outra.
+Elas aparecem após uma tentativa válida de abrir o canal. A nova tentativa
+valida os campos editados; a limpeza apaga os dados e restaura o tipo Pix.
+Não há recuperação de dados implementada pelo site após recarregar ou fechar.
 
-- Node.js 20.9 ou superior;
-- npm 11 ou compatível com o lockfile.
+## Requisitos e execução
 
-## Executar localmente
+`package.json` exige Node.js >=20.9.0. Use npm compatível com o lockfile
+versionado; o projeto não declara versão obrigatória de npm.
 
 ```powershell
 npm ci
@@ -18,66 +25,83 @@ Copy-Item .env.example .env
 npm run dev
 ```
 
-Acesse `http://localhost:3000`.
+Acesse `http://localhost:3000`. Copie o modelo somente se ainda não houver `.env`,
+para preservar sua configuração local.
 
 ## Configuração
 
-Preencha `.env` antes de testar contatos reais:
+As variáveis abaixo são públicas e incorporadas ao build. Alterações no ambiente
+de produção exigem novo build/deploy. `.env` está ignorado no Git.
 
-```dotenv
-NEXT_PUBLIC_SITE_URL=https://www.seudominio.com.br
-NEXT_PUBLIC_WHATSAPP=5511999999999
-NEXT_PUBLIC_PHONE_DISPLAY=(11) 99999-9999
-NEXT_PUBLIC_CONTACT_EMAIL=contato@seudominio.com.br
-NEXT_PUBLIC_OAB=OAB/SP 000.000
-NEXT_PUBLIC_OFFICE_LOCATION=Cidade/UF — atendimento 100% online
-NEXT_PUBLIC_SERVICE_AREA=Todo o Brasil
-NEXT_PUBLIC_CONTACT_DESTINATION=whatsapp
-```
+| Variável | Default em `src/config/site.ts` |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.maestriadv.com.br` |
+| `NEXT_PUBLIC_WHATSAPP` | `5516974075767` |
+| `NEXT_PUBLIC_PHONE_DISPLAY` | `(16) 97407-5767` |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | `contato.maestriadv@gmail.com` |
+| `NEXT_PUBLIC_OAB` | `OAB/SP 511954-SP` |
+| `NEXT_PUBLIC_OFFICE_LOCATION` | `Atendimento 100% online` |
+| `NEXT_PUBLIC_SERVICE_AREA` | `Todo o Brasil` |
+| `NEXT_PUBLIC_CONTACT_DESTINATION` | `whatsapp` |
 
-`NEXT_PUBLIC_WHATSAPP` aceita somente DDI 55, DDD e número. Enquanto o valor for
-placeholder, os CTAs levam à seção de contato e o formulário não abre uma URL
-inválida. O destino aceita `whatsapp` ou `email`.
+O modelo `.env.example` contém exemplos, não os defaults acima. Confira os dados
+antes de usá-lo. URL inválida ou sem HTTPS retorna ao default, exceto quando o
+hostname é `localhost`. E-mail inválido retorna ao default. Destino só seleciona
+e-mail quando o valor é exatamente `email`; qualquer outro valor usa WhatsApp.
 
-Variáveis `NEXT_PUBLIC_*` são incorporadas ao bundle durante o build. Alterações
-na Vercel exigem um novo deploy.
+O número configurado tem caracteres não numéricos removidos. O helper de link
+aceita prefixo 55 e 10 ou 11 dígitos seguintes, rejeitando o padrão de zeros.
+Não verifica existência da conta nem bloqueia todos os números de exemplo:
+`5511999999999` do modelo é aceito.
+
+Header, hero, calculadora e barra móvel levam à seção `#contato`. Os números no
+contato e rodapé também apontam para essa seção. O botão flutuante abre WhatsApp
+diretamente e é omitido se o helper rejeitar o número. O destino configurável
+altera apenas o formulário.
 
 ## Comandos
 
 ```powershell
-npm run dev        # desenvolvimento
-npm run lint       # análise estática
-npm run typecheck  # tipos sem emissão
-npm test           # testes unitários
-npm run build      # build de produção
-npm start          # executa o build localmente
+npm run dev        # next dev
+npm run lint       # eslint .
+npm run typecheck  # tsc --noEmit
+npm test           # vitest run
+npm run build      # next build
+npm start          # next start, após build
 ```
 
 ## Estrutura
 
 ```text
 src/
-├── app/                 rotas, metadata, SEO e estilos globais
-├── components/          layout, seções e componentes de interface
-├── config/              configuração tipada do site
+├── app/                 página, layout, metadata e estilos globais
+├── components/          layout, seções e interface reutilizável
+├── config/              dados institucionais e destino de contato
 ├── context/             sincronização de tipo de caso
 ├── data/                conteúdo editorial estruturado
 ├── domain/deadlines/    regras e cálculo puro de prazos
-├── hooks/               comportamentos reutilizáveis do navegador
-├── lib/                 datas e criação segura de links
-└── styles/              combinações reutilizáveis de classes Tailwind
+├── lib/                 datas, contato, animações e classes utilitárias
+└── styles/              classes Tailwind compartilhadas
 public/assets/           marca, favicons e fotografias
-.spec/                   arquitetura, stack e análise técnica
-docs/deployment.md       publicação na Vercel
+.spec/                   arquitetura, stack e diagnóstico
+docs/                    deploy e contexto de manutenção
 ```
 
-## Antes da publicação
+`components.json` configura componentes no estilo shadcn/ui e declara o alias
+`@/hooks`, mas não existe diretório `src/hooks` atualmente. `home.html` é um
+snapshot HTML renderizado em desenvolvimento, com referências a chunks do Next;
+não é a fonte da aplicação nem uma versão estática independente.
 
-1. configure os dados reais do escritório e o domínio;
-2. valide todo conteúdo e prazo com a pessoa profissionalmente responsável;
-3. defina a política de privacidade aplicável ao atendimento;
-4. execute `npm run lint`, `npm run typecheck`, `npm test` e `npm run build`;
-5. teste WhatsApp/e-mail no domínio HTTPS.
+## Qualidade e publicação
 
-Consulte [.spec/architecture.md](.spec/architecture.md) para manutenção e
-[docs/deployment.md](docs/deployment.md) para publicar na Vercel.
+Em 18/09/2026, lint, typecheck, build e os 22 testes passaram. Consulte o
+[diagnóstico](.spec/analysis.md) para detalhes e limites da revisão.
+
+Antes de publicar, confira dados institucionais, domínio e canais reais;
+valide conteúdo e prazos com a pessoa responsável e defina a privacidade do
+atendimento posterior. Execute os quatro comandos de qualidade e verifique os
+fluxos no navegador em mobile e desktop.
+
+Referências: [arquitetura](.spec/architecture.md), [stack](.spec/stack.md),
+[contexto para novas features](docs/project-context.md) e
+[deploy](docs/deployment.md).

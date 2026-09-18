@@ -1,8 +1,16 @@
 # Deploy na Vercel
 
-## 1. Preparação
+## Configuração do repositório
 
-Na máquina local:
+vercel.json declara framework nextjs. O script de build é npm run build;
+npm start executa o build localmente. Não há output: export ou diretório de
+saída personalizado em next.config.ts. A página e metadata são pré-renderizadas;
+imagens usam otimização Next/Vercel.
+
+Este guia descreve preparação e verificação; não comprova publicação realizada
+nem valores existentes no ambiente Vercel.
+
+## Preparação local
 
 ```powershell
 npm ci
@@ -12,59 +20,78 @@ npm test
 npm run build
 ```
 
-Todos os comandos devem terminar sem erro.
+package.json exige Node.js >=20.9.0. Escolha no provedor uma versão suportada
+compatível com o projeto. Todos os checks devem passar antes de publicar.
+Em 18/09/2026, lint, tipos, build e os 22 testes passaram:
+veja [diagnóstico](../.spec/analysis.md).
 
-## 2. Importar o projeto
+Importe o repositório na Vercel, mantendo a raiz deste projeto e o framework
+Next.js. Preserve o comando npm run build. Não adicione Output Directory manual
+para simular uma exportação que o projeto não configura.
 
-1. envie o projeto para um repositório Git;
-2. no painel da Vercel, escolha **Add New → Project**;
-3. importe o repositório;
-4. confirme o preset **Next.js**;
-5. mantenha `npm run build` como Build Command e a raiz como Root Directory.
+## Variáveis públicas
 
-`vercel.json` já declara o framework. Não é necessário configurar Output
-Directory.
+Use .env.example como modelo local apenas quando .env ainda não existir.
+O modelo contém exemplos que devem ser substituídos. Confira no ambiente do
+provedor os valores destinados a produção e preview.
 
-## 3. Variáveis de ambiente
-
-No desenvolvimento local, o projeto utiliza o arquivo `.env`. Use
-`.env.example` apenas como modelo e nunca armazene credenciais nele.
-
-Cadastre em **Settings → Environment Variables** para Production e Preview:
-
-| Variável | Exemplo |
+| Variável | Default do código quando ausente |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | `https://www.maestriadvocacia.com.br` |
-| `NEXT_PUBLIC_WHATSAPP` | `5516991554260` |
-| `NEXT_PUBLIC_PHONE_DISPLAY` | `(16) 99155-4260` |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | `contato@maestriadvocacia.com.br` |
-| `NEXT_PUBLIC_OAB` | `OAB/SP 123.456` |
-| `NEXT_PUBLIC_OFFICE_LOCATION` | `Franca/SP — atendimento 100% online` |
-| `NEXT_PUBLIC_SERVICE_AREA` | `Todo o Brasil` |
-| `NEXT_PUBLIC_CONTACT_DESTINATION` | `whatsapp` ou `email` |
+| NEXT_PUBLIC_SITE_URL | https://www.maestriadv.com.br |
+| NEXT_PUBLIC_WHATSAPP | 5516974075767 |
+| NEXT_PUBLIC_PHONE_DISPLAY | (16) 97407-5767 |
+| NEXT_PUBLIC_CONTACT_EMAIL | contato.maestriadv@gmail.com |
+| NEXT_PUBLIC_OAB | OAB/SP 511954-SP |
+| NEXT_PUBLIC_OFFICE_LOCATION | Atendimento 100% online |
+| NEXT_PUBLIC_SERVICE_AREA | Todo o Brasil |
+| NEXT_PUBLIC_CONTACT_DESTINATION | whatsapp |
 
-Esses dados são públicos por natureza e entram no bundle. Não armazene tokens,
-senhas ou credenciais em variáveis `NEXT_PUBLIC_*`.
+URL inválida ou sem HTTPS usa default, exceto hostname localhost. E-mail inválido
+usa default. Só o valor exato email muda o formulário para mailto; demais valores
+usam WhatsApp. Número configurado é normalizado para dígitos. A validação do link
+não confirma conta real nem bloqueia todo número de exemplo.
 
-## 4. Domínio e SEO
+Esses dados entram no bundle no build; alterações exigem novo deploy.
+Nunca use NEXT_PUBLIC para credenciais. .env está ignorado no Git.
+Telefone exibido e número de destino são variáveis independentes: mantenha ambos
+coerentes. O botão flutuante permanece WhatsApp mesmo com formulário por e-mail.
 
-1. conecte o domínio em **Settings → Domains**;
-2. atualize `NEXT_PUBLIC_SITE_URL` para o domínio canônico HTTPS;
-3. faça novo deploy, pois variáveis públicas são fixadas no build;
-4. confirme `/robots.txt`, `/sitemap.xml` e `/opengraph-image`;
-5. cadastre o sitemap no Google Search Console quando o domínio estiver ativo.
+## Domínio e SEO
 
-## 5. Verificação pós-deploy
+Conecte o domínio no provedor e configure NEXT_PUBLIC_SITE_URL com a URL canônica
+HTTPS. Faça novo deploy e confira canonical, Open Graph, Twitter, JSON-LD,
+/robots.txt, /sitemap.xml, /manifest.webmanifest e /opengraph-image.
 
-- abrir o site em janela anônima e celular real;
-- conferir canonical e imagem ao compartilhar uma URL;
-- testar CTAs do cabeçalho, hero, calculadora, contato, rodapé e barra móvel;
-- enviar um relato fictício pelos dois destinos configuráveis;
-- verificar teclado, Escape do menu, FAQ e movimento reduzido;
-- confirmar que resposta contém CSP, HSTS, `nosniff` e bloqueio de frames;
-- revisar logs de build e Runtime Logs da Vercel.
+O sitemap inclui apenas a home. O canonical global é /. Para adicionar páginas,
+defina metadata por rota. O manifest não fornece funcionamento offline.
 
-## Rollback
+## Verificação após publicar
 
-Se uma publicação apresentar problema, use **Deployments → menu do último deploy
-estável → Promote to Production**. Não altere DNS durante um rollback comum.
+- Abrir site em celular e desktop, conferir imagens, overflow, foco e navegação.
+- Conferir links de cada seção, menu móvel, Escape, FAQ, calendário e selects.
+- Testar cálculo, sincronização de tipo e datas independentes.
+- Testar botão flutuante e formulário com relato fictício; envio precisa ser
+  confirmado no aplicativo externo. Para verificar ambos os destinos, usar
+  builds/ambientes com o destino correspondente.
+- Conferir preservação após tentativa, reabertura com dados editados e limpeza
+  manual. Abaixo de 521 px, os botões de reabertura e limpeza são empilhados.
+  Verificar que nova tentativa inválida mantém os dados e foca o erro; limpeza
+  remove erros, zera contador, restaura tipo Pix e foca nome. Conferir o aviso
+  curto, que orienta confirmar o envio no aplicativo e informa dados preservados.
+- Conferir que números na seção e rodapé navegam para #contato, comportamento
+  atual que não abre diretamente WhatsApp.
+- Verificar movimento reduzido e conteúdo com JavaScript indisponível: existem
+  limitações conhecidas registradas no diagnóstico.
+- Inspecionar headers da resposta: CSP, HSTS, nosniff, bloqueio de frames,
+  Referrer-Policy, Permissions-Policy, COOP e DNS-prefetch off.
+- Revisar logs do deploy e funcionamento dos canais no domínio HTTPS.
+
+CSP permite conexões apenas à própria origem e não autoriza automaticamente
+analytics, embeds, CRM ou APIs externas. Produção remove unsafe-eval, mantém
+inline para scripts/estilos e acrescenta HSTS e upgrade-insecure-requests.
+
+## Reversão
+
+Mantenha um deploy estável identificado para restaurar pela ferramenta do
+provedor caso a publicação apresente regressão. Esta documentação não registra
+histórico de deploys ou uma reversão executada.

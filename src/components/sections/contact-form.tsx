@@ -33,6 +33,7 @@ import {
 import { fadeUp, VIEWPORT } from "@/lib/motion";
 import {
   buttonGold,
+  buttonGhost,
   fieldClass,
   inputClass,
   labelClass,
@@ -59,6 +60,7 @@ export function ContactForm() {
   const [date, setDate] = useState("");
   const [reportLength, setReportLength] = useState(0);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [hasAttemptedContact, setHasAttemptedContact] = useState(false);
   const selectedCaseLabel =
     contactCaseType === "outro"
       ? "Outro"
@@ -155,10 +157,10 @@ export function ContactForm() {
           body: message,
         }),
       );
-      setStatus("Abrimos seu aplicativo de e-mail com o relato preenchido.");
-      form.reset();
-      setDate("");
-      setReportLength(0);
+      setHasAttemptedContact(true);
+      setStatus(
+        "Prontinho! Abrimos seu e-mail com a mensagem preenchida — é só confirmar o envio por lá. Seus dados continuam aqui. Se não abrir, tente novamente abaixo.",
+      );
       return;
     }
 
@@ -169,12 +171,10 @@ export function ContactForm() {
     }
 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    setHasAttemptedContact(true);
     setStatus(
-      "Prontinho! Abrimos o WhatsApp com sua mensagem já preenchida — é só confirmar o envio por lá. Se a janela não abrir, use o número ou e-mail ao lado para falar com a gente.",
+      "Prontinho! Abrimos o WhatsApp com sua mensagem já preenchida — é só confirmar o envio por lá. Seus dados continuam aqui. Se não abrir, tente novamente abaixo.",
     );
-    form.reset();
-    setDate("");
-    setReportLength(0);
   };
 
   return (
@@ -187,6 +187,16 @@ export function ContactForm() {
       aria-describedby="form-privacy"
       noValidate
       onSubmit={handleSubmit}
+      onReset={(event) => {
+        setDate("");
+        setReportLength(0);
+        setFieldErrors({});
+        setCalendarOpen(false);
+        setContactCaseType("pix");
+        setHasAttemptedContact(false);
+        setStatus("Formulário limpo. Você pode preencher um novo relato.");
+        event.currentTarget.querySelector<HTMLInputElement>("#f-nome")?.focus();
+      }}
     >
       <div className="grid grid-cols-[repeat(auto-fit,minmax(178px,1fr))] gap-[18px]">
         <p className={fieldClass}>
@@ -403,6 +413,24 @@ export function ContactForm() {
         >
           {status}
         </p>
+      ) : null}
+      {hasAttemptedContact ? (
+        <div className="grid grid-cols-1 gap-3 min-[521px]:grid-cols-2">
+          <button
+            className={`${buttonGhost} min-h-11 w-full px-4 py-3 text-sm`}
+            type="submit"
+          >
+            {siteConfig.contactDestination === "email"
+              ? "Abrir novamente o e-mail"
+              : "Abrir novamente o WhatsApp"}
+          </button>
+          <button
+            className={`${buttonGhost} min-h-11 w-full px-4 py-3 text-sm`}
+            type="reset"
+          >
+            Limpar formulário
+          </button>
+        </div>
       ) : null}
       <p
         className="text-[13.5px] leading-[1.64] text-paper/60"

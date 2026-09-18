@@ -35,6 +35,32 @@ describe("calculateDeadline", () => {
     expect(urgent.tone).toBe("warning");
   });
 
+  it.each([
+    ["pix", "2026-06-07"],
+    ["compraonline", "2026-08-19"],
+    ["vicio30", "2026-07-27"],
+    ["vicio90", "2026-05-28"],
+    ["reparacao", "2021-08-26"],
+  ] as const)("distingue o dia-limite e o dia seguinte para %s", (id, date) => {
+    const limit = calculateDeadline(deadlineRules[id], date, NOW);
+    expect(limit.number).toBe(0);
+    expect(limit.unit).toBe("dias restantes");
+    expect(limit.progress).toBe(100);
+    expect(limit.tone).toBe("warning");
+    expect(limit.title).toBe("A data-limite é hoje.");
+
+    const overdue = calculateDeadline(
+      deadlineRules[id],
+      date,
+      new Date(2026, 7, 27, 12),
+    );
+    expect(overdue.number).toBe(1);
+    expect(overdue.unit).toBe("dia de atraso");
+    expect(overdue.tone).toBe("alert");
+    expect(overdue.title).toBe("Este prazo específico venceu.");
+    expect(overdue.text).toContain("Isso não encerra o caso");
+  });
+
   it("marca prazo vencido sem afirmar que o caso terminou", () => {
     const result = calculateDeadline(deadlineRules.compraonline, "2026-08-01", NOW);
     expect(result.tone).toBe("alert");
