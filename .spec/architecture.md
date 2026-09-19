@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-A aplicação usa Next.js App Router e tem uma única página de produto, `/`.
+A aplicação usa Next.js App Router, com home `/` e política `/privacidade`.
 O build local de 18/09/2026 pré-renderizou a home e as rotas de metadata.
 Não há `output: export`; otimização de imagens utiliza Next/Vercel.
 Não existem API própria, banco de dados, autenticação ou persistência de relatos.
@@ -144,11 +144,20 @@ JSON-LD usa dados controlados, escapa `<` e fixa areaServed em Brasil.
 next.config.ts define CSP, Referrer-Policy, nosniff, bloqueio de frames,
 DNS-prefetch off, COOP e Permissions-Policy. CSP permite inline em scripts e
 estilos; unsafe-eval só em desenvolvimento. Produção acrescenta HSTS e
-upgrade-insecure-requests. Conexões são limitadas à própria origem; novas
+upgrade-insecure-requests. Conexões autorizam a própria origem e os destinos
+Google necessários ao Ads; novas
 integrações exigem revisar diretivas. Headers foram inspecionados no código,
 não verificados na resposta de um deploy nesta revisão.
 
 ## Manutenção
+
+`src/lib/ads.ts` centraliza consentimento básico e evento de tentativa de contato.
+`MeasurementConsent` no layout carrega a tag apenas após aceitar; escolhas ficam
+em localStorage por 180 dias, e sessionStorage limita o evento a um por visita.
+Formulário validado e botão flutuante usam o mesmo evento, sem campos pessoais.
+`CookiePreferences` permite reabrir as escolhas na política de privacidade.
+Não há conversão de visita, GA4 ou campos monetários no evento.
+Veja [integração Ads](../docs/google-ads.md) para limites e validação.
 
 Consulte [stack](stack.md), [diagnóstico](analysis.md) e
 [contexto de features](../docs/project-context.md). Leia o guia relevante de

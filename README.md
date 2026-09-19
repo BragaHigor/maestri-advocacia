@@ -5,7 +5,7 @@ construída com Next.js App Router, React, TypeScript e Tailwind CSS. Inclui
 conteúdo editorial, calculadora informativa de prazos e formulário que prepara
 mensagens para WhatsApp ou e-mail no dispositivo do visitante.
 
-Não há API própria, banco de dados, autenticação, CMS, analytics ou armazenamento
+Não há API própria, banco de dados, autenticação, CMS ou armazenamento
 de relatos. A confirmação do envio acontece no aplicativo externo.
 Os campos permanecem preenchidos após a tentativa; o visitante pode abrir
 novamente com os dados atuais ou limpar o formulário manualmente. No mobile,
@@ -94,14 +94,20 @@ não é a fonte da aplicação nem uma versão estática independente.
 
 ## Qualidade e publicação
 
-Em 18/09/2026, lint, typecheck, build e os 22 testes passaram. Consulte o
+Em 18/09/2026, os 27 testes passaram. A integração Google Ads inclui consentimento
+e medição da tentativa de contato; veja o documento específico abaixo. Consulte o
 [diagnóstico](.spec/analysis.md) para detalhes e limites da revisão.
 
 Antes de publicar, confira dados institucionais, domínio e canais reais;
-valide conteúdo e prazos com a pessoa responsável e defina a privacidade do
-atendimento posterior. Execute os quatro comandos de qualidade e verifique os
+valide conteúdo e prazos com a pessoa responsável e revise a política em
+`/privacidade`, inclusive a identificação legal e as práticas do atendimento
+posterior. Execute os quatro comandos de qualidade e verifique os
 fluxos no navegador em mobile e desktop.
 
 Referências: [arquitetura](.spec/architecture.md), [stack](.spec/stack.md),
 [contexto para novas features](docs/project-context.md) e
 [deploy](docs/deployment.md).
+
+A preparação de medição, os dados necessários da conta e as pendências estão
+em [Google Ads e privacidade](docs/google-ads.md). A tag carrega após consentimento;
+não há Google Analytics ou medição de visita como conversão.

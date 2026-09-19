@@ -9,9 +9,11 @@ fraudes bancárias, com atendimento online em todo o Brasil. A jornada apresenta
 áreas de atuação, sinais de fraude, processo de atendimento, perfil profissional,
 perguntas frequentes, calculadora informativa e formulário de contato.
 
-A única página de produto é `/`. Não existem API própria, banco de dados,
+As páginas públicas são `/` e `/privacidade`. Não existem API própria, banco de dados,
 autenticação, painel administrativo, CMS, armazenamento de leads, upload,
-analytics ou integração de envio de e-mail no servidor. O formulário prepara
+Google Analytics ou integração de envio de e-mail no servidor. Há medição de
+tentativas de contato pelo Google Ads após consentimento, descrita em
+[Google Ads](google-ads.md). O formulário prepara
 uma mensagem no dispositivo; o visitante confirma o envio no WhatsApp ou no
 aplicativo de e-mail. O manifest não implica suporte offline: não há service
 worker no código do projeto.
@@ -121,11 +123,12 @@ seu conteúdo não foi exposto nesta revisão. Defaults do código, modelo de en
 e exemplos de deploy não devem ser confundidos com configuração de produção.
 
 SEO inclui canonical, Open Graph, Twitter, imagem social gerada, robots,
-sitemap, manifest, favicons e JSON-LD LegalService. A única URL do sitemap é
-a home. `areaServed` do JSON-LD está fixo em Brasil, embora exista serviceArea
+sitemap, manifest, favicons e JSON-LD LegalService. O sitemap inclui a home
+e /privacidade; a política define canonical próprio. `areaServed` do JSON-LD está fixo em Brasil, embora exista serviceArea
 configurável para o conteúdo visual.
 
-CSP restringe recursos e conexões à própria origem; scripts e estilos permitem
+CSP autoriza a própria origem e destinos Google necessários à medição Ads;
+scripts e estilos permitem
 inline, e unsafe-eval só é habilitado em desenvolvimento. Produção acrescenta
 HSTS e upgrade de requisições inseguras. Há bloqueio de frames, nosniff,
 Referrer-Policy e Permissions-Policy. Integrações externas de analytics,
@@ -137,7 +140,7 @@ CRM, vídeo, fontes, imagens ou APIs exigem avaliar as diretivas relevantes.
 | --- | --- |
 | `npm run lint` | Passou |
 | `npm run typecheck` | Passou |
-| `npm test` | 22 testes passaram, em 3 arquivos |
+| `npm test` | 27 testes passaram, em 4 arquivos |
 | `npm run build` | Passou; página e metadata estáticas |
 
 Os testes de contato usam mock de siteConfig com dados fixos, independente da

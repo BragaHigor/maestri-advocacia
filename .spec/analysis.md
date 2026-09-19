@@ -6,7 +6,8 @@ Revisão local de 18/09/2026, baseada no código e comandos executados.
 
 Landing com uma página, oito seções, menu responsivo, FAQ, calculadora com seis
 regras e formulário que prepara mensagens para WhatsApp/mailto no navegador.
-Não há backend próprio, persistência, autenticação ou analytics.
+Não há backend próprio, persistência de relatos ou autenticação. Há política
+/privacidade e Google Ads com consentimento; não há Google Analytics.
 
 Há separação de domínio, conteúdo, configuração e interface; TypeScript estrito;
 fontes Bodoni Moda/Manrope auto-hospedadas; Framer Motion; calendários Day Picker;
@@ -18,12 +19,12 @@ select/popover Radix; SEO técnico e headers em next.config.ts.
 | --- | --- |
 | npm run lint | Passou, sem diagnósticos |
 | npm run typecheck | Passou |
-| npm test | 22 testes passaram, em 3 arquivos |
+| npm test | 27 testes passaram, em 4 arquivos |
 | npm run build | Passou; home e rotas de metadata pré-renderizadas |
 
 A saída lista `/`, `/_not-found`, `/manifest.webmanifest`, `/opengraph-image`,
-`/robots.txt` e `/sitemap.xml`. A geração informou 7/7 páginas; isso não significa
-sete páginas de produto.
+`/privacidade`, `/robots.txt` e `/sitemap.xml`. A geração informou 8/8 páginas;
+isso inclui rotas técnicas.
 
 O teste de contato usa mock de siteConfig com telefone e e-mail fixos, sem
 depender dos dados institucionais. Cinco novos cenários verificam o dia limite

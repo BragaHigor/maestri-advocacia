@@ -46,7 +46,8 @@ PostCSS carrega @tailwindcss/postcss.
 package.json exige Node.js >=20.9.0 e não fixa versão de npm.
 vercel.json declara framework nextjs. O build atual pré-renderiza home e
 metadata; não há exportação estática configurada. Next/Vercel otimiza imagens.
-Não há banco, SDK de CRM, serviço de envio de e-mail, autenticação ou analytics.
+Não há banco, SDK de CRM, serviço de envio de e-mail, autenticação ou Google
+Analytics. A tag gtag.js do Google Ads carrega após consentimento, sem pacote npm.
 WhatsApp e aplicativo de e-mail são destinos externos abertos pelo navegador.
 
 ## Interface e convenções

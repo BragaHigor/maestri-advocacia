@@ -22,7 +22,7 @@ npm run build
 
 package.json exige Node.js >=20.9.0. Escolha no provedor uma versão suportada
 compatível com o projeto. Todos os checks devem passar antes de publicar.
-Em 18/09/2026, lint, tipos, build e os 22 testes passaram:
+Em 18/09/2026, a suíte tem 27 testes, incluindo cinco cenários de medição Ads:
 veja [diagnóstico](../.spec/analysis.md).
 
 Importe o repositório na Vercel, mantendo a raiz deste projeto e o framework
@@ -62,7 +62,8 @@ Conecte o domínio no provedor e configure NEXT_PUBLIC_SITE_URL com a URL canôn
 HTTPS. Faça novo deploy e confira canonical, Open Graph, Twitter, JSON-LD,
 /robots.txt, /sitemap.xml, /manifest.webmanifest e /opengraph-image.
 
-O sitemap inclui apenas a home. O canonical global é /. Para adicionar páginas,
+O sitemap inclui a home e /privacidade, que define canonical próprio.
+O canonical global é /. Para adicionar páginas,
 defina metadata por rota. O manifest não fornece funcionamento offline.
 
 ## Verificação após publicar
@@ -86,9 +87,13 @@ defina metadata por rota. O manifest não fornece funcionamento offline.
   Referrer-Policy, Permissions-Policy, COOP e DNS-prefetch off.
 - Revisar logs do deploy e funcionamento dos canais no domínio HTTPS.
 
-CSP permite conexões apenas à própria origem e não autoriza automaticamente
-analytics, embeds, CRM ou APIs externas. Produção remove unsafe-eval, mantém
+CSP autoriza a própria origem e destinos Google para medição Ads. A tag só
+carrega após consentimento. Outras integrações exigem revisão. Produção remove unsafe-eval, mantém
 inline para scripts/estilos e acrescenta HSTS e upgrade-insecure-requests.
+
+Após deploy, verificar consentimento e evento com Tag Assistant conforme
+[Google Ads](google-ads.md). Não tratar ausência do script antes de aceitar
+como falha de instalação. Não instalar uma segunda cópia pelo painel.
 
 ## Reversão
 

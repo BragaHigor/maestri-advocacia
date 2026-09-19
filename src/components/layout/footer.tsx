@@ -88,6 +88,7 @@ export function Footer() {
                 {item.label}
               </a>
             ))}
+            <a className={linkClass} href="/privacidade">Política de privacidade</a>
           </div>
         </div>
 

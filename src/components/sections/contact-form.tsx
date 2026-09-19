@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { CalendarIcon } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { measureContactAttempt } from "@/lib/ads";
 import { useCaseType } from "@/context/case-type-context";
 import {
   deadlineOptions,
@@ -151,6 +152,7 @@ export function ContactForm() {
     ].join("\n");
 
     if (siteConfig.contactDestination === "email") {
+      measureContactAttempt();
       window.location.assign(
         createEmailUrl({
           subject: `Solicitação de avaliação jurídica inicial — ${selectedCaseLabel}`,
@@ -171,6 +173,7 @@ export function ContactForm() {
     }
 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    measureContactAttempt();
     setHasAttemptedContact(true);
     setStatus(
       "Prontinho! Abrimos o WhatsApp com sua mensagem já preenchida — é só confirmar o envio por lá. Seus dados continuam aqui. Se não abrir, tente novamente abaixo.",
@@ -436,9 +439,9 @@ export function ContactForm() {
         className="text-[13.5px] leading-[1.64] text-paper/60"
         id="form-privacy"
       >
-        Seus dados são usados apenas para compor a mensagem no seu dispositivo.
-        Nada é armazenado neste site. O envio não cria, por si só, relação de
-        cliente e advogado.
+        O site prepara sua mensagem sem armazenar o relato. Confirme o envio no
+        aplicativo. O contato não cria relação de cliente e advogado.{" "}
+        <a href="/privacidade" className="underline underline-offset-4">Política de privacidade</a>.
       </p>
     </motion.form>
   );
