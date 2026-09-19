@@ -145,7 +145,21 @@ export function calculateDeadline(
   const remainingDays = differenceInCalendarDays(deadlineDate, today);
   const progress = Math.max(0, Math.min(100, (elapsedDays / totalDays) * 100));
 
-  if (remainingDays <= 0) {
+  if (remainingDays === 0) {
+    return {
+      number: 0,
+      unit: "dias restantes",
+      progress: 100,
+      tone: "warning",
+      title: "A data-limite é hoje.",
+      text:
+        `Hoje é o último dia do prazo estimado de ${formatDeadline(rule)} ` +
+        `para ${rule.name}. Busque orientação hoje para confirmar o prazo ` +
+        "aplicável ao seu caso.",
+    };
+  }
+
+  if (remainingDays < 0) {
     const overdueDays = Math.abs(remainingDays);
     return {
       number: overdueDays,

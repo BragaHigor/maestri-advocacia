@@ -1,4 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/config/site", () => ({
+  siteConfig: {
+    whatsapp: "5516991554260",
+    email: "contato@example.com",
+  },
+}));
 
 import {
   CONTACT_NAME_MAX_LENGTH,

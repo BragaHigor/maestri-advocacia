@@ -1,4 +1,7 @@
+"use client";
+
 import { createWhatsappUrl } from "@/lib/contact";
+import { measureContactAttempt } from "@/lib/ads";
 
 const FLOAT_MESSAGE =
   "Olá! Vim pelo site da Maestri Advocacia e gostaria de falar com um advogado.";
@@ -11,6 +14,7 @@ export function WhatsappFloat() {
     <a
       className="whatsapp-pulse fixed right-5 bottom-23 z-90 flex size-14 items-center justify-center rounded-full border border-gold/60 bg-ink text-gold shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_28px_6px_rgba(217,174,60,0.45)] transition duration-200 hover:-translate-y-0.5 hover:border-gold-bright hover:bg-ink-2 hover:text-gold-bright hover:shadow-[0_12px_30px_rgba(0,0,0,0.55),0_0_38px_10px_rgba(217,174,60,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold min-[1220px]:right-6 min-[1220px]:bottom-6 print:hidden"
       href={href}
+      onClick={() => measureContactAttempt()}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 
 import { headerNavigationItems } from "@/data/content";
@@ -13,6 +14,10 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  // Fora da home, as âncoras precisam apontar para a página inicial.
+  const pathname = usePathname();
+  const anchor = (hash: string) => (pathname === "/" ? hash : `/${hash}`);
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (value) => {
@@ -57,7 +62,7 @@ export function Header() {
       >
         <a
           className="mr-auto min-w-0 text-gold-bright"
-          href="#top"
+          href={anchor("#top")}
           aria-label="Maestri Advocacia — início"
         >
           <Brand />
@@ -68,7 +73,7 @@ export function Header() {
             <li key={item.href}>
               <a
                 className="text-[13px] font-medium tracking-[0.005em] whitespace-nowrap text-paper hover:text-gold-bright"
-                href={item.href}
+                href={anchor(item.href)}
               >
                 {item.label}
               </a>
@@ -77,7 +82,7 @@ export function Header() {
           <li>
             <a
               className={`${buttonGold} min-h-11 !px-4 !py-3 text-[13px] whitespace-nowrap`}
-              href="#contato"
+              href={anchor("#contato")}
             >
               Fale com um advogado
             </a>
@@ -113,7 +118,7 @@ export function Header() {
           <a
             ref={index === 0 ? firstLinkRef : undefined}
             className="border-b border-paper/15 py-[15px] text-[17px] font-medium text-paper hover:text-gold-bright"
-            href={item.href}
+            href={anchor(item.href)}
             key={item.href}
             onClick={() => setIsOpen(false)}
           >
@@ -122,7 +127,7 @@ export function Header() {
         ))}
         <a
           className={`${buttonGold} mt-3.5 flex w-full`}
-          href="#contato"
+          href={anchor("#contato")}
           onClick={() => setIsOpen(false)}
         >
           Fale com um advogado
