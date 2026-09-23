@@ -75,6 +75,9 @@ export const metadata: Metadata = {
   },
 };
 
+const NO_SCRIPT_FALLBACK =
+  '[style*="opacity:0"]{opacity:1!important;transform:none!important}';
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -86,6 +89,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <body suppressHydrationWarning>
+        {/* Entrance variants are server-rendered as opacity:0, and only Framer
+            Motion clears them. Without JavaScript nothing ever would, so the
+            editorial content would stay invisible. Matches the exact style
+            string React serializes for those variants. */}
+        <noscript>
+          <style>{NO_SCRIPT_FALLBACK}</style>
+        </noscript>
         <MotionProvider>{children}</MotionProvider>
         <MeasurementConsent />
         <MeasurementTag />

@@ -61,8 +61,14 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
   mantém a data da ferramenta, inclusive entre vencimento e data do fato.
 - Resultado da ferramenta usa useMemo por regra/data, sem atualização na virada
   do dia; CTA não transfere data/resultado nem compõe mensagem contextual.
-- Variantes Framer Motion começam com opacity 0, sem fallback explícito sem JS.
-  Visibilidade e acessibilidade completas requerem teste no navegador.
+- Variantes Framer Motion começam com opacity 0. O HTML servido traz 61
+  elementos com `style="opacity:0"`, limpos apenas pelo Framer Motion no cliente.
+  Desde 22/09/2026 há fallback `<noscript>` no layout que os força visíveis, para
+  cumprir a regra de conteúdo essencial visível sem animações.
+- Movimento reduzido **não** deixa conteúdo invisível. Em motion-dom, apenas
+  `positionalKeys` (width, height, top, left, right, bottom e props de transform)
+  viram instantâneas; `opacity` continua animando. O translateY é suprimido e o
+  fade acontece, que é o comportamento desejado.
 - CSS de movimento reduzido não interrompe marquee. MotionProvider respeita
   preferência em produção, mas usa never em desenvolvimento.
 - Escape global do header tenta focar toggle com menu fechado e pode interferir
