@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion";
 
+import { useSectionEntrance } from "@/hooks/use-section-entrance";
+
 import {
   headingTwoClass,
   introClass,
   kickerClass,
   sectionHeadingClass,
 } from "@/styles/classes";
-import { fadeUp, maskUp, staggerContainer, VIEWPORT } from "@/lib/motion";
+import { fadeUp, maskUp, staggerContainer } from "@/lib/motion";
 
 export function SectionHeading({
   kicker,
@@ -19,13 +21,12 @@ export function SectionHeading({
   title: string;
   description?: string;
 }) {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <motion.div
       className={sectionHeadingClass}
-      variants={staggerContainer(0.12)}
-      initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      key={`${modo}-1`} {...entrada(staggerContainer(0.12))}
     >
       <motion.p className={kickerClass} variants={fadeUp}>
         {kicker}

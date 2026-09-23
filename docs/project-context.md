@@ -52,6 +52,7 @@ pré-renderização com configuração de exportação estática.
 | `src/components/ui/` | Marca, container, títulos, botão, select, popover e calendário |
 | `src/styles/classes.ts` | Classes compartilhadas de tipografia, botões, campos, cards e espaçamento |
 | `src/lib/motion.ts` | Variantes e configuração de entrada das animações |
+| `src/hooks/use-section-entrance.ts` | Decide, por largura, se a seção anima na entrada |
 | `src/app/robots.ts`, `sitemap.ts`, `manifest.ts`, `opengraph-image.tsx` | Rotas técnicas de metadata |
 | `src/components/structured-data.tsx` | JSON-LD LegalService com dados controlados |
 | `next.config.ts` | CSP e headers de segurança |
@@ -219,7 +220,10 @@ nem workflow de CI versionado em `.github/workflows`.
 - Analytics ou conteúdo externo: definir eventos e serviço necessários,
   considerar privacidade e atualizar CSP conforme a integração concreta.
 - Animações: usar variantes compartilhadas e garantir conteúdo acessível
-  quando movimento é reduzido ou JavaScript está indisponível.
+  quando movimento é reduzido ou JavaScript está indisponível. Em novas seções
+  animadas, obter as props por `useSectionEntrance` e incluir o modo na `key`,
+  com um sufixo distinto por raiz: chaves iguais entre elementos irmãos fazem o
+  React reaproveitar o nó em vez de remontar, e a seção não perde a animação.
 
 Antes de escrever código Next, ler o guia pertinente da versão instalada em
 `node_modules/next/dist/docs/`, conforme AGENTS.md. Para dúvidas e uso de APIs

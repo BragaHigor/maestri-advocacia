@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
+
+import { useSectionEntrance } from "@/hooks/use-section-entrance";
 import { CalendarIcon } from "lucide-react";
 
 import { useCaseType } from "@/context/case-type-context";
@@ -19,7 +21,7 @@ import {
   startOfToday,
   toLocalIsoDate,
 } from "@/lib/date";
-import { fadeUp, staggerContainer, VIEWPORT } from "@/lib/motion";
+import { fadeUp, staggerContainer } from "@/lib/motion";
 import { buttonGold, fieldClass, inputClass, labelClass } from "@/styles/classes";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -55,6 +57,8 @@ const selectTriggerClass =
   "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-base text-paper whitespace-normal shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
 
 export function DeadlineCalculator() {
+  const { modo, entrada } = useSectionEntrance();
+
   const { deadlineType, setDeadlineType } = useCaseType();
   const [date, setDate] = useState("");
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -70,10 +74,7 @@ export function DeadlineCalculator() {
   return (
     <motion.div
       className="grid grid-cols-1 items-start gap-[clamp(24px,3vw,40px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
-      variants={staggerContainer(0.12)}
-      initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      key={`${modo}-1`} {...entrada(staggerContainer(0.12))}
     >
       <motion.div
         className="flex min-w-0 flex-col gap-5 rounded-md border border-paper/15 bg-ink-2 p-[clamp(18px,3vw,36px)] min-[521px]:p-[clamp(24px,3vw,36px)]"

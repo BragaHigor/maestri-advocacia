@@ -111,9 +111,20 @@ largura total em uma coluna até 520 px e duas colunas a partir de 521 px.
 
 ## Movimento, FAQ e acessibilidade
 
-Framer Motion aplica variantes de entrada, stagger e animação por visibilidade.
+Framer Motion aplica variantes de entrada, stagger e animação por visibilidade,
+mas apenas a partir de 880 px. Abaixo disso as seções renderizam no estado final,
+sem entrada: `useSectionEntrance` decide o modo e as seções não recebem variantes.
 ScrollProgress usa useScroll/useSpring; header acompanha scrollY para reduzir
-altura após 40 px. Não há componente MotionEffects, contadores ou parallax.
+altura após 40 px. Marquee, progresso de rolagem e pulso do WhatsApp não mudam
+com a largura. Não há componente MotionEffects, contadores ou parallax.
+
+O modo entra na `key` de cada raiz animada porque o Framer Motion resolve o
+comportamento na montagem: trocar `whileInView` por outra prop depois não surte
+efeito e o elemento fica preso no estado inicial. O snapshot de servidor do hook
+é `amplo`, então acima de 880 px nada remonta e o comportamento é idêntico ao
+anterior; só a faixa mobile remonta, uma única vez após a hidratação. A decisão
+é travada na primeira medição para que redimensionar cruzando 880 px não remonte
+seções nem apague o que já foi digitado no formulário.
 
 MotionProvider usa reducedMotion="user" em produção e "never" em desenvolvimento.
 CSS reduzido desliga rolagem suave, brilho e pulso do WhatsApp, mas não o marquee.

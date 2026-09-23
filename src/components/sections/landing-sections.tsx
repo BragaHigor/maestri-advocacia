@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { useSectionEntrance } from "@/hooks/use-section-entrance";
+
 import { siteConfig } from "@/config/site";
 import {
   caseCards,
@@ -17,7 +19,6 @@ import {
   fadeUpSmall,
   maskUp,
   staggerContainer,
-  VIEWPORT,
 } from "@/lib/motion";
 import {
   buttonGhost,
@@ -37,16 +38,15 @@ import { DeadlineCalculator } from "./deadline-calculator";
 import { Faq } from "./faq";
 
 export function HeroSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <>
       <section className="scroll-mt-24" id="top">
         <Container className="grid grid-cols-1 items-center gap-[clamp(36px,5vw,72px)] py-[clamp(44px,6vw,84px)] min-[880px]:min-h-[calc(100svh-150px)] min-[880px]:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
           <motion.div
             className="flex flex-col gap-[clamp(22px,2.6vw,32px)]"
-            variants={staggerContainer(0.12)}
-            initial="hidden"
-            whileInView="show"
-            viewport={VIEWPORT}
+            key={`${modo}-1`} {...entrada(staggerContainer(0.12))}
           >
             <motion.p className={kickerClass} variants={fadeUp}>
               <span className="h-[1.5px] w-[26px] bg-gold" />
@@ -87,10 +87,7 @@ export function HeroSection() {
 
           <motion.div
             className="relative mx-auto w-full min-w-0 max-w-[620px] min-[880px]:max-w-[520px]"
-            variants={fadeIn}
-            initial="hidden"
-            whileInView="show"
-            viewport={VIEWPORT}
+            key={`${modo}-2`} {...entrada(fadeIn)}
           >
             <div className="relative overflow-hidden rounded-md border border-paper/15">
               <Image
@@ -150,6 +147,8 @@ function Marquee() {
 }
 
 export function DeadlineSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section className={sectionClass} id="ferramenta">
       <Container>
@@ -161,10 +160,7 @@ export function DeadlineSection() {
         <DeadlineCalculator />
         <motion.aside
           className="mt-[clamp(20px,3vw,30px)] grid grid-cols-1 items-baseline gap-[8px_20px] border-l-2 border-gold/60 bg-gold/5 p-4 text-[13px] leading-[1.65] text-paper/60 min-[621px]:grid-cols-[auto_minmax(0,1fr)] min-[621px]:p-[18px_20px]"
-          variants={fadeIn}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-3`} {...entrada(fadeIn)}
           aria-labelledby="calc-sources-title"
         >
           <p
@@ -201,6 +197,8 @@ export function DeadlineSection() {
 }
 
 export function CasesSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section
       className={`${sectionClass} border-y border-paper/15 bg-ink-2`}
@@ -214,10 +212,7 @@ export function CasesSection() {
         />
         <motion.div
           className="grid grid-cols-1 gap-5 min-[521px]:grid-cols-[repeat(auto-fit,minmax(288px,1fr))]"
-          variants={staggerContainer(0.08)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-4`} {...entrada(staggerContainer(0.08))}
         >
           {caseCards.map((card) => (
             <motion.article
@@ -254,15 +249,14 @@ const splitAsideClass =
   "flex flex-col gap-4 min-[880px]:sticky min-[880px]:top-[116px]";
 
 export function SignalsSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section className={sectionClass} id="como-reconhecer">
       <Container className={splitClass}>
         <motion.div
           className={splitAsideClass}
-          variants={staggerContainer(0.12)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-5`} {...entrada(staggerContainer(0.12))}
         >
           <motion.p className={kickerClass} variants={fadeUp}>
             Como reconhecer
@@ -280,10 +274,7 @@ export function SignalsSection() {
         </motion.div>
         <motion.ol
           className="flex flex-col"
-          variants={staggerContainer(0.07)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-6`} {...entrada(staggerContainer(0.07))}
         >
           {scamSignals.map((signal, index) => (
             <motion.li
@@ -311,6 +302,8 @@ export function SignalsSection() {
 }
 
 export function ProcessSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section
       className={`${sectionClass} border-y border-paper/15 bg-ink-2`}
@@ -319,10 +312,7 @@ export function ProcessSection() {
       <Container className={splitClass}>
         <motion.div
           className={splitAsideClass}
-          variants={staggerContainer(0.12)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-7`} {...entrada(staggerContainer(0.12))}
         >
           <motion.p className={kickerClass} variants={fadeUp}>
             O caminho
@@ -339,10 +329,7 @@ export function ProcessSection() {
         </motion.div>
         <motion.div
           className="flex flex-col"
-          variants={staggerContainer(0.07)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-8`} {...entrada(staggerContainer(0.07))}
         >
           {processSteps.map((step, index) => (
             <motion.div
@@ -370,15 +357,14 @@ export function ProcessSection() {
 }
 
 export function AboutSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section className={sectionClass} id="quem-atende">
       <Container className="grid grid-cols-1 items-center gap-[clamp(32px,5vw,68px)] min-[880px]:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
         <motion.div
           className="relative order-first min-w-0 overflow-hidden rounded-md border border-paper/15"
-          variants={fadeIn}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-9`} {...entrada(fadeIn)}
         >
           <Image
             className="aspect-4/5 w-full object-cover object-[50%_55%] saturate-90 contrast-[1.03]"
@@ -392,10 +378,7 @@ export function AboutSection() {
         </motion.div>
         <motion.div
           className="flex min-w-0 flex-col gap-5"
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-10`} {...entrada(staggerContainer(0.1))}
         >
           <motion.p className={kickerClass} variants={fadeUp}>
             Quem atende
@@ -481,6 +464,8 @@ export function FaqSection() {
 }
 
 export function ContactSection() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <section
       className={`${sectionClass} relative overflow-hidden border-y border-paper/15 bg-ink-2`}
@@ -498,10 +483,7 @@ export function ContactSection() {
       <Container className="relative grid grid-cols-1 items-start gap-[clamp(36px,5vw,76px)] min-[880px]:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
         <motion.div
           className="flex min-w-0 flex-col gap-[22px]"
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          key={`${modo}-11`} {...entrada(staggerContainer(0.1))}
         >
           <motion.p className={kickerClass} variants={fadeUp}>
             Fale com um advogado
