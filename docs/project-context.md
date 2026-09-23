@@ -11,9 +11,9 @@ perguntas frequentes, calculadora informativa e formulário de contato.
 
 As páginas públicas são `/` e `/privacidade`. Não existem API própria, banco de dados,
 autenticação, painel administrativo, CMS, armazenamento de leads, upload,
-Google Analytics ou integração de envio de e-mail no servidor. Há medição de
-tentativas de contato pelo Google Ads após consentimento, descrita em
-[Google Ads](google-ads.md). O formulário prepara
+Google Analytics ou integração de envio de e-mail no servidor. Há medição de tentativas de contato pelo Google Ads em consent mode avançado,
+descrita em [Google Ads](google-ads.md): a tag carrega em toda visita já negada,
+sem cookies, e passa a gravar apenas após o aceite. O formulário prepara
 uma mensagem no dispositivo; o visitante confirma o envio no WhatsApp ou no
 aplicativo de e-mail. O manifest não implica suporte offline: não há service
 worker no código do projeto.
@@ -172,10 +172,17 @@ nem workflow de CI versionado em `.github/workflows`.
    useMemo; uma página aberta durante a virada do dia não atualiza o prazo
    automaticamente.
 6. **Movimento e conteúdo sem JS:** variantes começam em opacity 0 com
-   `initial="hidden"`, sem fallback explícito. A visibilidade do conteúdo
-   sem JS precisa de verificação e ajuste. CSS de movimento
-   reduzido não desativa a animação contínua do marquee; em desenvolvimento
-   MotionProvider usa reducedMotion="never".
+   `initial="hidden"`, e o HTML servido carrega 61 elementos assim. Sem
+   JavaScript o conteúdo editorial permanece invisível — pendência em aberto.
+   Um fallback `<noscript>` com `<style>` foi tentado em 22/09/2026 e revertido:
+   no site real as informações pararam de carregar em toda visita, mesmo com
+   JavaScript ativo. Antes de tentar de novo, reproduzir a regressão em build de
+   produção, com JavaScript habilitado, e confirmar que o React hidrata.
+   Movimento reduzido não causa invisibilidade: `opacity` não está entre as
+   chaves que o Framer Motion torna instantâneas, então o fade ocorre e só o
+   deslocamento é suprimido. CSS de movimento reduzido continua não desativando
+   a animação contínua do marquee; em desenvolvimento MotionProvider usa
+   reducedMotion="never".
 7. **Escape global no header:** o listener tenta focar o botão do menu mesmo
    com menu fechado, podendo interferir no fechamento de calendário/select.
 8. **Preservação do contato corrigida:** campos mantidos na página após a

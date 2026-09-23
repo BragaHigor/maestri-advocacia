@@ -87,13 +87,15 @@ defina metadata por rota. O manifest não fornece funcionamento offline.
   Referrer-Policy, Permissions-Policy, COOP e DNS-prefetch off.
 - Revisar logs do deploy e funcionamento dos canais no domínio HTTPS.
 
-CSP autoriza a própria origem e destinos Google para medição Ads. A tag só
-carrega após consentimento. Outras integrações exigem revisão. Produção remove unsafe-eval, mantém
+CSP autoriza a própria origem e destinos Google para medição Ads; nenhuma
+diretiva precisou mudar para o consent mode avançado. A tag carrega em toda
+visita, negada por padrão, e só grava cookies após o aceite. Outras integrações exigem revisão. Produção remove unsafe-eval, mantém
 inline para scripts/estilos e acrescenta HSTS e upgrade-insecure-requests.
 
 Após deploy, verificar consentimento e evento com Tag Assistant conforme
-[Google Ads](google-ads.md). Não tratar ausência do script antes de aceitar
-como falha de instalação. Não instalar uma segunda cópia pelo painel.
+[Google Ads](google-ads.md). Com o consent mode avançado o script deve estar
+presente já na primeira visita, antes de qualquer escolha: sua ausência aí, sim,
+indica falha de instalação. Não instalar uma segunda cópia pelo painel.
 
 ## Reversão
 

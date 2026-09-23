@@ -14,7 +14,7 @@
   --font-body: "Manrope", Arial, sans-serif;
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* shadcn/ui theme tokens, mapped onto the site's ink/gold palette */
+  /* Tokens de tema do shadcn/ui, mapeados na paleta ink/gold do site */
   --color-background: var(--color-ink);
   --color-foreground: var(--color-paper);
   --color-popover: var(--color-ink-3);

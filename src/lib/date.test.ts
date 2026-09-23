@@ -9,7 +9,7 @@ import {
   toLocalIsoDate,
 } from "./date";
 
-describe("date utilities", () => {
+describe("utilitários de data", () => {
   it("faz parsing estrito de datas locais", () => {
     expect(parseDateInput("2024-02-29")).toEqual(new Date(2024, 1, 29));
     expect(parseDateInput("2023-02-29")).toBeNull();

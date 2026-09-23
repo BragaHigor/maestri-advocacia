@@ -152,7 +152,7 @@ export function ContactForm() {
     ].join("\n");
 
     if (siteConfig.contactDestination === "email") {
-      measureContactAttempt();
+      measureContactAttempt("contact_form");
       window.location.assign(
         createEmailUrl({
           subject: `Solicitação de avaliação jurídica inicial — ${selectedCaseLabel}`,
@@ -173,7 +173,7 @@ export function ContactForm() {
     }
 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    measureContactAttempt();
+    measureContactAttempt("contact_form");
     setHasAttemptedContact(true);
     setStatus(
       "Prontinho! Abrimos o WhatsApp com sua mensagem já preenchida — é só confirmar o envio por lá. Seus dados continuam aqui. Se não abrir, tente novamente abaixo.",

@@ -22,8 +22,9 @@ export function MeasurementConsent() {
   const [accepted, setAccepted] = useState<boolean | null>(null);
   useEffect(() => {
     const choice = readConsent();
-    applyConsent(choice === true, false);
-    // Defer presentation until the initial client render has completed.
+    // A tag já está carregada e já reflete esta escolha: o snippet inline leu o
+    // mesmo registro antes do gtag.js rodar. Não há nada a aplicar aqui.
+    // Adia a exibição até a primeira renderização no cliente terminar.
     const timer = window.setTimeout(() => {
       setAccepted(choice);
       setVisible(choice === null);

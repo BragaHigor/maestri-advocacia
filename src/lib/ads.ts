@@ -4,6 +4,10 @@ export const CONSENT_KEY = "maestri-measurement-v1";
 export const CONSENT_LIFETIME = 180 * 24 * 60 * 60 * 1000;
 const CONTACT_KEY = "maestri-contact-measured";
 
+// Rótulos fixos. Nunca um campo do formulário, um link ou algo digitado
+// pelo visitante.
+export type ContactSource = "whatsapp_float" | "contact_form";
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -11,9 +15,39 @@ declare global {
   }
 }
 
-let granted = false;
-let started = false;
-let measured = false;
+// Uma entrada por origem de contato já medida no ciclo de vida desta página.
+const measured = new Set<ContactSource>();
+
+const DENIED_SIGNALS = {
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  analytics_storage: "denied",
+} as const;
+
+const GRANTED_SIGNALS = {
+  ...DENIED_SIGNALS,
+  ad_storage: "granted",
+  ad_user_data: "granted",
+} as const;
+
+// Consent mode avançado: a tag existe em toda visita, para que o Google consiga
+// verificá-la, mas começa negada. A escolha salva é lida aqui, antes do gtag.js,
+// então quem já aceitou nunca mede uma página no estado errado.
+export const CONSENT_BOOTSTRAP = `
+window.dataLayer=window.dataLayer||[];
+function gtag(){window.dataLayer.push(arguments)}
+window.gtag=gtag;
+;(function(){
+var ok=false;
+try{var c=JSON.parse(localStorage.getItem(${JSON.stringify(CONSENT_KEY)})||"null");
+ok=!!(c&&c.version===1&&c.accepted===true&&typeof c.at==="number"&&c.at<=Date.now()&&Date.now()-c.at<${CONSENT_LIFETIME})}catch(e){}
+gtag("consent","default",ok?${JSON.stringify(GRANTED_SIGNALS)}:${JSON.stringify(DENIED_SIGNALS)});
+gtag("set","ads_data_redaction",!ok);
+gtag("js",new Date());
+gtag("config",${JSON.stringify(ADS_ID)},{send_page_view:false,allow_ad_personalization_signals:false,allow_enhanced_conversions:false,page_location:location.origin+location.pathname,page_referrer:""})
+})()
+`.trim();
 
 export function readConsent(): boolean | null {
   try {
@@ -21,58 +55,38 @@ export function readConsent(): boolean | null {
     if (choice?.version === 1 && typeof choice.accepted === "boolean" &&
         typeof choice.at === "number" && choice.at <= Date.now() &&
         Date.now() - choice.at < CONSENT_LIFETIME) return choice.accepted;
-  } catch { /* Storage unavailable or invalid: require a new choice. */ }
+  } catch { /* Armazenamento indisponível ou inválido: exigir nova escolha. */ }
   return null;
 }
 
+// Atualiza a tag já carregada. Recusar a mantém sem cookies; o script nunca é
+// descarregado, então a página diante do visitante não é recarregada.
 export function applyConsent(accepted: boolean, persist = true) {
-  granted = accepted;
   if (persist) {
     try { localStorage.setItem(CONSENT_KEY, JSON.stringify({ version: 1, accepted, at: Date.now() })); }
-    catch { /* The choice remains valid for this page only. */ }
+    catch { /* A escolha vale apenas para esta página. */ }
   }
-  const denied = { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: "denied" };
-  if (!accepted) {
-    window.gtag?.("consent", "update", denied);
-    return;
-  }
-  if (!started) {
-    window.dataLayer = window.dataLayer ?? [];
-    window.gtag = function () {
-      // gtag.js consumes Arguments objects, as in Google's official bootstrap.
-      // eslint-disable-next-line prefer-rest-params
-      window.dataLayer!.push(arguments);
-    };
-    window.gtag("consent", "default", denied);
-  }
-  window.gtag?.("consent", "update", { ...denied, ad_storage: "granted", ad_user_data: "granted" });
-  if (started) return;
-  started = true;
-  window.gtag?.("set", "ads_data_redaction", true);
-  window.gtag?.("js", new Date());
-  window.gtag?.("config", ADS_ID, {
-    send_page_view: false,
-    allow_ad_personalization_signals: false,
-    allow_enhanced_conversions: false,
-    page_location: window.location.origin + window.location.pathname,
-    page_referrer: "",
-  });
-  const script = document.createElement("script");
-  script.id = "maestri-google-ads";
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${ADS_ID}`;
-  document.head.appendChild(script);
+  window.gtag?.("set", "ads_data_redaction", !accepted);
+  window.gtag?.("consent", "update", accepted ? GRANTED_SIGNALS : DENIED_SIGNALS);
 }
 
-// No arguments: form fields and external link URLs cannot enter this event.
-export function measureContactAttempt(): boolean {
-  if (!granted || !window.gtag || measured) return false;
-  try { if (sessionStorage.getItem(CONTACT_KEY)) return false; }
-  catch { /* In-memory deduplication remains available. */ }
-  measured = true;
-  try { sessionStorage.setItem(CONTACT_KEY, "1"); } catch { /* Optional storage. */ }
+// Só um rótulo fixo de origem viaja no evento: campos do formulário e URLs de
+// links externos não entram nele. No consent mode avançado um visitante que
+// recusou ainda chega aqui, e o Google recebe o ping sem cookies de publicidade.
+//
+// Uma conversão por origem por visita. O botão "Abrir novamente" envia o mesmo
+// formulário, então reutiliza "contact_form" e repetir uma tentativa que não
+// abriu não é contado uma segunda vez.
+export function measureContactAttempt(source: ContactSource): boolean {
+  if (!window.gtag || measured.has(source)) return false;
+  const key = `${CONTACT_KEY}:${source}`;
+  try { if (sessionStorage.getItem(key)) return false; }
+  catch { /* A deduplicação em memória continua disponível. */ }
+  measured.add(source);
+  try { sessionStorage.setItem(key, "1"); } catch { /* Armazenamento opcional. */ }
   window.gtag("event", "conversion", {
     send_to: ADS_CONVERSION,
+    contact_source: source,
     page_location: window.location.origin + window.location.pathname,
     page_referrer: "",
   });

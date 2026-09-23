@@ -13,9 +13,9 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { MotionProvider } from "@/components/motion-provider";
 import { MeasurementConsent } from "@/components/measurement-consent";
+import { MeasurementTag } from "@/components/measurement-tag";
 
-const title =
-  "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
+const title = "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
 const description =
   "Advocacia dedicada a fraudes bancárias e Direito do Consumidor: golpes de Pix, cartão de crédito e compras online. Calcule seu prazo e fale com um advogado.";
 
@@ -81,12 +81,17 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="pt-BR">
       <body suppressHydrationWarning>
         <MotionProvider>{children}</MotionProvider>
         <MeasurementConsent />
+        <MeasurementTag />
       </body>
     </html>
   );

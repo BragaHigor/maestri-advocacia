@@ -117,8 +117,11 @@ altura após 40 px. Não há componente MotionEffects, contadores ou parallax.
 
 MotionProvider usa reducedMotion="user" em produção e "never" em desenvolvimento.
 CSS reduzido desliga rolagem suave, brilho e pulso do WhatsApp, mas não o marquee.
-Variantes de entrada começam com opacity 0, sem fallback explícito para ausência
-de JavaScript. Visibilidade sem JS não foi validada nesta revisão.
+Variantes de entrada começam com opacity 0 e são servidas assim no HTML, sem
+fallback: sem JavaScript o conteúdo não fica legível. Um fallback `<noscript>` foi
+tentado e revertido em 22/09/2026 por regressão em produção; ver o diagnóstico.
+Com movimento reduzido o conteúdo aparece normalmente: o Framer Motion só torna
+instantâneas as chaves posicionais, e `opacity` não é uma delas.
 
 FAQ usa details/summary com name para exclusividade; seus wrappers são animados.
 Há link de pular para o conteúdo, labels, foco visível e mensagens de estado/erro.
@@ -151,10 +154,16 @@ não verificados na resposta de um deploy nesta revisão.
 
 ## Manutenção
 
-`src/lib/ads.ts` centraliza consentimento básico e evento de tentativa de contato.
-`MeasurementConsent` no layout carrega a tag apenas após aceitar; escolhas ficam
-em localStorage por 180 dias, e sessionStorage limita o evento a um por visita.
-Formulário validado e botão flutuante usam o mesmo evento, sem campos pessoais.
+`src/lib/ads.ts` centraliza o snippet de consentimento, a atualização de estado e o
+evento de tentativa de contato. `MeasurementTag` renderiza, no layout raiz e com
+`beforeInteractive`, o bootstrap inline e o gtag.js: consent mode avançado, tag
+presente em toda visita e negada até o aceite. `MeasurementConsent` apenas decide a
+exibição do aviso e aplica mudanças de escolha; escolhas ficam
+em localStorage por 180 dias. O evento é limitado a um por origem por visita,
+com uma chave de sessionStorage para cada uma. Formulário validado e botão
+flutuante compartilham a mesma ação de conversão, sem campos pessoais, e se
+identificam por `contact_source` (`contact_form` ou `whatsapp_float`). O botão
+de reabrir o WhatsApp reutiliza a origem do formulário e não conta de novo.
 `CookiePreferences` permite reabrir as escolhas na política de privacidade.
 Não há conversão de visita, GA4 ou campos monetários no evento.
 Veja [integração Ads](../docs/google-ads.md) para limites e validação.

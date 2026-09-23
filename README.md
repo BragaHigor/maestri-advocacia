@@ -109,5 +109,6 @@ Referências: [arquitetura](.spec/architecture.md), [stack](.spec/stack.md),
 [deploy](docs/deployment.md).
 
 A preparação de medição, os dados necessários da conta e as pendências estão
-em [Google Ads e privacidade](docs/google-ads.md). A tag carrega após consentimento;
-não há Google Analytics ou medição de visita como conversão.
+em [Google Ads e privacidade](docs/google-ads.md). A tag usa consent mode avançado: carrega em toda visita já negada e sem cookies,
+e passa a gravar após o aceite. Não há Google Analytics ou medição de visita
+como conversão.

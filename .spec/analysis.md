@@ -6,6 +6,8 @@ Revisão local de 18/09/2026, baseada no código e comandos executados.
 
 Landing com uma página, oito seções, menu responsivo, FAQ, calculadora com seis
 regras e formulário que prepara mensagens para WhatsApp/mailto no navegador.
+Desde 22/09/2026 a medição usa consent mode avançado: a tag carrega negada em
+toda visita e só grava cookies após o aceite.
 Não há backend próprio, persistência de relatos ou autenticação. Há política
 /privacidade e Google Ads com consentimento; não há Google Analytics.
 
@@ -59,8 +61,21 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
   mantém a data da ferramenta, inclusive entre vencimento e data do fato.
 - Resultado da ferramenta usa useMemo por regra/data, sem atualização na virada
   do dia; CTA não transfere data/resultado nem compõe mensagem contextual.
-- Variantes Framer Motion começam com opacity 0, sem fallback explícito sem JS.
-  Visibilidade e acessibilidade completas requerem teste no navegador.
+- Variantes Framer Motion começam com opacity 0. O HTML servido traz 61
+  elementos com `style="opacity:0"`, limpos apenas pelo Framer Motion no cliente.
+  Sem JavaScript nada os limpa e o conteúdo editorial não aparece: a regra de
+  conteúdo essencial visível sem animações continua **não atendida**.
+- Em 22/09/2026 tentou-se um fallback `<noscript>` com `<style>` no layout raiz.
+  Foi **revertido**: no site real as informações deixaram de carregar em toda
+  visita, com JavaScript ativo. O mecanismo não foi isolado; a hipótese principal
+  é falha de hidratação do React em torno de `<noscript>`/`<style>`, não
+  confirmada. Não repetir a abordagem sem reproduzir o efeito antes.
+  A verificação que aprovou o fallback era insuficiente: validou o CSS numa
+  cópia do HTML sem scripts, e nunca a página real com JavaScript habilitado.
+- Movimento reduzido **não** deixa conteúdo invisível. Em motion-dom, apenas
+  `positionalKeys` (width, height, top, left, right, bottom e props de transform)
+  viram instantâneas; `opacity` continua animando. O translateY é suprimido e o
+  fade acontece, que é o comportamento desejado.
 - CSS de movimento reduzido não interrompe marquee. MotionProvider respeita
   preferência em produção, mas usa never em desenvolvimento.
 - Escape global do header tenta focar toggle com menu fechado e pode interferir
