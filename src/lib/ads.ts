@@ -4,6 +4,9 @@ export const CONSENT_KEY = "maestri-measurement-v1";
 export const CONSENT_LIFETIME = 180 * 24 * 60 * 60 * 1000;
 const CONTACT_KEY = "maestri-contact-measured";
 
+// Fixed labels. Never a form field, a link or anything the visitor typed.
+export type ContactSource = "whatsapp_float" | "contact_form";
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -11,7 +14,8 @@ declare global {
   }
 }
 
-let measured = false;
+// One entry per contact source already measured in this page's lifetime.
+const measured = new Set<ContactSource>();
 
 const DENIED_SIGNALS = {
   ad_storage: "denied",
@@ -65,17 +69,23 @@ export function applyConsent(accepted: boolean, persist = true) {
   window.gtag?.("consent", "update", accepted ? GRANTED_SIGNALS : DENIED_SIGNALS);
 }
 
-// No arguments: form fields and external link URLs cannot enter this event.
-// Under advanced consent mode a denied visitor still reaches this point, and
-// Google receives the ping without advertising cookies or identifiers.
-export function measureContactAttempt(): boolean {
-  if (!window.gtag || measured) return false;
-  try { if (sessionStorage.getItem(CONTACT_KEY)) return false; }
+// Only a fixed source label travels with the event: form fields and external
+// link URLs cannot enter it. Under advanced consent mode a denied visitor still
+// reaches this point, and Google receives the ping without advertising cookies.
+//
+// One conversion per source per visit. The form's "open again" button submits
+// the same form, so it reuses "contact_form" and retrying an attempt that did
+// not open is not counted a second time.
+export function measureContactAttempt(source: ContactSource): boolean {
+  if (!window.gtag || measured.has(source)) return false;
+  const key = `${CONTACT_KEY}:${source}`;
+  try { if (sessionStorage.getItem(key)) return false; }
   catch { /* In-memory deduplication remains available. */ }
-  measured = true;
-  try { sessionStorage.setItem(CONTACT_KEY, "1"); } catch { /* Optional storage. */ }
+  measured.add(source);
+  try { sessionStorage.setItem(key, "1"); } catch { /* Optional storage. */ }
   window.gtag("event", "conversion", {
     send_to: ADS_CONVERSION,
+    contact_source: source,
     page_location: window.location.origin + window.location.pathname,
     page_referrer: "",
   });

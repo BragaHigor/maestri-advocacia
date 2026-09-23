@@ -159,8 +159,11 @@ evento de tentativa de contato. `MeasurementTag` renderiza, no layout raiz e com
 `beforeInteractive`, o bootstrap inline e o gtag.js: consent mode avançado, tag
 presente em toda visita e negada até o aceite. `MeasurementConsent` apenas decide a
 exibição do aviso e aplica mudanças de escolha; escolhas ficam
-em localStorage por 180 dias, e sessionStorage limita o evento a um por visita.
-Formulário validado e botão flutuante usam o mesmo evento, sem campos pessoais.
+em localStorage por 180 dias. O evento é limitado a um por origem por visita,
+com uma chave de sessionStorage para cada uma. Formulário validado e botão
+flutuante compartilham a mesma ação de conversão, sem campos pessoais, e se
+identificam por `contact_source` (`contact_form` ou `whatsapp_float`). O botão
+de reabrir o WhatsApp reutiliza a origem do formulário e não conta de novo.
 `CookiePreferences` permite reabrir as escolhas na política de privacidade.
 Não há conversão de visita, GA4 ou campos monetários no evento.
 Veja [integração Ads](../docs/google-ads.md) para limites e validação.

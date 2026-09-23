@@ -33,8 +33,24 @@ Em modo avançado a tag envia um ping sem cookies a cada carregamento, mesmo sob
 recusa, para `pagead2.googlesyndication.com/ccm/collect`. Isso foi observado no
 navegador e é esperado; `send_page_view: false` segue evitando o page_view
 convencional. O formulário mede somente depois da validação e tentativa de abrir um canal;
-o botão flutuante mede ao clicar. Ambos compartilham uma conversão por sessão
-da aba, com indicador em sessionStorage e fallback em memória. Não se mede
+o botão flutuante mede ao clicar. Desde 22/09/2026 a deduplicação é **por
+origem**, não global: cada origem tem sua própria chave em sessionStorage, com
+fallback em memória. As origens são rótulos fixos, `whatsapp_float` e
+`contact_form`, e viajam no evento como `contact_source`.
+
+Antes havia uma única chave compartilhada, então a primeira origem a disparar
+bloqueava todas as outras na mesma aba. Como o botão flutuante aparece desde o
+primeiro instante, na prática o formulário quase nunca era contabilizado.
+
+São no máximo duas conversões por visita. O botão "Abrir novamente o WhatsApp"
+é um submit do mesmo formulário e reutiliza `contact_form`, então repetir uma
+tentativa que não abriu não gera conversão nova.
+
+Atenção ao ler relatórios: o Google Ads não segmenta uma mesma ação de conversão
+por `contact_source`. O parâmetro serve para diagnóstico no Tag Assistant. Para
+separar os canais no painel seria preciso criar ações de conversão distintas na
+conta e apontar cada origem para o seu `send_to` — alteração de configuração da
+conta, não realizada. Não se mede
 carregamento da página como Contato. Nenhum campo do formulário, link wa.me,
 valor ou moeda entra no evento. page_location usa origem e caminho sem query
 ou fragmento; page_referrer é vazio. Identificadores publicitários e dados

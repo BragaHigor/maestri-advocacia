@@ -97,24 +97,59 @@ describe("consent updates and contact measurement", () => {
     expect(ads.readConsent()).toBe(false);
   });
 
-  it("measures once per visit without values, form fields or query strings", async () => {
+  it("measures the float and the form separately, once each per visit", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
-    expect(ads.measureContactAttempt()).toBe(true);
-    expect(ads.measureContactAttempt()).toBe(false);
+    expect(ads.measureContactAttempt("whatsapp_float")).toBe(true);
+    expect(ads.measureContactAttempt("contact_form")).toBe(true);
+    // Each source is capped on its own, so neither swallows the other.
+    expect(ads.measureContactAttempt("whatsapp_float")).toBe(false);
+    expect(ads.measureContactAttempt("contact_form")).toBe(false);
+    const conversions = (window.dataLayer as Array<IArguments>)
+      .map((c) => Array.from(c))
+      .filter((c) => c[0] === "event");
+    expect(conversions).toHaveLength(2);
+    expect(conversions.map((c) => (c[2] as { contact_source: string }).contact_source))
+      .toEqual(["whatsapp_float", "contact_form"]);
+  });
+
+  it("does not count the form's open-again button as a second conversion", async () => {
+    const ads = await runBootstrap();
+    ads.applyConsent(true);
+    // First valid submission.
+    expect(ads.measureContactAttempt("contact_form")).toBe(true);
+    // "Abrir novamente o WhatsApp" is a submit on the same form: same source.
+    expect(ads.measureContactAttempt("contact_form")).toBe(false);
+    expect((window.dataLayer as Array<IArguments>)
+      .map((c) => Array.from(c)).filter((c) => c[0] === "event")).toHaveLength(1);
+  });
+
+  it("sends no values, form fields or query strings with the event", async () => {
+    const ads = await runBootstrap();
+    ads.applyConsent(true);
+    ads.measureContactAttempt("contact_form");
     const commands = window.dataLayer as Array<IArguments>;
     expect(Array.from(commands.at(-1)!)).toEqual(["event", "conversion", {
-      send_to: ads.ADS_CONVERSION, page_location: "https://www.maestriadv.com.br/", page_referrer: "",
+      send_to: ads.ADS_CONVERSION,
+      contact_source: "contact_form",
+      page_location: "https://www.maestriadv.com.br/",
+      page_referrer: "",
     }]);
+  });
+
+  it("keeps the cap across page views of the same visit", async () => {
+    const ads = await runBootstrap();
+    ads.applyConsent(true);
+    expect(ads.measureContactAttempt("whatsapp_float")).toBe(true);
     vi.resetModules();
     const nextPage = await import("./ads");
-    expect(nextPage.measureContactAttempt()).toBe(false);
+    expect(nextPage.measureContactAttempt("whatsapp_float")).toBe(false);
   });
 
   it("still measures after a refusal, cookieless, as advanced mode requires", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(false);
-    expect(ads.measureContactAttempt()).toBe(true);
+    expect(ads.measureContactAttempt("contact_form")).toBe(true);
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
     expect(commands.at(-1)?.[0]).toBe("event");
     expect(commands.some((c) => c[0] === "set" && c[1] === "ads_data_redaction" && c[2] === true)).toBe(true);
@@ -122,7 +157,7 @@ describe("consent updates and contact measurement", () => {
 
   it("does nothing when the tag failed to load", async () => {
     const ads = await import("./ads");
-    expect(ads.measureContactAttempt()).toBe(false);
+    expect(ads.measureContactAttempt("contact_form")).toBe(false);
     expect(() => ads.applyConsent(true)).not.toThrow();
   });
 });
