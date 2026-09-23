@@ -2,17 +2,18 @@
 
 import { motion } from "framer-motion";
 
+import { useSectionEntrance } from "@/hooks/use-section-entrance";
+
 import { faqItems } from "@/data/content";
-import { fadeUpSmall, staggerContainer, VIEWPORT } from "@/lib/motion";
+import { fadeUpSmall, staggerContainer } from "@/lib/motion";
 
 export function Faq() {
+  const { modo, entrada } = useSectionEntrance();
+
   return (
     <motion.div
       className="border-t border-paper/15"
-      variants={staggerContainer(0.07)}
-      initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
+      key={`${modo}-1`} {...entrada(staggerContainer(0.07))}
     >
       {faqItems.map((item) => (
         <motion.details
