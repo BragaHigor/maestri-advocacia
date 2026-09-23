@@ -63,8 +63,15 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
   do dia; CTA não transfere data/resultado nem compõe mensagem contextual.
 - Variantes Framer Motion começam com opacity 0. O HTML servido traz 61
   elementos com `style="opacity:0"`, limpos apenas pelo Framer Motion no cliente.
-  Desde 22/09/2026 há fallback `<noscript>` no layout que os força visíveis, para
-  cumprir a regra de conteúdo essencial visível sem animações.
+  Sem JavaScript nada os limpa e o conteúdo editorial não aparece: a regra de
+  conteúdo essencial visível sem animações continua **não atendida**.
+- Em 22/09/2026 tentou-se um fallback `<noscript>` com `<style>` no layout raiz.
+  Foi **revertido**: no site real as informações deixaram de carregar em toda
+  visita, com JavaScript ativo. O mecanismo não foi isolado; a hipótese principal
+  é falha de hidratação do React em torno de `<noscript>`/`<style>`, não
+  confirmada. Não repetir a abordagem sem reproduzir o efeito antes.
+  A verificação que aprovou o fallback era insuficiente: validou o CSS numa
+  cópia do HTML sem scripts, e nunca a página real com JavaScript habilitado.
 - Movimento reduzido **não** deixa conteúdo invisível. Em motion-dom, apenas
   `positionalKeys` (width, height, top, left, right, bottom e props de transform)
   viram instantâneas; `opacity` continua animando. O translateY é suprimido e o

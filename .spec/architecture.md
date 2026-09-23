@@ -117,11 +117,11 @@ altura após 40 px. Não há componente MotionEffects, contadores ou parallax.
 
 MotionProvider usa reducedMotion="user" em produção e "never" em desenvolvimento.
 CSS reduzido desliga rolagem suave, brilho e pulso do WhatsApp, mas não o marquee.
-Variantes de entrada começam com opacity 0 e são servidas assim no HTML. O layout
-inclui um `<noscript>` que neutraliza esse estado quando não há JavaScript, de modo
-que o conteúdo permanece legível. Com movimento reduzido o conteúdo aparece
-normalmente: o Framer Motion só torna instantâneas as chaves posicionais, e
-`opacity` não é uma delas.
+Variantes de entrada começam com opacity 0 e são servidas assim no HTML, sem
+fallback: sem JavaScript o conteúdo não fica legível. Um fallback `<noscript>` foi
+tentado e revertido em 22/09/2026 por regressão em produção; ver o diagnóstico.
+Com movimento reduzido o conteúdo aparece normalmente: o Framer Motion só torna
+instantâneas as chaves posicionais, e `opacity` não é uma delas.
 
 FAQ usa details/summary com name para exclusividade; seus wrappers são animados.
 Há link de pular para o conteúdo, labels, foco visível e mensagens de estado/erro.
