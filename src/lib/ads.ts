@@ -4,7 +4,8 @@ export const CONSENT_KEY = "maestri-measurement-v1";
 export const CONSENT_LIFETIME = 180 * 24 * 60 * 60 * 1000;
 const CONTACT_KEY = "maestri-contact-measured";
 
-// Fixed labels. Never a form field, a link or anything the visitor typed.
+// Rótulos fixos. Nunca um campo do formulário, um link ou algo digitado
+// pelo visitante.
 export type ContactSource = "whatsapp_float" | "contact_form";
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
   }
 }
 
-// One entry per contact source already measured in this page's lifetime.
+// Uma entrada por origem de contato já medida no ciclo de vida desta página.
 const measured = new Set<ContactSource>();
 
 const DENIED_SIGNALS = {
@@ -30,9 +31,9 @@ const GRANTED_SIGNALS = {
   ad_user_data: "granted",
 } as const;
 
-// Advanced consent mode: the tag is present on every page view so Google can
-// verify it, but it starts denied. A stored acceptance is read here, ahead of
-// gtag.js, so a returning visitor never measures a page under the wrong state.
+// Consent mode avançado: a tag existe em toda visita, para que o Google consiga
+// verificá-la, mas começa negada. A escolha salva é lida aqui, antes do gtag.js,
+// então quem já aceitou nunca mede uma página no estado errado.
 export const CONSENT_BOOTSTRAP = `
 window.dataLayer=window.dataLayer||[];
 function gtag(){window.dataLayer.push(arguments)}
@@ -54,35 +55,35 @@ export function readConsent(): boolean | null {
     if (choice?.version === 1 && typeof choice.accepted === "boolean" &&
         typeof choice.at === "number" && choice.at <= Date.now() &&
         Date.now() - choice.at < CONSENT_LIFETIME) return choice.accepted;
-  } catch { /* Storage unavailable or invalid: require a new choice. */ }
+  } catch { /* Armazenamento indisponível ou inválido: exigir nova escolha. */ }
   return null;
 }
 
-// Updates the already-loaded tag. Refusing keeps it cookieless; it never
-// unloads the script, so the page in front of the visitor is not reloaded.
+// Atualiza a tag já carregada. Recusar a mantém sem cookies; o script nunca é
+// descarregado, então a página diante do visitante não é recarregada.
 export function applyConsent(accepted: boolean, persist = true) {
   if (persist) {
     try { localStorage.setItem(CONSENT_KEY, JSON.stringify({ version: 1, accepted, at: Date.now() })); }
-    catch { /* The choice remains valid for this page only. */ }
+    catch { /* A escolha vale apenas para esta página. */ }
   }
   window.gtag?.("set", "ads_data_redaction", !accepted);
   window.gtag?.("consent", "update", accepted ? GRANTED_SIGNALS : DENIED_SIGNALS);
 }
 
-// Only a fixed source label travels with the event: form fields and external
-// link URLs cannot enter it. Under advanced consent mode a denied visitor still
-// reaches this point, and Google receives the ping without advertising cookies.
+// Só um rótulo fixo de origem viaja no evento: campos do formulário e URLs de
+// links externos não entram nele. No consent mode avançado um visitante que
+// recusou ainda chega aqui, e o Google recebe o ping sem cookies de publicidade.
 //
-// One conversion per source per visit. The form's "open again" button submits
-// the same form, so it reuses "contact_form" and retrying an attempt that did
-// not open is not counted a second time.
+// Uma conversão por origem por visita. O botão "Abrir novamente" envia o mesmo
+// formulário, então reutiliza "contact_form" e repetir uma tentativa que não
+// abriu não é contado uma segunda vez.
 export function measureContactAttempt(source: ContactSource): boolean {
   if (!window.gtag || measured.has(source)) return false;
   const key = `${CONTACT_KEY}:${source}`;
   try { if (sessionStorage.getItem(key)) return false; }
-  catch { /* In-memory deduplication remains available. */ }
+  catch { /* A deduplicação em memória continua disponível. */ }
   measured.add(source);
-  try { sessionStorage.setItem(key, "1"); } catch { /* Optional storage. */ }
+  try { sessionStorage.setItem(key, "1"); } catch { /* Armazenamento opcional. */ }
   window.gtag("event", "conversion", {
     send_to: ADS_CONVERSION,
     contact_source: source,

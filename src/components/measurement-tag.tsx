@@ -2,21 +2,22 @@ import Script from "next/script";
 
 import { ADS_ID, CONSENT_BOOTSTRAP } from "@/lib/ads";
 
-// Both scripts use beforeInteractive so they land in the served HTML head, in
-// this order: consent defaults must be queued before gtag.js reads dataLayer.
-// The inline payload is a build-time constant, never visitor input.
+// Os dois scripts usam beforeInteractive para irem ao head do HTML servido,
+// nesta ordem: os padrões de consentimento precisam ser enfileirados antes do
+// gtag.js ler o dataLayer. O conteúdo inline é uma constante de build, nunca
+// entrada do visitante.
 export function MeasurementTag() {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document --
-          Pages Router rule. The App Router guide in node_modules/next/dist/docs requires
-          beforeInteractive scripts to live in the root layout, which is where this renders. */}
+          Regra do Pages Router. O guia do App Router em node_modules/next/dist/docs exige
+          que scripts beforeInteractive fiquem no layout raiz, que é onde este é renderizado. */}
       <Script
         id="maestri-consent-default"
         strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: CONSENT_BOOTSTRAP }}
       />
-      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- same as above. */}
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- idem acima. */}
       <Script
         id="maestri-google-ads"
         strategy="beforeInteractive"

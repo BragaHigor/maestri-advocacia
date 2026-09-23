@@ -21,7 +21,7 @@ import {
   sanitizeMessage,
 } from "./contact";
 
-describe("contact links", () => {
+describe("links de contato", () => {
   it("normaliza e limita texto controlado pelo visitante", () => {
     expect(sanitizeMessage("  Olá\u0000\r\nMundo  ")).toBe("Olá\nMundo");
     expect(sanitizeMessage("a".repeat(4_000))).toHaveLength(3_500);

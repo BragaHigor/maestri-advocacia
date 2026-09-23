@@ -5,8 +5,8 @@ function storage() {
   return { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) };
 }
 
-// Runs the inline bootstrap the way the browser does, against the stubbed
-// globals, so the snippet shipped in the HTML head is exercised by the suite.
+// Executa o snippet inline como o navegador faria, sobre os globais simulados,
+// para que o código enviado no head do HTML seja exercitado pela suíte.
 async function runBootstrap() {
   const ads = await import("./ads");
   new Function("window", "localStorage", "location", `${ads.CONSENT_BOOTSTRAP}`)(
@@ -22,8 +22,8 @@ beforeEach(() => {
   vi.stubGlobal("window", { location: { origin: "https://www.maestriadv.com.br", pathname: "/", search: "?relato=private" } });
 });
 
-describe("advanced consent mode bootstrap", () => {
-  it("is syntactically valid and configures the tag without a page view", async () => {
+describe("snippet inicial do consent mode avançado", () => {
+  it("tem sintaxe válida e configura a tag sem medir visualização de página", async () => {
     const ads = await runBootstrap();
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
     expect(commands.at(-1)).toEqual(["config", ads.ADS_ID, expect.objectContaining({
@@ -35,7 +35,7 @@ describe("advanced consent mode bootstrap", () => {
     })]);
   });
 
-  it("starts denied and redacted when no choice was recorded", async () => {
+  it("começa negado e com redução de dados quando não há escolha registrada", async () => {
     await runBootstrap();
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
     expect(commands[0]).toEqual(["consent", "default", {
@@ -45,7 +45,7 @@ describe("advanced consent mode bootstrap", () => {
     expect(commands[1]).toEqual(["set", "ads_data_redaction", true]);
   });
 
-  it("starts granted for a visitor who already accepted", async () => {
+  it("começa concedido para quem já aceitou", async () => {
     const ads = await import("./ads");
     localStorage.setItem(ads.CONSENT_KEY, JSON.stringify({ version: 1, accepted: true, at: Date.now() }));
     await runBootstrap();
@@ -57,7 +57,7 @@ describe("advanced consent mode bootstrap", () => {
     expect(commands[1]).toEqual(["set", "ads_data_redaction", false]);
   });
 
-  it("stays denied for a stored refusal, and for expired or malformed records", async () => {
+  it("permanece negado com recusa salva e com registro expirado ou malformado", async () => {
     const ads = await import("./ads");
     for (const value of [
       JSON.stringify({ version: 1, accepted: false, at: Date.now() }),
@@ -74,8 +74,8 @@ describe("advanced consent mode bootstrap", () => {
   });
 });
 
-describe("consent updates and contact measurement", () => {
-  it("grants only advertising storage and user data when accepting", async () => {
+describe("atualização de consentimento e medição de contato", () => {
+  it("concede apenas armazenamento de anúncios e dados do usuário ao aceitar", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
@@ -87,7 +87,7 @@ describe("consent updates and contact measurement", () => {
     expect(ads.readConsent()).toBe(true);
   });
 
-  it("returns the tag to denied and redacted when revoking", async () => {
+  it("devolve a tag para negada e com redução de dados ao revogar", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
     ads.applyConsent(false);
@@ -97,12 +97,12 @@ describe("consent updates and contact measurement", () => {
     expect(ads.readConsent()).toBe(false);
   });
 
-  it("measures the float and the form separately, once each per visit", async () => {
+  it("mede o botão flutuante e o formulário separadamente, um de cada por visita", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
     expect(ads.measureContactAttempt("whatsapp_float")).toBe(true);
     expect(ads.measureContactAttempt("contact_form")).toBe(true);
-    // Each source is capped on its own, so neither swallows the other.
+    // Cada origem tem seu próprio teto, então nenhuma engole a outra.
     expect(ads.measureContactAttempt("whatsapp_float")).toBe(false);
     expect(ads.measureContactAttempt("contact_form")).toBe(false);
     const conversions = (window.dataLayer as Array<IArguments>)
@@ -113,18 +113,18 @@ describe("consent updates and contact measurement", () => {
       .toEqual(["whatsapp_float", "contact_form"]);
   });
 
-  it("does not count the form's open-again button as a second conversion", async () => {
+  it("não conta o botão de reabrir do formulário como segunda conversão", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
-    // First valid submission.
+    // Primeiro envio válido.
     expect(ads.measureContactAttempt("contact_form")).toBe(true);
-    // "Abrir novamente o WhatsApp" is a submit on the same form: same source.
+    // "Abrir novamente o WhatsApp" é um submit do mesmo formulário: mesma origem.
     expect(ads.measureContactAttempt("contact_form")).toBe(false);
     expect((window.dataLayer as Array<IArguments>)
       .map((c) => Array.from(c)).filter((c) => c[0] === "event")).toHaveLength(1);
   });
 
-  it("sends no values, form fields or query strings with the event", async () => {
+  it("não envia valores, campos do formulário ou query string no evento", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
     ads.measureContactAttempt("contact_form");
@@ -137,7 +137,7 @@ describe("consent updates and contact measurement", () => {
     }]);
   });
 
-  it("keeps the cap across page views of the same visit", async () => {
+  it("mantém o teto entre páginas da mesma visita", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(true);
     expect(ads.measureContactAttempt("whatsapp_float")).toBe(true);
@@ -146,7 +146,7 @@ describe("consent updates and contact measurement", () => {
     expect(nextPage.measureContactAttempt("whatsapp_float")).toBe(false);
   });
 
-  it("still measures after a refusal, cookieless, as advanced mode requires", async () => {
+  it("ainda mede após recusa, sem cookies, como o modo avançado prevê", async () => {
     const ads = await runBootstrap();
     ads.applyConsent(false);
     expect(ads.measureContactAttempt("contact_form")).toBe(true);
@@ -155,7 +155,7 @@ describe("consent updates and contact measurement", () => {
     expect(commands.some((c) => c[0] === "set" && c[1] === "ads_data_redaction" && c[2] === true)).toBe(true);
   });
 
-  it("does nothing when the tag failed to load", async () => {
+  it("não faz nada quando a tag não carregou", async () => {
     const ads = await import("./ads");
     expect(ads.measureContactAttempt("contact_form")).toBe(false);
     expect(() => ads.applyConsent(true)).not.toThrow();

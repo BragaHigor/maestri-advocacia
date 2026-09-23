@@ -22,9 +22,9 @@ export function MeasurementConsent() {
   const [accepted, setAccepted] = useState<boolean | null>(null);
   useEffect(() => {
     const choice = readConsent();
-    // The tag is already loaded and already reflects this choice: the inline
-    // bootstrap read the same record before gtag.js ran. Nothing to apply here.
-    // Defer presentation until the initial client render has completed.
+    // A tag já está carregada e já reflete esta escolha: o snippet inline leu o
+    // mesmo registro antes do gtag.js rodar. Não há nada a aplicar aqui.
+    // Adia a exibição até a primeira renderização no cliente terminar.
     const timer = window.setTimeout(() => {
       setAccepted(choice);
       setVisible(choice === null);
