@@ -13,6 +13,7 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { MotionProvider } from "@/components/motion-provider";
 import { MeasurementConsent } from "@/components/measurement-consent";
+import { MeasurementTag } from "@/components/measurement-tag";
 
 const title =
   "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         <MotionProvider>{children}</MotionProvider>
         <MeasurementConsent />
+        <MeasurementTag />
       </body>
     </html>
   );

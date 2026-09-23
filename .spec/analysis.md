@@ -6,6 +6,8 @@ Revisão local de 18/09/2026, baseada no código e comandos executados.
 
 Landing com uma página, oito seções, menu responsivo, FAQ, calculadora com seis
 regras e formulário que prepara mensagens para WhatsApp/mailto no navegador.
+Desde 22/09/2026 a medição usa consent mode avançado: a tag carrega negada em
+toda visita e só grava cookies após o aceite.
 Não há backend próprio, persistência de relatos ou autenticação. Há política
 /privacidade e Google Ads com consentimento; não há Google Analytics.
 

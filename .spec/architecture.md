@@ -151,8 +151,11 @@ não verificados na resposta de um deploy nesta revisão.
 
 ## Manutenção
 
-`src/lib/ads.ts` centraliza consentimento básico e evento de tentativa de contato.
-`MeasurementConsent` no layout carrega a tag apenas após aceitar; escolhas ficam
+`src/lib/ads.ts` centraliza o snippet de consentimento, a atualização de estado e o
+evento de tentativa de contato. `MeasurementTag` renderiza, no layout raiz e com
+`beforeInteractive`, o bootstrap inline e o gtag.js: consent mode avançado, tag
+presente em toda visita e negada até o aceite. `MeasurementConsent` apenas decide a
+exibição do aviso e aplica mudanças de escolha; escolhas ficam
 em localStorage por 180 dias, e sessionStorage limita o evento a um por visita.
 Formulário validado e botão flutuante usam o mesmo evento, sem campos pessoais.
 `CookiePreferences` permite reabrir as escolhas na política de privacidade.

@@ -11,9 +11,9 @@ perguntas frequentes, calculadora informativa e formulário de contato.
 
 As páginas públicas são `/` e `/privacidade`. Não existem API própria, banco de dados,
 autenticação, painel administrativo, CMS, armazenamento de leads, upload,
-Google Analytics ou integração de envio de e-mail no servidor. Há medição de
-tentativas de contato pelo Google Ads após consentimento, descrita em
-[Google Ads](google-ads.md). O formulário prepara
+Google Analytics ou integração de envio de e-mail no servidor. Há medição de tentativas de contato pelo Google Ads em consent mode avançado,
+descrita em [Google Ads](google-ads.md): a tag carrega em toda visita já negada,
+sem cookies, e passa a gravar apenas após o aceite. O formulário prepara
 uma mensagem no dispositivo; o visitante confirma o envio no WhatsApp ou no
 aplicativo de e-mail. O manifest não implica suporte offline: não há service
 worker no código do projeto.

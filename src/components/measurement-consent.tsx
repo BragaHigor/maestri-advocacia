@@ -22,7 +22,8 @@ export function MeasurementConsent() {
   const [accepted, setAccepted] = useState<boolean | null>(null);
   useEffect(() => {
     const choice = readConsent();
-    applyConsent(choice === true, false);
+    // The tag is already loaded and already reflects this choice: the inline
+    // bootstrap read the same record before gtag.js ran. Nothing to apply here.
     // Defer presentation until the initial client render has completed.
     const timer = window.setTimeout(() => {
       setAccepted(choice);

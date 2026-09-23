@@ -13,15 +13,26 @@ A implementação está no código local; não houve deploy nem alteração na c
 Não há Google Analytics ou contêiner GTM. gtag.js é servido pelo domínio
 googletagmanager.com, o que não significa instalação de contêiner GTM.
 
-`src/lib/ads.ts` carrega a tag após aceitar a medição. O aviso oferece recusar
+A integração usa **consent mode avançado** desde 22/09/2026. `MeasurementTag`
+injeta, pelo layout raiz e com `strategy="beforeInteractive"`, um snippet inline
+de consentimento seguido do gtag.js. A tag passa a existir em toda visita, o que
+permite a verificação pelo Google, mas inicia negada: `ad_storage`, `ad_user_data`,
+`ad_personalization` e `analytics_storage` começam em `denied`, com
+`ads_data_redaction` em `true`. O snippet lê a escolha salva antes do gtag.js, de
+modo que quem já aceitou nunca mede uma página no estado errado. O aviso oferece recusar
 e permitir com aparência equivalente; seu texto descreve a finalidade sem
 nomear a ferramenta, e a identificação do Google Ads está na política; a preferência fica em localStorage por
 180 dias. O controle de preferências na política permite mudar a escolha,
 sincronizada entre abas. Sem acesso ao armazenamento, vale apenas na página.
 ad_storage e ad_user_data são concedidos após aceitar; ad_personalization e
 analytics_storage permanecem negados. Não habilitamos conversões otimizadas.
+Verificado no navegador: sem aceite nenhum cookie é gravado; `_gcl_au` aparece
+somente após permitir.
 
-O formulário mede somente depois da validação e tentativa de abrir um canal;
+Em modo avançado a tag envia um ping sem cookies a cada carregamento, mesmo sob
+recusa, para `pagead2.googlesyndication.com/ccm/collect`. Isso foi observado no
+navegador e é esperado; `send_page_view: false` segue evitando o page_view
+convencional. O formulário mede somente depois da validação e tentativa de abrir um canal;
 o botão flutuante mede ao clicar. Ambos compartilham uma conversão por sessão
 da aba, com indicador em sessionStorage e fallback em memória. Não se mede
 carregamento da página como Contato. Nenhum campo do formulário, link wa.me,
@@ -29,8 +40,10 @@ valor ou moeda entra no evento. page_location usa origem e caminho sem query
 ou fragmento; page_referrer é vazio. Identificadores publicitários e dados
 técnicos do Google ainda podem ser tratados após consentimento.
 
-Revogar bloqueia novos eventos e atualiza a tag para denied. O script já
-carregado permanece até novo documento/recarregamento; não apagamos o formulário
+Revogar atualiza a tag para denied e religa `ads_data_redaction`, de imediato.
+O script permanece carregado por definição do modo avançado. Diferente da
+implementação anterior, revogar **não** bloqueia mais o evento de contato: ele
+continua sendo enviado sem cookies, em formato agregado; não apagamos o formulário
 nem recarregamos automaticamente. Isso não desfaz dados já enviados nem garante
 eliminação automática de cookies Google existentes. A política explica o limite.
 A CSP autoriza destinos específicos documentados pelo Google, incluindo .com.br.
