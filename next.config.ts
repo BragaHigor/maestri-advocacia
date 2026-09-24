@@ -2,14 +2,20 @@ import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const adsSources = "https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net";
+// Destinos do Google Analytics 4. As regiões usam subdomínios próprios
+// (region1.google-analytics.com, por exemplo), daí os curingas.
+const analyticsSources = "https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com";
+// Pixels de correspondência de cookie do Ads. Chegam como imagem e como
+// conexão, conforme o formato, então precisam valer nas duas diretivas.
+const adsCookieMatch = "https://ad.doubleclick.net";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' ${adsSources}${isDevelopment ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' blob: data: ${adsSources} https://google.com https://www.google.com.br`,
+  `img-src 'self' blob: data: ${adsSources} ${analyticsSources} ${adsCookieMatch} https://google.com https://www.google.com.br`,
   "font-src 'self' data:",
-  `connect-src 'self' ${adsSources} https://ad.doubleclick.net https://google.com https://www.google.com.br`,
+  `connect-src 'self' ${adsSources} ${analyticsSources} ${adsCookieMatch} https://google.com https://www.google.com.br`,
   "frame-src 'self' https://www.googletagmanager.com",
   "object-src 'none'",
   "base-uri 'self'",

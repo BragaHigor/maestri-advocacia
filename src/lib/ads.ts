@@ -1,3 +1,5 @@
+import { siteConfig } from "@/config/site";
+
 export const ADS_ID = "AW-18438128750";
 export const ADS_CONVERSION = `${ADS_ID}/ag1XCKXGgPQcEO6I_tdE`;
 export const CONSENT_KEY = "maestri-measurement-v1";
@@ -25,11 +27,21 @@ const DENIED_SIGNALS = {
   analytics_storage: "denied",
 } as const;
 
+// ad_personalization segue negado: não fazemos remarketing nem personalização.
+// analytics_storage é concedido para o Google Analytics medir a audiência.
 const GRANTED_SIGNALS = {
   ...DENIED_SIGNALS,
   ad_storage: "granted",
   ad_user_data: "granted",
+  analytics_storage: "granted",
 } as const;
+
+// O Analytics recebe a URL e o referenciador reais: sem eles não há como saber
+// de onde vem o tráfego, que é a finalidade da medição de audiência. A conversão
+// do Ads continua sem query string e sem referenciador.
+const GA4_CONFIG = siteConfig.ga4Id
+  ? `gtag("config",${JSON.stringify(siteConfig.ga4Id)},{send_page_view:true});`
+  : "";
 
 // Consent mode avançado: a tag existe em toda visita, para que o Google consiga
 // verificá-la, mas começa negada. A escolha salva é lida aqui, antes do gtag.js,
@@ -45,7 +57,8 @@ ok=!!(c&&c.version===1&&c.accepted===true&&typeof c.at==="number"&&c.at<=Date.no
 gtag("consent","default",ok?${JSON.stringify(GRANTED_SIGNALS)}:${JSON.stringify(DENIED_SIGNALS)});
 gtag("set","ads_data_redaction",!ok);
 gtag("js",new Date());
-gtag("config",${JSON.stringify(ADS_ID)},{send_page_view:false,allow_ad_personalization_signals:false,allow_enhanced_conversions:false,page_location:location.origin+location.pathname,page_referrer:""})
+gtag("config",${JSON.stringify(ADS_ID)},{send_page_view:false,allow_ad_personalization_signals:false,allow_enhanced_conversions:false,page_location:location.origin+location.pathname,page_referrer:""});
+${GA4_CONFIG}
 })()
 `.trim();
 
@@ -89,6 +102,19 @@ export function measureContactAttempt(source: ContactSource): boolean {
     contact_source: source,
     page_location: window.location.origin + window.location.pathname,
     page_referrer: "",
+  });
+  return true;
+}
+
+// O App Router navega sem recarregar a página, e nesse caso o Analytics não
+// registra sozinho. Chamado apenas em mudanças de rota, nunca na carga inicial,
+// que já é contada pelo `config`.
+export function measurePageView(): boolean {
+  if (!siteConfig.ga4Id || !window.gtag) return false;
+  window.gtag("event", "page_view", {
+    send_to: siteConfig.ga4Id,
+    page_location: window.location.href,
+    page_title: document.title,
   });
   return true;
 }

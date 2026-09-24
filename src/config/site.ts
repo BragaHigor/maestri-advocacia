@@ -2,6 +2,11 @@ export type ContactDestination = "whatsapp" | "email";
 
 const DEFAULT_SITE_URL = "https://www.maestriadv.com.br";
 const DEFAULT_EMAIL = "contato.maestriadv@gmail.com";
+// ID de medição do Google Analytics 4. Atenção ao quinto caractere: na fonte
+// do painel do Analytics o I maiúsculo e o dígito 1 são idênticos. Ao alterar,
+// confirme o valor pelo botão de copiar do painel e verifique se a tag
+// responde 200 em https://www.googletagmanager.com/gtag/js?id=<ID>
+const DEFAULT_TOKEN_GA4 = "G-Z1YCKTT9WK";
 
 function parseSiteUrl(value: string | undefined): URL {
   try {
@@ -42,4 +47,5 @@ export const siteConfig = Object.freeze({
   contactDestination: parseDestination(
     process.env.NEXT_PUBLIC_CONTACT_DESTINATION,
   ),
+  ga4Id: DEFAULT_TOKEN_GA4,
 });

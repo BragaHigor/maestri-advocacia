@@ -14,6 +14,7 @@ import { siteConfig } from "@/config/site";
 import { MotionProvider } from "@/components/motion-provider";
 import { MeasurementConsent } from "@/components/measurement-consent";
 import { MeasurementTag } from "@/components/measurement-tag";
+import { AnalyticsPageViews } from "@/components/analytics-page-views";
 
 const title = "Maestri Advocacia — Direito do Consumidor e fraudes bancárias";
 const description =
@@ -92,6 +93,7 @@ export default function RootLayout({
         <MotionProvider>{children}</MotionProvider>
         <MeasurementConsent />
         <MeasurementTag />
+        <AnalyticsPageViews />
       </body>
     </html>
   );

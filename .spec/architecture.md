@@ -165,6 +165,10 @@ não verificados na resposta de um deploy nesta revisão.
 
 ## Manutenção
 
+O Google Analytics 4 só é configurado quando `NEXT_PUBLIC_GA4_ID` existe, pela
+mesma tag; `AnalyticsPageViews` cobre as trocas de rota do App Router.
+`analytics_storage` é concedido no aceite e `ad_personalization` nunca é.
+
 `src/lib/ads.ts` centraliza o snippet de consentimento, a atualização de estado e o
 evento de tentativa de contato. `MeasurementTag` renderiza, no layout raiz e com
 `beforeInteractive`, o bootstrap inline e o gtag.js: consent mode avançado, tag
