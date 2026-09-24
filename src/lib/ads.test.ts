@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@/config/site", () => ({
+  siteConfig: { ga4Id: "G-TESTE12345" },
+}));
+
 function storage() {
   const values = new Map<string, string>();
   return { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) };
@@ -26,7 +30,8 @@ describe("snippet inicial do consent mode avançado", () => {
   it("tem sintaxe válida e configura a tag sem medir visualização de página", async () => {
     const ads = await runBootstrap();
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
-    expect(commands.at(-1)).toEqual(["config", ads.ADS_ID, expect.objectContaining({
+    const anuncios = commands.find((c) => c[0] === "config" && c[1] === ads.ADS_ID);
+    expect(anuncios).toEqual(["config", ads.ADS_ID, expect.objectContaining({
       send_page_view: false,
       allow_ad_personalization_signals: false,
       allow_enhanced_conversions: false,
@@ -52,7 +57,7 @@ describe("snippet inicial do consent mode avançado", () => {
     const commands = (window.dataLayer as Array<IArguments>).map((c) => Array.from(c));
     expect(commands[0]).toEqual(["consent", "default", expect.objectContaining({
       ad_storage: "granted", ad_user_data: "granted",
-      ad_personalization: "denied", analytics_storage: "denied",
+      ad_personalization: "denied", analytics_storage: "granted",
     })]);
     expect(commands[1]).toEqual(["set", "ads_data_redaction", false]);
   });
@@ -82,7 +87,7 @@ describe("atualização de consentimento e medição de contato", () => {
     expect(commands.at(-2)).toEqual(["set", "ads_data_redaction", false]);
     expect(commands.at(-1)).toEqual(["consent", "update", {
       ad_storage: "granted", ad_user_data: "granted",
-      ad_personalization: "denied", analytics_storage: "denied",
+      ad_personalization: "denied", analytics_storage: "granted",
     }]);
     expect(ads.readConsent()).toBe(true);
   });
@@ -159,5 +164,43 @@ describe("atualização de consentimento e medição de contato", () => {
     const ads = await import("./ads");
     expect(ads.measureContactAttempt("contact_form")).toBe(false);
     expect(() => ads.applyConsent(true)).not.toThrow();
+  });
+
+  it("configura o Analytics com page_view e mantém o Ads sem ele", async () => {
+    const ads = await runBootstrap();
+    const configs = (window.dataLayer as Array<IArguments>)
+      .map((c) => Array.from(c))
+      .filter((c) => c[0] === "config");
+    expect(configs).toHaveLength(2);
+    const [anuncios, analytics] = configs;
+    expect(anuncios[1]).toBe(ads.ADS_ID);
+    expect(anuncios[2]).toEqual(expect.objectContaining({ send_page_view: false }));
+    expect(analytics[1]).toBe("G-TESTE12345");
+    expect(analytics[2]).toEqual({ send_page_view: true });
+  });
+
+  it("não envia a URL completa nem o referenciador ao Ads", async () => {
+    await runBootstrap();
+    const anuncios = (window.dataLayer as Array<IArguments>)
+      .map((c) => Array.from(c))
+      .find((c) => c[0] === "config") as unknown[];
+    expect(anuncios[2]).toEqual(expect.objectContaining({
+      page_location: "https://www.maestriadv.com.br/",
+      page_referrer: "",
+    }));
+  });
+
+  it("registra page_view apenas em navegação no cliente", async () => {
+    const ads = await runBootstrap();
+    vi.stubGlobal("document", { title: "Política de privacidade" });
+    (window as unknown as { location: { href: string } }).location.href =
+      "https://www.maestriadv.com.br/privacidade";
+    expect(ads.measurePageView()).toBe(true);
+    const ultimo = Array.from((window.dataLayer as Array<IArguments>).at(-1)!);
+    expect(ultimo).toEqual(["event", "page_view", {
+      send_to: "G-TESTE12345",
+      page_location: "https://www.maestriadv.com.br/privacidade",
+      page_title: "Política de privacidade",
+    }]);
   });
 });

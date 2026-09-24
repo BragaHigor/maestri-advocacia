@@ -82,6 +82,30 @@ também sem overflow horizontal. Recusa persistiu após reload sem tag; permitir
 revogar e recarregar bloqueou novamente o script. Não foi disparado evento real
 de conversão no navegador. A entrega efetiva do evento exige validação posterior.
 
+## Google Analytics 4
+
+Desde 23/09/2026 a mesma tag do Google também configura o GA4. O ID de medição
+é `G-ZIYCKTT9WK`, fixo em `src/config/site.ts` como acontece com a tag do Ads.
+Não há variável de ambiente: trocar o destino exige alterar o código e publicar.
+
+São duas configurações para uma única gtag.js: a do Ads mantém
+`send_page_view: false`, sem query string e sem referenciador; a do Analytics usa
+`send_page_view: true` e recebe URL e referenciador reais, sem os quais não há
+como apurar a origem do tráfego. `analytics_storage` passa a ser concedido no
+aceite; `ad_personalization` continua negado sempre.
+
+O App Router navega sem recarregar, e nesses casos o Analytics não registra
+sozinho. `AnalyticsPageViews` dispara `page_view` apenas em troca de rota, nunca
+na carga inicial, que já é contada pelo `config`.
+
+A CSP passou a autorizar `google-analytics.com` e `analytics.google.com`, com
+curinga para os subdomínios regionais.
+
+Verificado localmente com ID de teste: sem aceite, quatro sinais negados, nenhum
+cookie e ping sem cookies para `google-analytics.com/g/collect`; com aceite,
+`analytics_storage` concedido e cookies `_ga` e `_gcl_au` presentes. Navegação
+sem recarregamento disparou exatamente um `page_view`. Nenhum bloqueio de CSP.
+
 ## Próximos passos técnicos
 
 1. Validar práticas reais de atendimento e política com a responsável.
