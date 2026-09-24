@@ -2,12 +2,11 @@ export type ContactDestination = "whatsapp" | "email";
 
 const DEFAULT_SITE_URL = "https://www.maestriadv.com.br";
 const DEFAULT_EMAIL = "contato.maestriadv@gmail.com";
-// ID de medição do Google Analytics 4. O quinto caractere é a letra I
-// maiúscula, não o dígito 1: na fonte do painel do Analytics os dois são
-// idênticos, e trocá-los faz o Google devolver 404 para a tag, sem nenhum
-// erro visível no site. Verificável em:
-// https://www.googletagmanager.com/gtag/js?id=G-ZIYCKTT9WK
-const DEFAULT_TOKEN_GA4 = "G-ZIYCKTT9WK";
+// ID de medição do Google Analytics 4. Atenção ao quinto caractere: na fonte
+// do painel do Analytics o I maiúsculo e o dígito 1 são idênticos. Ao alterar,
+// confirme o valor pelo botão de copiar do painel e verifique se a tag
+// responde 200 em https://www.googletagmanager.com/gtag/js?id=<ID>
+const DEFAULT_TOKEN_GA4 = "G-Z1YCKTT9WK";
 
 function parseSiteUrl(value: string | undefined): URL {
   try {

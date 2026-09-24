@@ -10,6 +10,6 @@ describe("identificadores de medição", () => {
   });
 
   it("aponta para a propriedade configurada para este site", () => {
-    expect(siteConfig.ga4Id).toBe("G-ZIYCKTT9WK");
+    expect(siteConfig.ga4Id).toBe("G-Z1YCKTT9WK");
   });
 });

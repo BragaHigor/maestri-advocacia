@@ -85,7 +85,7 @@ de conversão no navegador. A entrega efetiva do evento exige validação poster
 ## Google Analytics 4
 
 Desde 23/09/2026 a mesma tag do Google também configura o GA4. O ID de medição
-é `G-ZIYCKTT9WK`, fixo em `src/config/site.ts` como acontece com a tag do Ads.
+é `G-Z1YCKTT9WK`, fixo em `src/config/site.ts` como acontece com a tag do Ads.
 Não há variável de ambiente: trocar o destino exige alterar o código e publicar.
 
 São duas configurações para uma única gtag.js: a do Ads mantém
