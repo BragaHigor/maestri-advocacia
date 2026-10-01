@@ -5,6 +5,7 @@ import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 
 import { useSectionEntrance } from "@/hooks/use-section-entrance";
+import { useContactLocation } from "@/hooks/use-contact-location";
 import { CalendarIcon } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
@@ -19,6 +20,7 @@ import {
   CONTACT_NAME_MAX_LENGTH,
   CONTACT_REPORT_MAX_LENGTH,
   CONTACT_REPORT_MIN_LENGTH,
+  createContactMessage,
   createEmailUrl,
   createWhatsappUrl,
   formatBrazilianPhone,
@@ -27,6 +29,7 @@ import {
   isValidContactReport,
   sanitizeMessage,
 } from "@/lib/contact";
+import { brazilianStates, getContactLocation, isBrazilianStateCode } from "@/lib/location";
 import {
   formatDateInputPtBr,
   parseDateInput,
@@ -41,6 +44,7 @@ import {
   inputClass,
   labelClass,
 } from "@/styles/classes";
+import { LocationSelect } from "@/components/ui/location-select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -50,14 +54,17 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 
-type FieldName = "name" | "phone" | "date" | "report";
+type FieldName = "name" | "phone" | "state" | "city" | "date" | "report";
 type FieldErrors = Partial<Record<FieldName, string>>;
 
 const wrapSelectTriggerClass =
   "flex min-h-[52px] w-full items-center justify-between gap-2 rounded-sm border border-paper/15 bg-ink-3 px-[15px] py-3 text-left font-body text-[14.5px] leading-[1.5] text-paper whitespace-normal shadow-none outline-none transition-colors hover:border-paper/30 focus-visible:border-gold focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold data-[state=open]:border-gold";
 
+const locationSelectTriggerClass = `${wrapSelectTriggerClass} min-w-0 data-[placeholder]:text-paper/40 disabled:cursor-not-allowed disabled:opacity-50`;
+
 export function ContactForm() {
   const { modo, entrada } = useSectionEntrance();
+  const location = useContactLocation();
 
   const { contactCaseType, setContactCaseType } = useCaseType();
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -90,6 +97,8 @@ export function ContactForm() {
     const values = {
       name: sanitizeMessage(String(formData.get("nome") ?? "")),
       phone: sanitizeMessage(String(formData.get("fone") ?? "")),
+      state: String(formData.get("estado") ?? ""),
+      city: String(formData.get("cidade") ?? ""),
       date: sanitizeMessage(String(formData.get("quando") ?? "")),
       report: sanitizeMessage(String(formData.get("relato") ?? "")),
     };
@@ -104,6 +113,15 @@ export function ContactForm() {
     } else if (!isValidBrazilianPhone(values.phone)) {
       nextErrors.phone = "Digite um número válido com DDD.";
     }
+    if (!isBrazilianStateCode(values.state)) {
+      nextErrors.state = "Selecione seu estado.";
+    }
+    const contactLocation = getContactLocation(values.state, values.city, location.municipalities);
+    if (!contactLocation) {
+      nextErrors.city = location.loadStatus === "loading"
+        ? "Aguarde o carregamento das cidades."
+        : "Selecione uma cidade do estado escolhido.";
+    }
     const occurrenceDate = parseDateInput(values.date);
     if (!values.date || !occurrenceDate) {
       nextErrors.date = "Informe quando o caso aconteceu.";
@@ -117,43 +135,32 @@ export function ContactForm() {
     }
     setFieldErrors(nextErrors);
 
-    const invalidFieldOrder: FieldName[] = ["name", "phone", "date", "report"];
+    const invalidFieldOrder: FieldName[] = ["name", "phone", "state", "city", "date", "report"];
     const first = invalidFieldOrder.find((field) => nextErrors[field]);
     if (first) {
       const fieldIds: Record<FieldName, string> = {
         name: "f-nome",
         phone: "f-fone",
+        state: "f-estado",
+        city: "f-cidade",
         date: "f-quando",
         report: "f-relato",
       };
-      const firstInvalidElement = form.querySelector(`#${fieldIds[first]}`);
+      const firstInvalidElement = first === "city" && location.loadStatus !== "ready"
+        ? form.querySelector("#f-estado")
+        : form.querySelector(`#${fieldIds[first]}`);
       if (firstInvalidElement instanceof HTMLElement) {
         firstInvalidElement.focus();
       }
       setStatus("Revise os campos destacados antes de continuar.");
       return;
     }
-
-    const formattedDate = formatDateInputPtBr(values.date);
-    const caseDetails = [
-      `*Nome:* ${values.name}`,
-      `*WhatsApp:* ${values.phone}`,
-      `*Tipo de caso:* ${selectedCaseLabel}`,
-    ];
-    if (formattedDate) {
-      caseDetails.push(`*Quando aconteceu:* ${formattedDate}`);
-    }
-
-    const message = [
-      "Olá! Acessei o site da Maestri Advocacia e gostaria de solicitar uma avaliação jurídica inicial do meu caso.",
-      "",
-      "Seguem abaixo as informações preenchidas:",
-      "",
-      ...caseDetails,
-      "",
-      "*Relato do caso:*",
-      values.report,
-    ].join("\n");
+    if (!contactLocation) return;
+    const message = createContactMessage({
+      ...values,
+      caseLabel: selectedCaseLabel,
+      location: contactLocation,
+    });
 
     if (siteConfig.contactDestination === "email") {
       measureContactAttempt("contact_form");
@@ -192,6 +199,7 @@ export function ContactForm() {
       noValidate
       onSubmit={handleSubmit}
       onReset={(event) => {
+        location.resetLocation();
         setDate("");
         setReportLength(0);
         setFieldErrors({});
@@ -284,6 +292,81 @@ export function ContactForm() {
             </span>
           ) : null}
         </p>
+      </div>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(178px,1fr))] gap-[18px]">
+        <div className={fieldClass}>
+          <label className={labelClass} id="f-estado-label" htmlFor="f-estado">
+            Estado
+          </label>
+          <input type="hidden" name="estado" value={location.stateCode} readOnly />
+          <LocationSelect
+            id="f-estado"
+            className={locationSelectTriggerClass}
+            value={location.stateCode}
+            placeholder="Selecione o estado"
+            options={brazilianStates.map((state) => ({ value: state.code, label: `${state.name} (${state.code})` }))}
+            onValueChange={(value) => {
+              void location.selectState(value);
+              clearInvalid("state");
+              clearInvalid("city");
+            }}
+            aria-invalid={Boolean(fieldErrors.state)}
+            aria-describedby={fieldErrors.state ? "f-estado-error" : undefined}
+          />
+          {fieldErrors.state ? (
+            <span className="text-[13px] leading-[1.45] text-alert" id="f-estado-error" role="alert">
+              {fieldErrors.state}
+            </span>
+          ) : null}
+        </div>
+        <div className={fieldClass}>
+          <label className={labelClass} id="f-cidade-label" htmlFor="f-cidade">
+            Cidade
+          </label>
+          <input type="hidden" name="cidade" value={location.municipalityCode} readOnly />
+          <LocationSelect
+            id="f-cidade"
+            className={locationSelectTriggerClass}
+            value={location.municipalityCode}
+            placeholder="Selecione a cidade"
+            disabled={location.loadStatus !== "ready"}
+            options={location.municipalities.map((city) => ({ value: city.code, label: city.name }))}
+            onValueChange={(value) => {
+              location.selectCity(value);
+              clearInvalid("city");
+            }}
+            aria-invalid={Boolean(fieldErrors.city)}
+            aria-busy={location.loadStatus === "loading"}
+            aria-describedby={[
+              location.loadStatus === "loading" || location.loadStatus === "error" ? "f-cidade-status" : "",
+              fieldErrors.city ? "f-cidade-error" : "",
+            ].filter(Boolean).join(" ") || undefined}
+          />
+          {location.loadStatus === "loading" || location.loadStatus === "error" ? (
+            <p className="text-[13px] leading-[1.45] text-paper/60" id="f-cidade-status" role="status">
+              {location.loadStatus === "error"
+                ? "Não foi possível carregar as cidades. Tente novamente."
+                : "Carregando as cidades do estado escolhido."}
+            </p>
+          ) : null}
+          {location.loadStatus === "error" ? (
+            <button
+              type="button"
+              className="min-h-11 self-start text-sm text-gold-bright underline underline-offset-4"
+              onClick={() => {
+                clearInvalid("city");
+                void location.selectState(location.stateCode);
+              }}
+            >
+              Carregar cidades novamente
+            </button>
+          ) : null}
+          {fieldErrors.city ? (
+            <span className="text-[13px] leading-[1.45] text-alert" id="f-cidade-error" role="alert">
+              {fieldErrors.city}
+            </span>
+          ) : null}
+        </div>
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(178px,1fr))] gap-[18px]">
         <p className={fieldClass}>

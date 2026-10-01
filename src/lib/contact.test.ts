@@ -10,6 +10,7 @@ vi.mock("@/config/site", () => ({
 import {
   CONTACT_NAME_MAX_LENGTH,
   CONTACT_REPORT_MAX_LENGTH,
+  createContactMessage,
   createEmailUrl,
   createWhatsappUrl,
   formatBrazilianPhone,
@@ -22,6 +23,24 @@ import {
 } from "./contact";
 
 describe("links de contato", () => {
+  it("inclui cidade e estado formatados na mensagem e nos dois canais", () => {
+    const message = createContactMessage({
+      name: "Ana Clara",
+      phone: "(16) 99155-4260",
+      caseLabel: "Caí em um golpe no Pix",
+      date: "2026-09-30",
+      report: "Fiz um Pix e depois percebi que era um golpe.",
+      location: { cityName: "Ribeirão Preto", stateName: "São Paulo", stateCode: "SP" },
+    });
+    expect(message).toContain("*Cidade:* Ribeirão Preto\n*Estado:* São Paulo (SP)");
+    expect(message).toContain("*Quando aconteceu:* 30/09/2026");
+    expect(message).toContain("*Nome:* Ana Clara");
+    const whatsapp = new URL(createWhatsappUrl(message)!);
+    expect(whatsapp.searchParams.get("text")).toBe(message);
+    const email = new URL(createEmailUrl({ body: message }));
+    expect(email.searchParams.get("body")).toBe(message);
+  });
+
   it("normaliza e limita texto controlado pelo visitante", () => {
     expect(sanitizeMessage("  Olá\u0000\r\nMundo  ")).toBe("Olá\nMundo");
     expect(sanitizeMessage("a".repeat(4_000))).toHaveLength(3_500);

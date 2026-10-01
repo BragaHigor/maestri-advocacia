@@ -35,7 +35,7 @@ export default function PrivacyPage() {
       </Link>
       <main className="mx-auto max-w-3xl px-5 py-12 text-paper/80 sm:px-8 sm:py-20">
         <h1 className="mt-8 font-serif text-4xl leading-tight text-paper sm:text-5xl">Política de privacidade</h1>
-        <p className="mt-4 text-sm">Atualizada em 22 de setembro de 2026.</p>
+        <p className="mt-4 text-sm">Atualizada em 1º de outubro de 2026.</p>
         <div className="break-words text-base leading-relaxed">
           <section className={sectionClass}>
             <h2 className={headingClass}>Responsável e contato</h2>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
           </section>
           <section className={sectionClass}>
             <h2 className={headingClass}>Formulário e calculadora</h2>
-            <p>O formulário utiliza nome, telefone, tipo de caso, data e relato para preparar uma mensagem no seu dispositivo. O código do site não envia esses campos a um servidor próprio nem grava o relato em cookies ou armazenamento local. A calculadora também processa os dados no dispositivo.</p>
+            <p>O formulário utiliza nome, telefone, cidade, estado, tipo de caso, data e relato para preparar uma mensagem no seu dispositivo. Cidade e estado são obrigatórios e selecionados de um catálogo local de municípios brasileiros; essa seleção não consulta uma API externa. O código do site não envia esses campos a um servidor próprio nem grava o relato em cookies ou armazenamento local. A calculadora também processa os dados no dispositivo.</p>
             <p>Após tentar abrir o aplicativo, os campos continuam preenchidos na página. Você pode tentar novamente ou usar “Limpar formulário”. Não há recurso do site para recuperar o preenchimento após fechar ou recarregar a página.</p>
             <p>Ao abrir o WhatsApp, os dados preenchidos compõem o endereço de uma mensagem e são encaminhados ao serviço externo. Ao abrir o e-mail, são repassados ao aplicativo escolhido. A confirmação do envio acontece nesses aplicativos. Esses serviços podem tratar dados conforme suas próprias políticas, inclusive antes da confirmação do envio.</p>
             <p>Evite informar senhas, códigos de autenticação, números completos de cartão ou documentos desnecessários no relato inicial.</p>

@@ -18,6 +18,32 @@
 .env*
 !.env.example
 
+# Local credentials and private keys
+.npmrc
+.pypirc
+/.aws/
+/.azure/
+/.gcloud/
+/.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+*-service-account.json
+
+# Local agent state (project instructions remain versioned)
+/.codex/
+/.agents/
+
+# Generated development snapshot
+/home.html
+
 # TypeScript and tool caches
 *.tsbuildinfo
 next-env.d.ts

@@ -1,6 +1,10 @@
-# Google Ads e privacidade
+# Google Ads, GA4 e privacidade
 
-## Estado em 18/09/2026
+Revisão documental do código em 01/10/2026. Registros de conta e navegador
+abaixo são históricos; não houve acesso à conta, deploy ou nova verificação no
+domínio publicado nesta revisão.
+
+## Implementação atual e histórico
 
 O usuário informou site publicado em https://www.maestriadv.com.br e WhatsApp
 (16) 97407-5767. Autorizou consultar a conta e configurar a integração no código,
@@ -9,8 +13,9 @@ lances, pagamentos ou faturamento. Nenhuma alteração na conta foi realizada.
 
 O usuário forneceu a tag AW-18438128750 e o destino de conversão
 AW-18438128750/ag1XCKXGgPQcEO6I_tdE por snippets da conta do escritório.
-A implementação está no código local; não houve deploy nem alteração na conta.
-Não há Google Analytics ou contêiner GTM. gtag.js é servido pelo domínio
+Na implementação registrada em setembro não houve deploy nem alteração na
+conta por esta integração. GA4 também está implementado desde 23/09/2026,
+conforme a seção abaixo. Não há contêiner GTM. gtag.js é servido pelo domínio
 googletagmanager.com, o que não significa instalação de contêiner GTM.
 
 A integração usa **consent mode avançado** desde 22/09/2026. `MeasurementTag`
@@ -24,15 +29,17 @@ e permitir com aparência equivalente; seu texto descreve a finalidade sem
 nomear a ferramenta, e a identificação do Google Ads está na política; a preferência fica em localStorage por
 180 dias. O controle de preferências na política permite mudar a escolha,
 sincronizada entre abas. Sem acesso ao armazenamento, vale apenas na página.
-ad_storage e ad_user_data são concedidos após aceitar; ad_personalization e
-analytics_storage permanecem negados. Não habilitamos conversões otimizadas.
-Verificado no navegador: sem aceite nenhum cookie é gravado; `_gcl_au` aparece
-somente após permitir.
+ad_storage, ad_user_data e analytics_storage são concedidos após aceitar;
+ad_personalization permanece negado. Não habilitamos conversões otimizadas.
+Na verificação histórica do Ads no navegador: sem aceite nenhum cookie foi
+gravado; `_gcl_au` apareceu somente após permitir.
 
 Em modo avançado a tag envia um ping sem cookies a cada carregamento, mesmo sob
 recusa, para `pagead2.googlesyndication.com/ccm/collect`. Isso foi observado no
 navegador e é esperado; `send_page_view: false` segue evitando o page_view
-convencional. O formulário mede somente depois da validação e tentativa de abrir um canal;
+convencional no Ads. GA4 tem page_view habilitado. O formulário mede após
+validação: no WhatsApp, depois de window.open; no e-mail, antes de
+window.location.assign. Isso registra intenção de abrir, sem confirmar abertura;
 o botão flutuante mede ao clicar. Desde 22/09/2026 a deduplicação é **por
 origem**, não global: cada origem tem sua própria chave em sessionStorage, com
 fallback em memória. As origens são rótulos fixos, `whatsapp_float` e
@@ -73,14 +80,25 @@ Laura De Freitas Pereira Maestri, nome incluído na política. As práticas reai
 de retenção/atendimento precisam de validação antes do deploy.
 O texto não declara certificação de conformidade com a LGPD.
 
-Lint, typecheck e build finais passaram. Validação: 27 testes em quatro arquivos, incluindo bloqueio antes de consentir,
-ordem dos comandos, carregamento único, evento sem valores/query, duplicidade,
-revogação e preferência inválida/expirada. No Chrome local a 320 px, não houve
-overflow horizontal e os botões empilhados medem mais de 44 px de altura.
-No desktop de 1280 px, os botões têm a mesma largura e ficam lado a lado,
-também sem overflow horizontal. Recusa persistiu após reload sem tag; permitir inseriu o script correto;
-revogar e recarregar bloqueou novamente o script. Não foi disparado evento real
-de conversão no navegador. A entrega efetiva do evento exige validação posterior.
+## Verificações e limites
+
+Em 01/10/2026 lint passou e 45 testes passaram em seis arquivos. A suíte
+exercita bootstrap e ordem de consentimento, escolha salva, recusa, expiração,
+revogação, conversão sob recusa, deduplicação por origem, ausência de campos
+pessoais/monetários no evento Ads e configuração/page_view do GA4. Ela não
+verifica entrega de rede, cookies reais, carregamento único do script ou layout.
+Typecheck e build passaram em 01/10/2026 após a feature cidade/estado. O fluxo
+do formulário foi conferido no navegador com proxy local que desativa a tag
+remota e captura a mensagem sem abrir WhatsApp; isso não valida entrega Ads/GA4
+ou envio real. O domínio publicado não foi revalidado. Cidade e estado entram
+apenas na mensagem externa, junto com os demais campos, nunca no evento Ads.
+
+As verificações de navegador registradas em setembro incluem botões a 320 px
+e 1280 px. Os registros de recusa sem tag e bloqueio do script após revogar
+eram da implementação anterior ao consent mode avançado e não descrevem o
+código atual: a tag permanece carregada sob recusa e revogação. Não foi
+disparada conversão real no navegador nessa validação histórica; a entrega
+efetiva exige conferência posterior.
 
 ## Google Analytics 4
 
@@ -101,8 +119,8 @@ na carga inicial, que já é contada pelo `config`.
 A CSP passou a autorizar `google-analytics.com` e `analytics.google.com`, com
 curinga para os subdomínios regionais.
 
-Verificado localmente com ID de teste: sem aceite, quatro sinais negados, nenhum
-cookie e ping sem cookies para `google-analytics.com/g/collect`; com aceite,
+Na verificação histórica de setembro, registrada com ID de teste: sem aceite,
+quatro sinais negados, nenhum cookie e ping sem cookies para `google-analytics.com/g/collect`; com aceite,
 `analytics_storage` concedido e cookies `_ga` e `_gcl_au` presentes. Navegação
 sem recarregamento disparou exatamente um `page_view`. Nenhum bloqueio de CSP.
 
@@ -116,8 +134,8 @@ sem recarregamento disparou exatamente um `page_view`. Nenhum bloqueio de CSP.
    configurações foi alterada. Omitir value/currency no código não remove o
    valor padrão configurado na conta. Sua alteração depende de autorização
    específica, pois o usuário proibiu ações relacionadas a dinheiro.
-4. Se medir visitas, usar uma ação distinta secundária ou GA4 com configuração
-   própria. Não reutilizar a conversão Contato para carregamento da home.
+4. Conferir page_view do GA4 na carga inicial e nas trocas de rota. GA4 já mede
+   visitas; não reutilizar a conversão Contato para carregamento da home.
 
 ## Referências
 

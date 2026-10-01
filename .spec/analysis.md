@@ -1,21 +1,46 @@
 # Diagnóstico atual
 
-Revisão local de 18/09/2026, baseada no código e comandos executados.
+Revisão do código e atualização documental em 01/10/2026. Registros anteriores
+de build e navegador são históricos e mantêm suas datas.
 
 ## Implementação existente
 
 Landing com uma página, oito seções, menu responsivo, FAQ, calculadora com seis
 regras e formulário que prepara mensagens para WhatsApp/mailto no navegador.
 Desde 22/09/2026 a medição usa consent mode avançado: a tag carrega negada em
-toda visita e só grava cookies após o aceite.
+toda visita sem escolha válida ou com recusa; um aceite válido salvo é aplicado
+antes do carregamento. O armazenamento é concedido após o aceite.
 Não há backend próprio, persistência de relatos ou autenticação. Há política
-/privacidade e Google Ads com consentimento; não há Google Analytics.
+/privacidade, Google Ads e GA4 com consentimento compartilhado. GA4 usa o ID
+fixo G-Z1YCKTT9WK em src/config/site.ts, sem variável de ambiente.
 
 Há separação de domínio, conteúdo, configuração e interface; TypeScript estrito;
 fontes Bodoni Moda/Manrope auto-hospedadas; Framer Motion; calendários Day Picker;
 select/popover Radix; SEO técnico e headers em next.config.ts.
 
-## Verificação executada
+## Verificação em 01/10/2026
+
+- `npm run lint`: passou, sem diagnósticos.
+- `npm test`: 45 testes passaram em seis arquivos.
+- `npm run typecheck` e `npm run build`: passaram após a feature de localização.
+- Navegador: formulário verificado em 320 px e 1280 px com build de produção
+  por proxy local que desativa a tag remota e captura a mensagem sem abrir
+  WhatsApp. Conferidos obrigatoriedade, foco, troca de UF/cidade, mensagem,
+  reabertura, limpeza, Brasília e retry após falha simulada no chunk.
+- Domínio publicado e entrega real aos canais externos não foram revalidados.
+- Ajustes visuais: larguras de 320, 390, 520, 880 e 1280 px conferidas sem
+  overflow horizontal; nomes longos quebram linha e setas mantêm recuo interno.
+  Menus não modais permitem rolagem da página e fecham ao rolar o documento,
+  preservando a rolagem interna das opções. Cidade bloqueada foi clicada no
+  navegador sem criar menu vazio. Barra fina e cores conferidas em Chrome;
+  o acabamento final também remove botões nativos em Chromium/Safari.
+
+Os seis arquivos cobrem datas, contato, localidade, cálculo, consentimento/Ads/GA4 e
+configuração GA4. A suíte atual exercita o bootstrap negado ou concedido por
+escolha salva, preferências inválidas/expiradas, revogação, conversões mesmo sob
+recusa, deduplicação por origem e page_view GA4.
+
+## Verificação histórica de 18/09/2026
 
 | Comando | Resultado em 18/09/2026 |
 | --- | --- |
@@ -52,7 +77,8 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
 
 - Números de WhatsApp na seção contato e rodapé apontam para #contato; só o
   flutuante abre diretamente o canal. O destino de formulário não altera o float.
-- Formulário exige quatro campos: nome, telefone, data e relato. Preserva os
+- Formulário exige seis campos: nome, telefone, estado, cidade, data e relato.
+  Cidade depende da UF e é validada pelo catálogo local da biblioteca. Preserva os
   campos após abrir o aplicativo externo, oferece nova tentativa com dados
   atuais e limpeza manual. Não confirma abertura/envio nem persiste em storage.
 - Todas as regras mostram data-limite hoje quando restam zero dias, com tom
@@ -61,8 +87,9 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
   mantém a data da ferramenta, inclusive entre vencimento e data do fato.
 - Resultado da ferramenta usa useMemo por regra/data, sem atualização na virada
   do dia; CTA não transfere data/resultado nem compõe mensagem contextual.
-- Variantes Framer Motion começam com opacity 0. O HTML servido traz 61
-  elementos com `style="opacity:0"`, limpos apenas pelo Framer Motion no cliente.
+- Variantes Framer Motion começam com opacity 0. A inspeção histórica encontrou
+  61 elementos com `style="opacity:0"`; essa contagem não foi repetida agora.
+  O snapshot de servidor do hook continua amplo, inclusive para mobile.
   Sem JavaScript nada os limpa e o conteúdo editorial não aparece: a regra de
   conteúdo essencial visível sem animações continua **não atendida**.
 - Em 22/09/2026 tentou-se um fallback `<noscript>` com `<style>` no layout raiz.
@@ -86,6 +113,11 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
   selects atuais fornecem valores controlados.
 - Datas somadas em anos seguem rollover de Date em 29/02; parsing não exige
   explicitamente formato exato YYYY-MM-DD. Os testes não definem esses extremos.
+- Entradas de seção são removidas abaixo de 880 px após a hidratação. O hook
+  não assina resize, mas lê matchMedia em cada snapshot sem guardar o modo
+  inicial. Uma nova renderização após mudar a largura pode alterar a key e
+  remontar seções, inclusive formulário; preservação nesse cenário ainda
+  precisa de validação. Marquee, pulso e progresso independem dessa largura.
 - Seções editoriais estão no módulo client de landing-sections.tsx por animação.
 - areaServed do JSON-LD é Brasil fixo; serviceArea configura texto do perfil.
 - home.html é snapshot Next em desenvolvimento, não fonte de execução.

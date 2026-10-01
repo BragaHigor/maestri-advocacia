@@ -1,5 +1,8 @@
 # Arquitetura do projeto
 
+Revisão documental do código em 01/10/2026. Verificações históricas de build e
+navegador mantêm suas datas; veja o diagnóstico.
+
 ## Visão geral
 
 A aplicação usa Next.js App Router, com home `/` e política `/privacidade`.
@@ -32,9 +35,10 @@ sem React ou DOM.
 - `src/lib`: datas, validação/links de contato, variantes Framer Motion e `cn`.
 - `src/styles/classes.ts`: classes de layout, tipografia, cards e campos.
 
-Page, layout, footer, contatos fixos, marca, container e JSON-LD não declaram
+Page, layout, footer, barra móvel, marca, container e JSON-LD não declaram
 `use client`. Header, providers, progresso, FAQ, formulário, calculadora,
-títulos animados, select, popover e calendário são módulos client.
+títulos animados, select, popover, calendário e botão flutuante WhatsApp são
+módulos client. Consentimento, navegação GA4 e o hook de entrada também são client.
 `landing-sections.tsx` inteiro também declara `use client`, incluindo as seções
 editoriais. Componentes importados por módulos client participam dessa fronteira.
 
@@ -76,13 +80,15 @@ UTC. Soma de anos segue o comportamento de Date, inclusive rollover em 29/02.
 
 ## Contato
 
-O formulário valida quatro campos obrigatórios: nome, telefone, data do ocorrido
-e relato. Nome aceita 2 a 80 caracteres sem números; relato aceita 20 a 1500
+O formulário valida seis campos obrigatórios: nome, telefone, estado, cidade,
+data do ocorrido e relato. Nome aceita 2 a 80 caracteres sem números; relato aceita 20 a 1500
 caracteres com alguma letra/número. Telefone tem máscara brasileira e aceita
 celular ou fixo. Data não pode estar no futuro. O foco vai ao primeiro erro.
 
 Nome/telefone/relato são lidos de FormData. Tipo e data usam campos hidden
-controlados. A mensagem inclui nome, telefone, tipo, data e relato. Texto é
+controlados. Estado e cidade usam menus de seleção Radix não modais controlados
+e inputs ocultos para FormData.
+A mensagem inclui nome, telefone, cidade, estado, tipo, data e relato. Texto é
 normalizado em NFKC, tem controles removidos e é limitado a 3500 caracteres
 pelo helper de sanitização. URLs usam encodeURIComponent ou URLSearchParams.
 
@@ -109,11 +115,41 @@ ou fechar não oferece recuperação implementada pelo site.
 Os botões “Abrir novamente o WhatsApp/e-mail” e “Limpar formulário” ocupam
 largura total em uma coluna até 520 px e duas colunas a partir de 521 px.
 
+### Cidade e estado
+
+A interface usa `LocationSelect`, baseado em `DropdownMenu` do Radix com
+`modal={false}`. O menu não bloqueia a rolagem da página. Rolar a página fecha
+a lista sem reposicionar a tela; rolar dentro da lista mantém as opções abertas.
+O bloqueio é aplicado ao botão, ao trigger Radix e ao estado de abertura; sem
+opções ou com o campo desabilitado, o conteúdo do menu não é renderizado.
+O placeholder de cidade permanece `Selecione a cidade`. Não há texto de
+orientação permanente abaixo dos campos. As setas têm recuo interno de 15 px;
+nomes longos quebram linha. `.location-options` aplica barra fina, trilho
+transparente e indicador dourado arredondado em Chromium/Safari, com barra
+fina e cores equivalentes em Firefox.
+
+`src/lib/location.ts` usa `@brazilian-utils/brazilian-utils` 2.4.0: getStates
+fornece as 27 UFs; getMunicipalities é importado pelo subpath sob demanda
+ao escolher uma UF, em um chunk separado. Os dados são locais do pacote e
+não há consulta a uma API de localidades nem envio de escolhas ao Google.
+`src/hooks/use-contact-location.ts` limpa a cidade a cada troca de estado,
+controla carregamento/erro e invalida respostas antigas por contador de
+requisição. Cidade fica desabilitada sem estado ou enquanto o catálogo não
+está pronto. Falha mostra orientação e um botão para tentar carregar novamente.
+
+A validação exige UF válida e código IBGE de município pertencente à UF.
+A mensagem usa nomes do catálogo: `*Cidade:* Ribeirão Preto` e
+`*Estado:* São Paulo (SP)`. Brasília está disponível para o Distrito Federal.
+Os selects preservam rótulos, foco, mensagens de erro e navegação por teclado;
+o reset apaga estado/cidade e invalida carregamentos pendentes.
+`createContactMessage` centraliza a composição para WhatsApp e e-mail.
+
 ## Movimento, FAQ e acessibilidade
 
 Framer Motion aplica variantes de entrada, stagger e animação por visibilidade,
 mas apenas a partir de 880 px. Abaixo disso as seções renderizam no estado final,
-sem entrada: `useSectionEntrance` decide o modo e as seções não recebem variantes.
+sem entrada após a hidratação: `useSectionEntrance` decide o modo e as raízes
+não recebem props de entrada; filhos ainda podem declarar variantes.
 ScrollProgress usa useScroll/useSpring; header acompanha scrollY para reduzir
 altura após 40 px. Marquee, progresso de rolagem e pulso do WhatsApp não mudam
 com a largura. Não há componente MotionEffects, contadores ou parallax.
@@ -122,9 +158,12 @@ O modo entra na `key` de cada raiz animada porque o Framer Motion resolve o
 comportamento na montagem: trocar `whileInView` por outra prop depois não surte
 efeito e o elemento fica preso no estado inicial. O snapshot de servidor do hook
 é `amplo`, então acima de 880 px nada remonta e o comportamento é idêntico ao
-anterior; só a faixa mobile remonta, uma única vez após a hidratação. A decisão
-é travada na primeira medição para que redimensionar cruzando 880 px não remonte
-seções nem apague o que já foi digitado no formulário.
+anterior; na faixa mobile a mudança inicial de modo remonta a raiz após a
+hidratação. O hook não assina eventos de resize e seu comentário registra a intenção de
+manter a primeira decisão. Porém, o snapshot consulta matchMedia a cada leitura,
+sem armazenar o modo inicial. Uma nova renderização pode detectar outra largura
+e mudar a key, remontando a seção. A preservação de estado durante
+redimensionamentos não está garantida pelo código atual.
 
 MotionProvider usa reducedMotion="user" em produção e "never" em desenvolvimento.
 CSS reduzido desliga rolagem suave, brilho e pulso do WhatsApp, mas não o marquee.
@@ -159,20 +198,23 @@ next.config.ts define CSP, Referrer-Policy, nosniff, bloqueio de frames,
 DNS-prefetch off, COOP e Permissions-Policy. CSP permite inline em scripts e
 estilos; unsafe-eval só em desenvolvimento. Produção acrescenta HSTS e
 upgrade-insecure-requests. Conexões autorizam a própria origem e os destinos
-Google necessários ao Ads; novas
+Google necessários ao Ads e GA4; novas
 integrações exigem revisar diretivas. Headers foram inspecionados no código,
 não verificados na resposta de um deploy nesta revisão.
 
 ## Manutenção
 
-O Google Analytics 4 só é configurado quando `NEXT_PUBLIC_GA4_ID` existe, pela
-mesma tag; `AnalyticsPageViews` cobre as trocas de rota do App Router.
+O Google Analytics 4 usa G-Z1YCKTT9WK fixo em `src/config/site.ts`, sem
+variável de ambiente, pela mesma gtag.js do Ads; `AnalyticsPageViews` cobre
+as trocas de rota do App Router.
 `analytics_storage` é concedido no aceite e `ad_personalization` nunca é.
 
 `src/lib/ads.ts` centraliza o snippet de consentimento, a atualização de estado e o
 evento de tentativa de contato. `MeasurementTag` renderiza, no layout raiz e com
 `beforeInteractive`, o bootstrap inline e o gtag.js: consent mode avançado, tag
-presente em toda visita e negada até o aceite. `MeasurementConsent` apenas decide a
+presente em toda visita. Sem escolha válida ou com recusa começa negada;
+um aceite válido salvo é aplicado pelo bootstrap antes do carregamento.
+`MeasurementConsent` apenas decide a
 exibição do aviso e aplica mudanças de escolha; escolhas ficam
 em localStorage por 180 dias. O evento é limitado a um por origem por visita,
 com uma chave de sessionStorage para cada uma. Formulário validado e botão
@@ -180,7 +222,11 @@ flutuante compartilham a mesma ação de conversão, sem campos pessoais, e se
 identificam por `contact_source` (`contact_form` ou `whatsapp_float`). O botão
 de reabrir o WhatsApp reutiliza a origem do formulário e não conta de novo.
 `CookiePreferences` permite reabrir as escolhas na política de privacidade.
-Não há conversão de visita, GA4 ou campos monetários no evento.
+GA4 registra page_view na carga inicial pelo config e nas trocas de rota
+pelo AnalyticsPageViews. Recebe a URL real e dados de origem de tráfego; nas
+trocas de rota o evento inclui também o título. Ads recebe origem e caminho
+sem query/fragmento e referenciador vazio. Não há conversão de visita como
+Contato nem campos monetários no evento Ads.
 Veja [integração Ads](../docs/google-ads.md) para limites e validação.
 
 Consulte [stack](stack.md), [diagnóstico](analysis.md) e
