@@ -1,6 +1,7 @@
 # Contexto do projeto
 
-Revisão do código e verificações locais em 18/09/2026.
+Revisão do código e atualização documental em 01/10/2026. Verificações
+históricas de build e navegador são identificadas abaixo.
 
 ## Produto e escopo atual
 
@@ -10,10 +11,12 @@ fraudes bancárias, com atendimento online em todo o Brasil. A jornada apresenta
 perguntas frequentes, calculadora informativa e formulário de contato.
 
 As páginas públicas são `/` e `/privacidade`. Não existem API própria, banco de dados,
-autenticação, painel administrativo, CMS, armazenamento de leads, upload,
-Google Analytics ou integração de envio de e-mail no servidor. Há medição de tentativas de contato pelo Google Ads em consent mode avançado,
-descrita em [Google Ads](google-ads.md): a tag carrega em toda visita já negada,
-sem cookies, e passa a gravar apenas após o aceite. O formulário prepara
+autenticação, painel administrativo, CMS, armazenamento de leads, upload
+ou integração de envio de e-mail no servidor. Há GA4 para audiência e medição
+de tentativas de contato pelo Google Ads em consent mode avançado,
+descrita em [Google Ads e GA4](google-ads.md): sem escolha válida ou com recusa,
+a tag carrega negada e opera sem cookies de medição. Um aceite válido salvo é
+aplicado antes do carregamento; o armazenamento é concedido após o aceite. O formulário prepara
 uma mensagem no dispositivo; o visitante confirma o envio no WhatsApp ou no
 aplicativo de e-mail. O manifest não implica suporte offline: não há service
 worker no código do projeto.
@@ -53,6 +56,10 @@ pré-renderização com configuração de exportação estática.
 | `src/styles/classes.ts` | Classes compartilhadas de tipografia, botões, campos, cards e espaçamento |
 | `src/lib/motion.ts` | Variantes e configuração de entrada das animações |
 | `src/hooks/use-section-entrance.ts` | Decide, por largura, se a seção anima na entrada |
+| `src/lib/ads.ts` | Bootstrap, consentimento, conversões Ads e page_view GA4 |
+| `src/components/measurement-tag.tsx` | Scripts de consentimento e gtag.js no layout raiz |
+| `src/components/measurement-consent.tsx` | Aviso, preferências e sincronização entre abas |
+| `src/components/analytics-page-views.tsx` | page_view GA4 em trocas de rota |
 | `src/app/robots.ts`, `sitemap.ts`, `manifest.ts`, `opengraph-image.tsx` | Rotas técnicas de metadata |
 | `src/components/structured-data.tsx` | JSON-LD LegalService com dados controlados |
 | `next.config.ts` | CSP e headers de segurança |
@@ -128,7 +135,10 @@ sitemap, manifest, favicons e JSON-LD LegalService. O sitemap inclui a home
 e /privacidade; a política define canonical próprio. `areaServed` do JSON-LD está fixo em Brasil, embora exista serviceArea
 configurável para o conteúdo visual.
 
-CSP autoriza a própria origem e destinos Google necessários à medição Ads;
+GA4 usa o ID fixo `G-Z1YCKTT9WK` em `src/config/site.ts`, sem variável de
+ambiente. Ads usa ID e conversão fixos em `src/lib/ads.ts`.
+
+CSP autoriza a própria origem e destinos Google necessários à medição Ads e GA4;
 scripts e estilos permitem
 inline, e unsafe-eval só é habilitado em desenvolvimento. Produção acrescenta
 HSTS e upgrade de requisições inseguras. Há bloqueio de frames, nosniff,
@@ -137,18 +147,19 @@ CRM, vídeo, fontes, imagens ou APIs exigem avaliar as diretivas relevantes.
 
 ## Verificação atual
 
-| Verificação | Resultado |
+| Verificação | Resultado e data |
 | --- | --- |
-| `npm run lint` | Passou |
-| `npm run typecheck` | Passou |
-| `npm test` | 27 testes passaram, em 4 arquivos |
-| `npm run build` | Passou; página e metadata estáticas |
+| `npm run lint` | Passou em 01/10/2026 |
+| `npm run typecheck` | Passou em 18/09/2026; não reexecutado nesta revisão |
+| `npm test` | 39 testes passaram em cinco arquivos em 01/10/2026 |
+| `npm run build` | Passou em 18/09/2026; não reexecutado nesta revisão |
 
 Os testes de contato usam mock de siteConfig com dados fixos, independente da
 configuração institucional. A calculadora tem cenários de dia limite e dia
 seguinte para as cinco regras contadas do fato.
 
-O formulário WhatsApp foi verificado no navegador em desktop e emulação mobile
+Na revisão histórica de 18/09/2026, o formulário WhatsApp foi verificado no
+navegador em desktop e emulação mobile
 de 390 px; após ajuste de layout das ações, o build final foi conferido em 320 px.
 Foram verificados preservação, nova tentativa, validação e limpeza manual.
 Não foram executados auditoria de dependências, validação jurídica,
@@ -173,7 +184,8 @@ nem workflow de CI versionado em `.github/workflows`.
    useMemo; uma página aberta durante a virada do dia não atualiza o prazo
    automaticamente.
 6. **Movimento e conteúdo sem JS:** variantes começam em opacity 0 com
-   `initial="hidden"`, e o HTML servido carrega 61 elementos assim. Sem
+   `initial="hidden"`; a inspeção histórica encontrou 61 elementos assim.
+   O snapshot do servidor continua sendo amplo, inclusive para mobile. Sem
    JavaScript o conteúdo editorial permanece invisível — pendência em aberto.
    Um fallback `<noscript>` com `<style>` foi tentado em 22/09/2026 e revertido:
    no site real as informações pararam de carregar em toda visita, mesmo com
@@ -197,7 +209,12 @@ nem workflow de CI versionado em `.github/workflows`.
 11. **Casos de datas:** soma de anos em 29/02 segue rollover de Date; parsing
     não exige explicitamente o formato exato YYYY-MM-DD. Cobertura atual não
     define a expectativa desses extremos.
-12. **Snapshot e documentação:** `home.html` contém snapshot renderizado do
+12. **Entrada mobile e estado:** abaixo de 880 px as entradas são removidas
+    após a hidratação. O hook não assina resize, mas lê matchMedia a cada
+    snapshot, sem armazenar o modo inicial. Uma nova renderização após mudar
+    a largura pode alterar a key e remontar seções; preservação do formulário
+    nesse cenário ainda precisa de validação.
+13. **Snapshot e documentação:** `home.html` contém snapshot renderizado do
     Next em dev, com referências a chunks; não é fonte de execução nem uma
     landing independente. README, `.spec` e guia de deploy foram atualizados
     nesta revisão para refletir fontes, animações, campos e CTAs reais.

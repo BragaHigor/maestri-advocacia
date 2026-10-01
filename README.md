@@ -80,7 +80,8 @@ src/
 ├── context/             sincronização de tipo de caso
 ├── data/                conteúdo editorial estruturado
 ├── domain/deadlines/    regras e cálculo puro de prazos
-├── lib/                 datas, contato, animações e classes utilitárias
+├── hooks/               modo de entrada das seções por largura
+├── lib/                 datas, contato, medição, animações e classes utilitárias
 └── styles/              classes Tailwind compartilhadas
 public/assets/           marca, favicons e fotografias
 .spec/                   arquitetura, stack e diagnóstico
@@ -88,14 +89,16 @@ docs/                    deploy e contexto de manutenção
 ```
 
 `components.json` configura componentes no estilo shadcn/ui e declara o alias
-`@/hooks`, mas não existe diretório `src/hooks` atualmente. `home.html` é um
+`@/hooks`, usado por `src/hooks/use-section-entrance.ts`. `home.html` é um
 snapshot HTML renderizado em desenvolvimento, com referências a chunks do Next;
 não é a fonte da aplicação nem uma versão estática independente.
+Esse snapshot é ignorado pelo Git porque pode incluir caminhos locais da máquina.
 
 ## Qualidade e publicação
 
-Em 18/09/2026, os 27 testes passaram. A integração Google Ads inclui consentimento
-e medição da tentativa de contato; veja o documento específico abaixo. Consulte o
+Em 01/10/2026, lint passou e os 39 testes passaram em cinco arquivos. Google Ads
+mede tentativas de contato e GA4 mede audiência, com consentimento compartilhado;
+veja o documento específico abaixo. Consulte o
 [diagnóstico](.spec/analysis.md) para detalhes e limites da revisão.
 
 Antes de publicar, confira dados institucionais, domínio e canais reais;
@@ -110,5 +113,11 @@ Referências: [arquitetura](.spec/architecture.md), [stack](.spec/stack.md),
 
 A preparação de medição, os dados necessários da conta e as pendências estão
 em [Google Ads e privacidade](docs/google-ads.md). A tag usa consent mode avançado: carrega em toda visita já negada e sem cookies,
-e passa a gravar após o aceite. Não há Google Analytics ou medição de visita
-como conversão.
+e concede armazenamento de anúncios e Analytics após o aceite. Uma escolha
+válida salva é aplicada antes do carregamento. O GA4 mede visitas; elas não são
+conversões de contato no Ads. O ID GA4 `G-Z1YCKTT9WK` está fixo em
+`src/config/site.ts`, sem variável de ambiente.
+
+As entradas de seção são removidas abaixo de 880 px após a hidratação.
+Marquee, pulso e progresso de rolagem são independentes dessa largura.
+Consulte o diagnóstico para os limites sem JavaScript e durante redimensionamentos.
