@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@brazilian-utils/brazilian-utils": "2.4.0",
     "@fontsource/bodoni-moda": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
     "class-variance-authority": "^0.7.1",
@@ -39,6 +40,6 @@
     "vitest": "4.1.11"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": "^20.19.0 || >=22.12.0"
   }
 }

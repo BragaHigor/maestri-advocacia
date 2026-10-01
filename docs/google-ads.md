@@ -82,12 +82,16 @@ O texto não declara certificação de conformidade com a LGPD.
 
 ## Verificações e limites
 
-Em 01/10/2026 lint passou e 39 testes passaram em cinco arquivos. A suíte
+Em 01/10/2026 lint passou e 45 testes passaram em seis arquivos. A suíte
 exercita bootstrap e ordem de consentimento, escolha salva, recusa, expiração,
 revogação, conversão sob recusa, deduplicação por origem, ausência de campos
 pessoais/monetários no evento Ads e configuração/page_view do GA4. Ela não
 verifica entrega de rede, cookies reais, carregamento único do script ou layout.
-Typecheck, build, navegador e domínio publicado não foram revalidados agora.
+Typecheck e build passaram em 01/10/2026 após a feature cidade/estado. O fluxo
+do formulário foi conferido no navegador com proxy local que desativa a tag
+remota e captura a mensagem sem abrir WhatsApp; isso não valida entrega Ads/GA4
+ou envio real. O domínio publicado não foi revalidado. Cidade e estado entram
+apenas na mensagem externa, junto com os demais campos, nunca no evento Ads.
 
 As verificações de navegador registradas em setembro incluem botões a 320 px
 e 1280 px. Os registros de recusa sem tag e bloqueio do script após revogar

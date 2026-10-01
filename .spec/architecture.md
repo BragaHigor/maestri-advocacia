@@ -80,13 +80,15 @@ UTC. Soma de anos segue o comportamento de Date, inclusive rollover em 29/02.
 
 ## Contato
 
-O formulário valida quatro campos obrigatórios: nome, telefone, data do ocorrido
-e relato. Nome aceita 2 a 80 caracteres sem números; relato aceita 20 a 1500
+O formulário valida seis campos obrigatórios: nome, telefone, estado, cidade,
+data do ocorrido e relato. Nome aceita 2 a 80 caracteres sem números; relato aceita 20 a 1500
 caracteres com alguma letra/número. Telefone tem máscara brasileira e aceita
 celular ou fixo. Data não pode estar no futuro. O foco vai ao primeiro erro.
 
 Nome/telefone/relato são lidos de FormData. Tipo e data usam campos hidden
-controlados. A mensagem inclui nome, telefone, tipo, data e relato. Texto é
+controlados. Estado e cidade usam menus de seleção Radix não modais controlados
+e inputs ocultos para FormData.
+A mensagem inclui nome, telefone, cidade, estado, tipo, data e relato. Texto é
 normalizado em NFKC, tem controles removidos e é limitado a 3500 caracteres
 pelo helper de sanitização. URLs usam encodeURIComponent ou URLSearchParams.
 
@@ -112,6 +114,35 @@ ou fechar não oferece recuperação implementada pelo site.
 
 Os botões “Abrir novamente o WhatsApp/e-mail” e “Limpar formulário” ocupam
 largura total em uma coluna até 520 px e duas colunas a partir de 521 px.
+
+### Cidade e estado
+
+A interface usa `LocationSelect`, baseado em `DropdownMenu` do Radix com
+`modal={false}`. O menu não bloqueia a rolagem da página. Rolar a página fecha
+a lista sem reposicionar a tela; rolar dentro da lista mantém as opções abertas.
+O bloqueio é aplicado ao botão, ao trigger Radix e ao estado de abertura; sem
+opções ou com o campo desabilitado, o conteúdo do menu não é renderizado.
+O placeholder de cidade permanece `Selecione a cidade`. Não há texto de
+orientação permanente abaixo dos campos. As setas têm recuo interno de 15 px;
+nomes longos quebram linha. `.location-options` aplica barra fina, trilho
+transparente e indicador dourado arredondado em Chromium/Safari, com barra
+fina e cores equivalentes em Firefox.
+
+`src/lib/location.ts` usa `@brazilian-utils/brazilian-utils` 2.4.0: getStates
+fornece as 27 UFs; getMunicipalities é importado pelo subpath sob demanda
+ao escolher uma UF, em um chunk separado. Os dados são locais do pacote e
+não há consulta a uma API de localidades nem envio de escolhas ao Google.
+`src/hooks/use-contact-location.ts` limpa a cidade a cada troca de estado,
+controla carregamento/erro e invalida respostas antigas por contador de
+requisição. Cidade fica desabilitada sem estado ou enquanto o catálogo não
+está pronto. Falha mostra orientação e um botão para tentar carregar novamente.
+
+A validação exige UF válida e código IBGE de município pertencente à UF.
+A mensagem usa nomes do catálogo: `*Cidade:* Ribeirão Preto` e
+`*Estado:* São Paulo (SP)`. Brasília está disponível para o Distrito Federal.
+Os selects preservam rótulos, foco, mensagens de erro e navegação por teclado;
+o reset apaga estado/cidade e invalida carregamentos pendentes.
+`createContactMessage` centraliza a composição para WhatsApp e e-mail.
 
 ## Movimento, FAQ e acessibilidade
 

@@ -48,6 +48,8 @@ pré-renderização com configuração de exportação estática.
 | `src/context/case-type-context.tsx` | Sincronização do tipo selecionado na ferramenta e no formulário |
 | `src/domain/deadlines/` | Tipos, catálogo das seis regras e função pura de cálculo |
 | `src/lib/date.ts` | Datas locais, parsing, formatação e operações de calendário |
+| `src/lib/location.ts` | Catálogo local de UFs/municípios e validação do vínculo cidade–estado |
+| `src/hooks/use-contact-location.ts` | Seleção dependente, carregamento, erro, retry e reset |
 | `src/lib/contact.ts` | Validação de entradas, máscara de telefone, normalização e links wa.me/mailto |
 | `src/components/sections/contact-form.tsx` | Campos, erros, calendário, composição da mensagem e abertura do canal |
 | `src/components/sections/deadline-calculator.tsx` | Seleção de regra/data e apresentação de número, progresso e tom |
@@ -104,7 +106,7 @@ O CTA do resultado apenas navega para `#contato`.
 
 ### Formulário
 
-Exige nome, telefone, data do ocorrido e relato; tipo começa como Pix.
+Exige nome, telefone, estado, cidade, data do ocorrido e relato; tipo começa como Pix.
 Nome: 2 a 80 caracteres, sem números. Relato: 20 a 1500 caracteres.
 Telefone recebe máscara e validação; aceita também formatos de telefone fixo.
 Calendário e validação impedem data futura. Erros direcionam o foco ao primeiro
@@ -116,6 +118,17 @@ O relato é normalizado, limitado e codificado na URL. Destino `email` usa
 Os campos são preservados após a tentativa de abertura; não há confirmação de
 envio ou recebimento. Nova tentativa revalida os dados atuais. Limpeza manual
 restaura o tipo Pix, apaga campos, contador e erros, fecha calendário e foca nome.
+Estado e cidade usam menus Radix não modais obrigatórios, com o mesmo visual
+dos demais campos. Escolher a UF carrega o
+catálogo local de municípios da biblioteca; trocar o estado limpa a cidade.
+Falha permite tentar novamente e respostas antigas são descartadas. A validação
+confere o código IBGE e sua UF; a mensagem inclui cidade e estado com nome e
+sigla. Limpar apaga ambos e invalida carregamentos pendentes.
+Cidade mostra `Selecione a cidade` e permanece bloqueada até o catálogo estar
+pronto. Campo bloqueado não renderiza menu vazio. A página pode rolar com a
+lista aberta; a rolagem da página fecha a lista sem trazer o foco visual de
+volta ao campo. A lista tem rolagem própria e barra fina dourada, com trilho
+transparente. Nomes longos quebram linha e as setas ficam recuadas no campo.
 Não há persistência em storage. Alterar o destino não altera o botão flutuante.
 As ações aparecem após tentativa válida de abertura e permanecem disponíveis
 durante a edição. Limpar oculta as ações. Até 520 px os botões ocupam largura
@@ -150,9 +163,9 @@ CRM, vídeo, fontes, imagens ou APIs exigem avaliar as diretivas relevantes.
 | Verificação | Resultado e data |
 | --- | --- |
 | `npm run lint` | Passou em 01/10/2026 |
-| `npm run typecheck` | Passou em 18/09/2026; não reexecutado nesta revisão |
-| `npm test` | 39 testes passaram em cinco arquivos em 01/10/2026 |
-| `npm run build` | Passou em 18/09/2026; não reexecutado nesta revisão |
+| `npm run typecheck` | Passou em 01/10/2026 |
+| `npm test` | 45 testes passaram em seis arquivos em 01/10/2026 |
+| `npm run build` | Passou em 01/10/2026 |
 
 Os testes de contato usam mock de siteConfig com dados fixos, independente da
 configuração institucional. A calculadora tem cenários de dia limite e dia
@@ -166,6 +179,13 @@ Não foram executados auditoria de dependências, validação jurídica,
 verificação de deploy, medições de performance, abertura de aplicativo de e-mail
 ou testes em celular físico. Não há suíte de componentes ou E2E configurada,
 nem workflow de CI versionado em `.github/workflows`.
+
+A feature de localização foi verificada em build de produção, por um proxy
+local de teste que desativa a tag remota e captura window.open sem abrir
+WhatsApp. Em 320 px e 1280 px foram verificados layout dos selects e ausência
+de overflow horizontal. Foram conferidos campos obrigatórios, foco, troca de
+UF, nova mensagem com outra cidade, reset, Brasília e recuperação de uma falha
+simulada no chunk do catálogo. Não houve envio real nem conversão real.
 
 ## Achados para priorização
 

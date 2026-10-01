@@ -1,4 +1,6 @@
 import { siteConfig } from "@/config/site";
+import { formatDateInputPtBr } from "@/lib/date";
+import type { ContactLocation } from "@/lib/location";
 
 const DEFAULT_MESSAGE =
   "Olá! Acessei o site da Maestri Advocacia e gostaria de solicitar uma avaliação jurídica inicial do meu caso.";
@@ -7,6 +9,31 @@ const MAX_MESSAGE_LENGTH = 3_500;
 export const CONTACT_NAME_MAX_LENGTH = 80;
 export const CONTACT_REPORT_MIN_LENGTH = 20;
 export const CONTACT_REPORT_MAX_LENGTH = 1_500;
+
+export function createContactMessage(values: {
+  name: string;
+  phone: string;
+  caseLabel: string;
+  date: string;
+  report: string;
+  location: ContactLocation;
+}): string {
+  return [
+    DEFAULT_MESSAGE,
+    "",
+    "Seguem abaixo as informações preenchidas:",
+    "",
+    `*Nome:* ${sanitizeMessage(values.name)}`,
+    `*WhatsApp:* ${sanitizeMessage(values.phone)}`,
+    `*Cidade:* ${values.location.cityName}`,
+    `*Estado:* ${values.location.stateName} (${values.location.stateCode})`,
+    `*Tipo de caso:* ${values.caseLabel}`,
+    `*Quando aconteceu:* ${formatDateInputPtBr(values.date)}`,
+    "",
+    "*Relato do caso:*",
+    sanitizeMessage(values.report),
+  ].join("\n");
+}
 
 export function isValidContactName(value: string): boolean {
   const name = value.trim();

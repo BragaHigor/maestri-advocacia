@@ -21,10 +21,21 @@ select/popover Radix; SEO técnico e headers em next.config.ts.
 ## Verificação em 01/10/2026
 
 - `npm run lint`: passou, sem diagnósticos.
-- `npm test`: 39 testes passaram em cinco arquivos.
-- Typecheck, build, navegador e produção não foram revalidados nesta revisão.
+- `npm test`: 45 testes passaram em seis arquivos.
+- `npm run typecheck` e `npm run build`: passaram após a feature de localização.
+- Navegador: formulário verificado em 320 px e 1280 px com build de produção
+  por proxy local que desativa a tag remota e captura a mensagem sem abrir
+  WhatsApp. Conferidos obrigatoriedade, foco, troca de UF/cidade, mensagem,
+  reabertura, limpeza, Brasília e retry após falha simulada no chunk.
+- Domínio publicado e entrega real aos canais externos não foram revalidados.
+- Ajustes visuais: larguras de 320, 390, 520, 880 e 1280 px conferidas sem
+  overflow horizontal; nomes longos quebram linha e setas mantêm recuo interno.
+  Menus não modais permitem rolagem da página e fecham ao rolar o documento,
+  preservando a rolagem interna das opções. Cidade bloqueada foi clicada no
+  navegador sem criar menu vazio. Barra fina e cores conferidas em Chrome;
+  o acabamento final também remove botões nativos em Chromium/Safari.
 
-Os cinco arquivos cobrem datas, contato, cálculo, consentimento/Ads/GA4 e
+Os seis arquivos cobrem datas, contato, localidade, cálculo, consentimento/Ads/GA4 e
 configuração GA4. A suíte atual exercita o bootstrap negado ou concedido por
 escolha salva, preferências inválidas/expiradas, revogação, conversões mesmo sob
 recusa, deduplicação por origem e page_view GA4.
@@ -66,7 +77,8 @@ nesta revisão. Não há suíte de componentes/E2E ou workflow de CI versionado.
 
 - Números de WhatsApp na seção contato e rodapé apontam para #contato; só o
   flutuante abre diretamente o canal. O destino de formulário não altera o float.
-- Formulário exige quatro campos: nome, telefone, data e relato. Preserva os
+- Formulário exige seis campos: nome, telefone, estado, cidade, data e relato.
+  Cidade depende da UF e é validada pelo catálogo local da biblioteca. Preserva os
   campos após abrir o aplicativo externo, oferece nova tentativa com dados
   atuais e limpeza manual. Não confirma abertura/envio nem persiste em storage.
 - Todas as regras mostram data-limite hoje quando restam zero dias, com tom

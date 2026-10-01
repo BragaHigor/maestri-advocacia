@@ -8,6 +8,7 @@ O lockfile registra a resolução usada por npm ci.
 
 | Pacote | Versão declarada | Uso |
 | --- | --- | --- |
+| @brazilian-utils/brazilian-utils | 2.4.0 | Estados e municípios IBGE, com catálogo local carregado sob demanda |
 | next | 16.3.3 | App Router, renderização, metadata e imagens |
 | react / react-dom | 19.2.8 | Componentes e interações |
 | @fontsource/bodoni-moda | ^5.3.0 | Fonte de títulos auto-hospedada |
@@ -37,14 +38,14 @@ O lockfile registra a resolução usada por npm ci.
 
 TypeScript usa strict, moduleResolution bundler, JSX react-jsx e alias @/* para
 src/*. ESLint compõe configurações Next Core Web Vitals e TypeScript.
-Vitest usa ambiente node e inclui src/**/*.test.ts; há cinco arquivos de testes,
-para datas, contato, cálculo, medição/consentimento e configuração GA4.
-Em 01/10/2026 passaram 39 testes. Não há suíte DOM/E2E ou workflow CI versionado.
+Vitest usa ambiente node e inclui src/**/*.test.ts; há seis arquivos de testes,
+para datas, contato, localidade, cálculo, medição/consentimento e configuração GA4.
+Em 01/10/2026 passaram 45 testes. Não há suíte DOM/E2E ou workflow CI versionado.
 PostCSS carrega @tailwindcss/postcss.
 
 ## Runtime e publicação
 
-package.json exige Node.js >=20.9.0 e não fixa versão de npm.
+package.json exige Node.js ^20.19.0 ou >=22.12.0 e não fixa versão de npm.
 vercel.json declara framework nextjs. O build atual pré-renderiza home e
 metadata; não há exportação estática configurada. Next/Vercel otimiza imagens.
 Não há banco, SDK de CRM, serviço de envio de e-mail ou autenticação.
@@ -64,7 +65,8 @@ marquee, pulso e brilho; Framer Motion implementa entradas e progresso.
 components.json configura estilo new-york-v4, TypeScript, RSC, Lucide e aliases.
 Os componentes são arquivos locais; não existe dependência chamada shadcn/ui.
 O alias @/hooks está declarado nessa configuração e é usado por
-src/hooks/use-section-entrance.ts para controlar as entradas por largura.
+src/hooks/use-section-entrance.ts para controlar as entradas por largura e por
+src/hooks/use-contact-location.ts para gerenciar UF, município e carregamento.
 
 Código interno usa alias @/, arquivos kebab-case e componentes PascalCase.
 Regras de cálculo ficam fora de React. As fronteiras client atuais incluem todas

@@ -20,10 +20,10 @@ npm test
 npm run build
 ```
 
-package.json exige Node.js >=20.9.0. Escolha no provedor uma versão suportada
+package.json exige Node.js ^20.19.0 ou >=22.12.0. Escolha no provedor uma versão suportada
 compatível com o projeto. Todos os checks devem passar antes de publicar.
-Em 01/10/2026 passaram 39 testes em cinco arquivos e lint passou. Typecheck e
-build não foram reexecutados nessa revisão documental. A suíte inclui Ads,
+Em 01/10/2026 passaram lint, typecheck, build e 45 testes em seis arquivos
+após a feature de cidade/estado. A suíte inclui localidade, Ads,
 consentimento e GA4:
 veja [diagnóstico](../.spec/analysis.md).
 
@@ -77,6 +77,15 @@ defina metadata por rota. O manifest não fornece funcionamento offline.
 - Abrir site em celular e desktop, conferir imagens, overflow, foco e navegação.
 - Conferir links de cada seção, menu móvel, Escape, FAQ, calendário e selects.
 - Testar cálculo, sincronização de tipo e datas independentes.
+- Conferir cidade/estado obrigatórios: UF primeiro, somente municípios da UF,
+  limpeza da cidade ao trocar estado e nomes formatados na mensagem. Testar
+  Distrito Federal/Brasília, carregamento, falha/retry e reset dos novos campos.
+  Clicar em Cidade bloqueada não deve abrir menu vazio. Conferir barra fina,
+  quebra de nomes longos e recuo das setas em mobile/desktop. Rolar a página
+  com menu aberto deve fechar a lista sem saltar de volta ao campo; rolar as
+  opções deve manter a lista aberta.
+  O catálogo vem do pacote local, sem API externa; novos municípios exigem
+  atualizar a biblioteca e publicar novamente.
 - Testar botão flutuante e formulário com relato fictício; envio precisa ser
   confirmado no aplicativo externo. Para verificar ambos os destinos, usar
   builds/ambientes com o destino correspondente.
